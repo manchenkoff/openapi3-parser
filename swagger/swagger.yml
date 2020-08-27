@@ -1,0 +1,106 @@
+openapi: 3.0.0
+
+info:
+  title: 'Example API'
+  version: 1.0.0
+  description: 'Service description'
+  license:
+    name: 'MIT'
+  contact:
+    name: 'manchenkoff'
+    email: 'artyom@manchenkoff.me'
+
+servers:
+  - url: 'https://example.com'
+    description: 'production'
+
+  - url: 'http://stage.example.com'
+    description: 'staging'
+
+  - url: 'http://localhost'
+    description: 'development'
+
+tags:
+  - name: User
+    description: 'Users'
+
+paths:
+  /users:
+    get:
+      tags:
+        - User
+      summary: 'Get user list'
+      operationId: 'GetList'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: './schemas.yml#/requests/LimitOffsetRequest'
+      responses:
+        200:
+          description: 'Successful response'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessfulResponse'
+        400:
+          description: 'Bad request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroneousResponse'
+        401:
+          description: 'Access denied'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeniedResponse'
+        500:
+          description: 'Internal error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionalResponse'
+
+components:
+  schemas:
+    SuccessfulResponse:
+      title: SuccessfulResponse
+      type: object
+      required:
+        - users
+      properties:
+        users:
+          type: array
+          items:
+            $ref: './schemas.yml#/schemas/User'
+
+    ErroneousResponse:
+      title: ErroneousResponse
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          example: 'ERROR'
+
+    DeniedResponse:
+      title: DeniedResponse
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          example: 'DENIED'
+
+    ExceptionalResponse:
+      title: ExceptionalResponse
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          example: 'EXCEPTION'
