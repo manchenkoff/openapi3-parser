@@ -6,6 +6,7 @@ verify_ssl = true
 [dev-packages]
 twine = "==3.2.0"
 wheel = "==0.35.1"
+pytest = "*"
 
 [packages]
 prance = "==0.19.0"

@@ -18,7 +18,7 @@ clean: ## Remove build files
 	@rm -Rf build/ dist/ *.egg-info
 
 test: ## Run code tests
-	@echo "No tests yet!"
+	@pipenv run pytest -q
 
 sync: ## Sync with Pipfile packages list
 	@pipenv sync
