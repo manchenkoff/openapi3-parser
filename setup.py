@@ -1,17 +1,28 @@
 from os.path import dirname, join
 
-import swagger_parser
 from setuptools import find_packages, setup
 
-description_file = join(dirname(__file__), 'readme.txt')
+import swagger_parser
+
+description_file = join(dirname(__file__), "readme.md")
 
 setup(
     name="swagger_parser",
     author="Artyom Manchenkov",
     author_email="artyom@manchenkoff.me",
     url="https://github.com/manchenkoff/swagger-parser",
+    project_urls={
+        "Source": "https://github.com/manchenkoff/swagger-parser",
+    },
     version=swagger_parser.__version__,
-    packages=find_packages(),
+    packages=find_packages(where="swagger_parser"),
     license="MIT",
-    long_description=open(description_file).read()
+    description="Swagger API v3 parser",
+    long_description=open(description_file).read(),
+    long_description_content_type="text/markdown",
+    keywords="swagger, python, swagger-parser, parser, openapi, swagger-api",
+    install_requires=[
+        "prance",
+        "openapi-spec-validator",
+    ],
 )

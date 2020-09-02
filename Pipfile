@@ -4,10 +4,12 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
+twine = "==3.2.0"
+wheel = "==0.35.1"
 
 [packages]
-prance = "*"
-openapi-spec-validator = "*"
+prance = "==0.19.0"
+openapi-spec-validator = "==0.2.9"
 
 [requires]
 python_version = "3.8"

@@ -1,14 +1,21 @@
 .DEFAULT_GOAL := help
-.PHONY: help
+.PHONY: help build
 
 build: ## Build an application
 	@pipenv run python setup.py sdist
+	@pipenv run python setup.py bdist_wheel
+
+publish-test: ## Upload package to test PyPI
+	@pipenv run twine upload --repository testpypi dist/*
+
+publish: ## Upload package to PyPI
+	@pipenv run twine upload dist/*
 
 install: ## Install application to Pip environment
 	@pipenv run python setup.py install
 
 clean: ## Remove build files
-	@rm -R build/ dist/ *.egg-info
+	@rm -Rf build/ dist/ *.egg-info
 
 test: ## Run code tests
 	@echo "No tests yet!"
