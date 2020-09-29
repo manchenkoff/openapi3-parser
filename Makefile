@@ -8,14 +8,15 @@ build: ## Build an application
 publish-test: ## Upload package to test PyPI
 	@pipenv run twine upload --repository testpypi dist/*
 
-publish: ## Upload package to PyPI
+publish: build ## Upload package to PyPI
 	@pipenv run twine upload dist/*
+	@make clean
 
 install: ## Install application to Pip environment
 	@pipenv run python setup.py install
 
 clean: ## Remove build files
-	@rm -Rf build/ dist/ *.egg-info
+	@rm -Rf build/ dist/ *.egg-info .pytest_cache/
 
 test: ## Run code tests
 	@pipenv run pytest -q

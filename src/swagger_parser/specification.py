@@ -1,31 +1,30 @@
 from enum import Enum, unique
-from typing import List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple
+
+from .common import Comparable, Printable
 
 
-class Specification:
+class Specification(Comparable, Printable):
     version: str
     info: 'Info'
-    servers: Tuple['Server']
-    tags: Tuple['Tag']
-    paths: Tuple['Path']
+    servers: Tuple['Server', ...]
+    tags: Tuple['Tag', ...]
+    paths: Tuple['Path', ...]
 
     def __init__(self,
                  version: str,
                  info: 'Info',
-                 servers: Tuple['Server'],
-                 tags: Tuple['Tag'],
-                 paths: Tuple['Path']) -> None:
+                 servers: Tuple['Server', ...],
+                 tags: Tuple['Tag', ...],
+                 paths: Tuple['Path', ...]) -> None:
         self.version = version
         self.info = info
         self.servers = servers
         self.tags = tags
         self.paths = paths
 
-    def __repr__(self) -> str:
-        return f"{self.info.title}: {self.info.description} <OpenAPI v{self.version}>"
 
-
-class Info:
+class Info(Comparable, Printable):
     title: str
     version: str
     description: str
@@ -45,14 +44,14 @@ class Info:
         self.contact = contact_item
 
 
-class License:
+class License(Comparable, Printable):
     name: str
 
     def __init__(self, name: str) -> None:
         self.name = name
 
 
-class Contact:
+class Contact(Comparable, Printable):
     name: str
     email: str
 
@@ -61,7 +60,7 @@ class Contact:
         self.email = email
 
 
-class Server:
+class Server(Comparable, Printable):
     url: str
     description: str
 
@@ -70,7 +69,7 @@ class Server:
         self.description = description
 
 
-class Tag:
+class Tag(Comparable, Printable):
     name: str
     description: str
 
@@ -79,11 +78,11 @@ class Tag:
         self.description = description
 
 
-class Path:
+class Path(Comparable, Printable):
     url: str
-    operations: Tuple['Operation']
+    operations: Tuple['Operation', ...]
 
-    def __init__(self, url: str, operations: Tuple['Operation']) -> None:
+    def __init__(self, url: str, operations: Tuple['Operation', ...]) -> None:
         self.url = url
         self.operations = operations
 
@@ -97,23 +96,23 @@ class OperationMethod(Enum):
     DELETE = 'delete'
 
 
-class Operation:
+class Operation(Comparable, Printable):
     method: OperationMethod
     tags: List[str]
     summary: str
     operation_id: str
-    parameters: Tuple['Parameter']
-    request_body: 'RequestBody'
-    responses: Tuple['Response']
+    parameters: Tuple['Parameter', ...]
+    request_body: Optional['RequestBody']
+    responses: Tuple['Response', ...]
 
     def __init__(self,
-                 method: str,
+                 method: OperationMethod,
                  tags: List[str],
                  summary: str,
                  operation_id: str,
-                 parameters: Tuple['Parameter'],
-                 request_body: 'RequestBody',
-                 responses: Tuple['Response']) -> None:
+                 parameters: Tuple['Parameter', ...],
+                 request_body: Optional['RequestBody'],
+                 responses: Tuple['Response', ...]) -> None:
         self.method = OperationMethod(method)
         self.tags = tags
         self.summary = summary
@@ -131,7 +130,7 @@ class ParameterLocation(Enum):
     COOKIE = 'cookie'
 
 
-class Parameter:
+class Parameter(Comparable, Printable):
     name: str
     location: ParameterLocation
     description: str
@@ -157,26 +156,26 @@ class Parameter:
         self.schema = schema
 
 
-class RequestBody:
-    description: str
+class RequestBody(Comparable, Printable):
+    description: Optional[str]
     required: bool
-    contents: Tuple['Content']
+    contents: Dict['ContentType', 'Content']
 
     def __init__(self,
-                 description: str,
+                 contents: Dict['ContentType', 'Content'],
                  required: bool,
-                 contents: Tuple['Content']) -> None:
+                 description: Optional[str] = None) -> None:
         self.description = description
         self.required = required
         self.contents = contents
 
 
-class Response:
+class Response(Comparable, Printable):
     code: int
     description: str
-    contents: Tuple['Content']
+    contents: Dict['ContentType', 'Content']
 
-    def __init__(self, code: int, description: str, contents: Tuple['Content']) -> None:
+    def __init__(self, code: int, description: str, contents: Dict['ContentType', 'Content']) -> None:
         self.code = code
         self.description = description
         self.contents = contents
@@ -184,11 +183,11 @@ class Response:
 
 @unique
 class ContentType(Enum):
-    APPLICATION_JSON = 'application/json'
-    # TODO: support other types
+    application_json = 'application/json'
+    # TODO: support other types from https://swagger.io/docs/specification/media-types/
 
 
-class Content:
+class Content(Comparable, Printable):
     type: ContentType
     schema: 'Schema'
 
@@ -207,7 +206,7 @@ class DataType(Enum):
     object = 'object'
 
 
-class Schema:
+class Schema(Comparable, Printable):
     type: DataType
     title: Optional[str]
     deprecated: Optional[bool]
@@ -218,11 +217,11 @@ class Schema:
 
     def __init__(self, data_type: DataType, **kwargs) -> None:
         self.type = data_type
-        self.title = kwargs['title']
-        self.deprecated = kwargs['deprecated']
-        self.nullable = kwargs['nullable']
-        self.description = kwargs['description']
-        self.format = kwargs['format']
+        self.title = kwargs.get('title')
+        self.deprecated = kwargs.get('deprecated', False)
+        self.nullable = kwargs.get('nullable', False)
+        self.description = kwargs.get('description')
+        self.format = kwargs.get('format')
         self.required = False
 
 
@@ -336,10 +335,10 @@ class ArraySchema(Schema):
 
 
 class ObjectSchema(Schema):
-    properties: Tuple['Schema']
+    properties: Tuple['Schema', ...]
 
     def __init__(self,
-                 properties: Tuple['Schema'],
+                 properties: Tuple['Schema', ...],
                  **kwargs) -> None:
         self.properties = properties
 

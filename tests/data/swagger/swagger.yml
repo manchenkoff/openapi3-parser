@@ -22,7 +22,7 @@ servers:
 
 tags:
   - name: User
-    description: 'Users'
+    description: 'User operations'
 
 paths:
   /users:
@@ -65,42 +65,47 @@ paths:
 components:
   schemas:
     SuccessfulResponse:
-      title: SuccessfulResponse
+      allOf:
+        - $ref: '#/components/schemas/BaseResponse'
+        - title: SuccessfulResponse
+          required:
+            - status
+            - users
+          properties:
+            users:
+              type: array
+              items:
+                $ref: './schemas.yml#/schemas/User'
+
+    BaseResponse:
       type: object
       required:
-        - users
+        - status
       properties:
-        users:
-          type: array
-          items:
-            $ref: './schemas.yml#/schemas/User'
+        status:
+          type: string
+          example: 'SUCCESS'
 
     ErroneousResponse:
-      title: ErroneousResponse
-      type: object
-      required:
-        - status
-      properties:
-        status:
-          type: string
-          example: 'ERROR'
+      allOf:
+        - $ref: '#/components/schemas/BaseResponse'
+        - title: ErroneousResponse
+          properties:
+            status:
+              example: 'ERROR'
 
     DeniedResponse:
-      title: DeniedResponse
-      type: object
-      required:
-        - status
-      properties:
-        status:
-          type: string
-          example: 'DENIED'
+      allOf:
+        - $ref: '#/components/schemas/BaseResponse'
+        - title: DeniedResponse
+          properties:
+            status:
+              example: 'DENIED'
 
     ExceptionalResponse:
-      title: ExceptionalResponse
-      type: object
-      required:
-        - status
-      properties:
-        status:
-          type: string
-          example: 'EXCEPTION'
+      allOf:
+        - $ref: '#/components/schemas/BaseResponse'
+        - title: ExceptionalResponse
+          properties:
+            status:
+              example: 'EXCEPTION'
