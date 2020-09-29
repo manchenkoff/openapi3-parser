@@ -3,8 +3,8 @@ from unittest import mock
 import prance
 import pytest
 
-from swagger_parser import Contact, Info, License, Path, Server, Specification, Tag
-from swagger_parser.parser import OperationParser, SpecificationParser
+from src.swagger_parser import Contact, Info, License, Path, Server, Specification, Tag
+from src.swagger_parser.parser import OperationParser, SpecificationParser
 
 
 @pytest.fixture()

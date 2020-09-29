@@ -1,8 +1,8 @@
 from typing import Dict
 from unittest import mock
 
-from swagger_parser import Content, ContentType, IntSchema, Operation, OperationMethod, Response
-from swagger_parser.parser import OperationParser
+from src.swagger_parser import Content, ContentType, IntSchema, Operation, OperationMethod, Response
+from src.swagger_parser.parser import OperationParser
 
 
 def _get_content_parser_mock(expected_content: Dict[ContentType, Content]) -> mock.MagicMock:

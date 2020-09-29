@@ -1,6 +1,6 @@
 import pytest
 
-from swagger_parser.parser import ParserException, SchemaResolver
+from src.swagger_parser.parser import ParserException, SchemaResolver
 
 schema_to_resolve = {
     'allOf': [

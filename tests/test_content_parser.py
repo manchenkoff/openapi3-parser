@@ -1,7 +1,7 @@
 from unittest import mock
 
-from swagger_parser import Content, ContentType, IntSchema
-from swagger_parser.parser import ContentParser
+from src.swagger_parser import Content, ContentType, IntSchema
+from src.swagger_parser.parser import ContentParser
 
 
 def _get_schema_parser_mock():

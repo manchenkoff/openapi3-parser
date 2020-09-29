@@ -1,7 +1,7 @@
 from unittest import mock
 
-from swagger_parser import Content, ContentType, RequestBody, StringSchema
-from swagger_parser.parser import ContentParser, RequestBodyParser
+from src.swagger_parser import Content, ContentType, RequestBody, StringSchema
+from src.swagger_parser.parser import ContentParser, RequestBodyParser
 
 
 def _get_content_parser_mock(data) -> ContentParser:

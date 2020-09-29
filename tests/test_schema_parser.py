@@ -1,7 +1,7 @@
 import pytest
 
-from swagger_parser import ArraySchema, BooleanSchema, IntSchema, NumberSchema, ObjectSchema, Schema, StringSchema
-from swagger_parser.parser import SchemaParser
+from src.swagger_parser import ArraySchema, BooleanSchema, IntSchema, NumberSchema, ObjectSchema, Schema, StringSchema
+from src.swagger_parser.parser import SchemaParser
 
 
 def test_fail_without_type():
