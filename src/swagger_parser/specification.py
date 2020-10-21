@@ -1,345 +1,725 @@
-from enum import Enum, unique
-from typing import Dict, List, Optional, Tuple
+from dataclasses import dataclass, field
+from typing import Any, Dict, List, Optional
 
-from .common import Comparable, Printable
-
-
-class Specification(Comparable, Printable):
-    version: str
-    info: 'Info'
-    servers: Tuple['Server', ...]
-    tags: Tuple['Tag', ...]
-    paths: Tuple['Path', ...]
-
-    def __init__(self,
-                 version: str,
-                 info: 'Info',
-                 servers: Tuple['Server', ...],
-                 tags: Tuple['Tag', ...],
-                 paths: Tuple['Path', ...]) -> None:
-        self.version = version
-        self.info = info
-        self.servers = servers
-        self.tags = tags
-        self.paths = paths
+from .enumeration import *
 
 
-class Info(Comparable, Printable):
+@dataclass
+class Contact:
+    """
+    {
+      "name": "API Support",
+      "url": "http://www.example.com/support",
+      "email": "support@example.com"
+    }
+    """
+    name: Optional[str]
+    url: Optional[str]
+    email: Optional[str]
+
+
+@dataclass
+class License:
+    """
+    {
+      "name": "Apache 2.0",
+      "url": "https://www.apache.org/licenses/LICENSE-2.0.html"
+    }
+    """
+    name: str
+    url: Optional[str]
+
+
+@dataclass
+class Info:
+    """
+    {
+      "title": "Sample Pet Store App",
+      "description": "This is a sample server for a pet store.",
+      "termsOfService": "http://example.com/terms/",
+      "contact": {
+        "name": "API Support",
+        "url": "http://www.example.com/support",
+        "email": "support@example.com"
+      },
+      "license": {
+        "name": "Apache 2.0",
+        "url": "https://www.apache.org/licenses/LICENSE-2.0.html"
+      },
+      "version": "1.0.1"
+    }
+    """
     title: str
     version: str
-    description: str
-    license: 'License'
-    contact: 'Contact'
-
-    def __init__(self,
-                 title: str,
-                 version: str,
-                 description: str,
-                 license_item: 'License',
-                 contact_item: 'Contact') -> None:
-        self.title = title
-        self.version = version
-        self.description = description
-        self.license = license_item
-        self.contact = contact_item
-
-
-class License(Comparable, Printable):
-    name: str
-
-    def __init__(self, name: str) -> None:
-        self.name = name
-
-
-class Contact(Comparable, Printable):
-    name: str
-    email: str
-
-    def __init__(self, name: str, email: str) -> None:
-        self.name = name
-        self.email = email
-
-
-class Server(Comparable, Printable):
-    url: str
-    description: str
-
-    def __init__(self, url: str, description: str) -> None:
-        self.url = url
-        self.description = description
-
-
-class Tag(Comparable, Printable):
-    name: str
-    description: str
-
-    def __init__(self, name: str, description: str) -> None:
-        self.name = name
-        self.description = description
-
-
-class Path(Comparable, Printable):
-    url: str
-    operations: Tuple['Operation', ...]
-
-    def __init__(self, url: str, operations: Tuple['Operation', ...]) -> None:
-        self.url = url
-        self.operations = operations
-
-
-@unique
-class OperationMethod(Enum):
-    GET = 'get'
-    POST = 'post'
-    PUT = 'put'
-    PATCH = 'patch'
-    DELETE = 'delete'
-
-
-class Operation(Comparable, Printable):
-    method: OperationMethod
-    tags: List[str]
-    summary: str
-    operation_id: str
-    parameters: Tuple['Parameter', ...]
-    request_body: Optional['RequestBody']
-    responses: Tuple['Response', ...]
-
-    def __init__(self,
-                 method: OperationMethod,
-                 tags: List[str],
-                 summary: str,
-                 operation_id: str,
-                 parameters: Tuple['Parameter', ...],
-                 request_body: Optional['RequestBody'],
-                 responses: Tuple['Response', ...]) -> None:
-        self.method = OperationMethod(method)
-        self.tags = tags
-        self.summary = summary
-        self.operation_id = operation_id
-        self.parameters = parameters
-        self.request_body = request_body
-        self.responses = responses
-
-
-@unique
-class ParameterLocation(Enum):
-    QUERY = 'query'
-    HEADER = 'header'
-    PATH = 'path'
-    COOKIE = 'cookie'
-
-
-class Parameter(Comparable, Printable):
-    name: str
-    location: ParameterLocation
-    description: str
-    required: bool
-    deprecated: bool
-    allow_empty: bool
-    schema: 'Schema'
-
-    def __init__(self,
-                 name: str,
-                 location: ParameterLocation,
-                 description: str,
-                 required: bool,
-                 deprecated: bool,
-                 allow_empty: bool,
-                 schema: 'Schema') -> None:
-        self.name = name
-        self.location = location
-        self.description = description
-        self.required = required
-        self.deprecated = deprecated
-        self.allow_empty = allow_empty
-        self.schema = schema
-
-
-class RequestBody(Comparable, Printable):
     description: Optional[str]
-    required: bool
-    contents: Dict['ContentType', 'Content']
-
-    def __init__(self,
-                 contents: Dict['ContentType', 'Content'],
-                 required: bool,
-                 description: Optional[str] = None) -> None:
-        self.description = description
-        self.required = required
-        self.contents = contents
+    terms_of_service: Optional[str]
+    contact: Optional[Contact]
+    license: Optional[License]
 
 
-class Response(Comparable, Printable):
-    code: int
-    description: str
-    contents: Dict['ContentType', 'Content']
-
-    def __init__(self, code: int, description: str, contents: Dict['ContentType', 'Content']) -> None:
-        self.code = code
-        self.description = description
-        self.contents = contents
-
-
-@unique
-class ContentType(Enum):
-    application_json = 'application/json'
-    # TODO: support other types from https://swagger.io/docs/specification/media-types/
-
-
-class Content(Comparable, Printable):
-    type: ContentType
-    schema: 'Schema'
-
-    def __init__(self, content_type: ContentType, schema: 'Schema') -> None:
-        self.type = content_type
-        self.schema = schema
-
-
-@unique
-class DataType(Enum):
-    int = 'integer'
-    number = 'number'
-    string = 'string'
-    bool = 'boolean'
-    array = 'array'
-    object = 'object'
+@dataclass
+class Server:
+    """
+    {
+      "servers": [
+        {
+          "url": "https://development.gigantic-server.com/v1",
+          "description": "Development server"
+        },
+        {
+          "url": "https://staging.gigantic-server.com/v1",
+          "description": "Staging server"
+        },
+        {
+          "url": "https://api.gigantic-server.com/v1",
+          "description": "Production server"
+        }
+      ]
+    }
+    """
+    url: str
+    description: Optional[str]
+    variables: Optional[dict]
 
 
-class Schema(Comparable, Printable):
-    type: DataType
+@dataclass
+class ExternalDoc:
+    """
+    {
+      "description": "Find more info here",
+      "url": "https://example.com"
+    }
+    """
+    url: str
+    description: Optional[str]
+
+
+@dataclass
+class Schema:
+    """
+    {
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "address": {
+          "$ref": "#/components/schemas/Address"
+        },
+        "age": {
+          "type": "integer",
+          "format": "int32",
+          "minimum": 0
+        }
+      }
+    }
+    """
     title: Optional[str]
-    deprecated: Optional[bool]
-    nullable: Optional[bool]
+    type: DataType
+    enum: Optional[List[Any]]
+    example: Optional[Any]
     description: Optional[str]
-    format: Optional[str]
-    required: bool
+    default: Optional[Any]
+    nullable: Optional[bool]
+    read_only: Optional[bool]
+    write_only: Optional[bool]
+    deprecated: Optional[bool]
+    external_docs: Optional[ExternalDoc]
+    # all_of: Any
+    # one_of: Any
+    # any_of: Any
+    # not: Any
 
-    def __init__(self, data_type: DataType, **kwargs) -> None:
-        self.type = data_type
-        self.title = kwargs.get('title')
-        self.deprecated = kwargs.get('deprecated', False)
-        self.nullable = kwargs.get('nullable', False)
-        self.description = kwargs.get('description')
-        self.format = kwargs.get('format')
-        self.required = False
+    def __post_init__(self):
+        """
+        Fix to load default values in inherited classes
+        """
+        if self.enum is None:
+            self.enum = []
+        if self.nullable is None:
+            self.nullable = False
+        if self.read_only is None:
+            self.read_only = False
+        if self.write_only is None:
+            self.write_only = False
+        if self.deprecated is None:
+            self.deprecated = False
 
 
-class IntSchema(Schema):
-    example: Optional[int]
-    minimum: Optional[int]
+@dataclass
+class Integer(Schema):
+    """
+    {
+      "type": "integer",
+      "format": "int32"
+    }
+    """
+    multiple_of: Optional[int]
     maximum: Optional[int]
-    default: Optional[int]
-    enum: List[int]
-
-    def __init__(self,
-                 example: Optional[int] = None,
-                 minimum: Optional[int] = None,
-                 maximum: Optional[int] = None,
-                 default: Optional[int] = None,
-                 enum: List[int] = None,
-                 **kwargs) -> None:
-        if enum is None:
-            enum = []
-
-        self.example = example
-        self.minimum = minimum
-        self.maximum = maximum
-        self.default = default
-        self.enum = enum
-
-        super().__init__(DataType.int, **kwargs)
+    exclusive_maximum: Optional[int]
+    minimum: Optional[int]
+    exclusive_minimum: Optional[int]
+    format: Optional[IntegerFormat]
 
 
-class NumberSchema(Schema):
-    example: Optional[float]
-    minimum: Optional[float]
+@dataclass
+class Number(Schema):
+    """
+    {
+      "type": "number",
+      "format": "float"
+    }
+    """
+    multiple_of: Optional[float]
     maximum: Optional[float]
-    default: Optional[float]
-    enum: List[float]
-
-    def __init__(self,
-                 example: Optional[float] = None,
-                 minimum: Optional[float] = None,
-                 maximum: Optional[float] = None,
-                 default: Optional[float] = None,
-                 enum: List[float] = None,
-                 **kwargs) -> None:
-        if enum is None:
-            enum = []
-
-        self.example = example
-        self.minimum = minimum
-        self.maximum = maximum
-        self.default = default
-        self.enum = enum
-
-        super().__init__(DataType.number, **kwargs)
+    exclusive_maximum: Optional[float]
+    minimum: Optional[float]
+    exclusive_minimum: Optional[float]
+    format: Optional[NumberFormat]
 
 
-class StringSchema(Schema):
-    example: Optional[str]
-    min_length: Optional[int]
+@dataclass
+class String(Schema):
+    """
+    {
+      "type": "string",
+      "format": "email"
+    }
+    """
     max_length: Optional[int]
-    default: Optional[str]
-    enum: List[str]
-
-    def __init__(self,
-                 example: Optional[str] = None,
-                 min_length: Optional[int] = None,
-                 max_length: Optional[int] = None,
-                 default: Optional[str] = None,
-                 enum: List[str] = None,
-                 **kwargs) -> None:
-        if enum is None:
-            enum = []
-
-        self.example = example
-        self.min_length = min_length
-        self.max_length = max_length
-        self.default = default
-        self.enum = enum
-
-        super().__init__(DataType.string, **kwargs)
+    min_length: Optional[int]
+    pattern: Optional[str]
+    format: Optional[StringFormat]
 
 
-class BooleanSchema(Schema):
-    example: Optional[bool]
-    default: Optional[bool]
-
-    def __init__(self,
-                 example: Optional[bool] = None,
-                 default: Optional[bool] = None,
-                 **kwargs) -> None:
-        self.example = example
-        self.default = default
-
-        super().__init__(DataType.bool, **kwargs)
-
-
-class ArraySchema(Schema):
-    items_schema: Schema
-    min_items: Optional[int]
+@dataclass
+class Array(Schema):
+    """
+    {
+      "animals": {
+        "type": "array",
+        "items": {
+          "type": "string",
+        }
+      }
+    }
+    """
     max_items: Optional[int]
-
-    def __init__(self,
-                 items_schema: Schema,
-                 min_items: Optional[int] = None,
-                 max_items: Optional[int] = None,
-                 **kwargs) -> None:
-        self.items_schema = items_schema
-        self.min_items = min_items
-        self.max_items = max_items
-
-        super().__init__(DataType.array, **kwargs)
+    min_items: Optional[int]
+    unique_items: Optional[bool]
+    items: Schema
 
 
-class ObjectSchema(Schema):
-    properties: Tuple['Schema', ...]
+@dataclass
+class Property:
+    """
+    {
+        "name": {
+          "type": "string"
+        }
+    }
+    """
+    name: str
+    schema: Schema
 
-    def __init__(self,
-                 properties: Tuple['Schema', ...],
-                 **kwargs) -> None:
-        self.properties = properties
 
-        super().__init__(DataType.object, **kwargs)
+@dataclass
+class Object(Schema):
+    """
+    {
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "age": {
+          "type": "integer",
+          "format": "int32",
+          "minimum": 0
+        }
+      }
+    }
+    """
+    max_properties: Optional[int]
+    min_properties: Optional[int]
+    required: List[str] = field(default_factory=list)
+    properties: List[Property] = field(default_factory=list)
+    # additional_properties: Optional[Union[bool, Schema]] = field(default=True)
+
+
+@dataclass
+class Parameter:
+    """
+    {
+      "name": "token",
+      "in": "header",
+      "description": "token to be passed as a header",
+      "required": true,
+      "schema": {
+        "type": "array",
+        "items": {
+          "type": "integer",
+          "format": "int64"
+        }
+      },
+      "style": "simple"
+    }
+    OR
+    {
+      "name": "username",
+      "in": "path",
+      "description": "username to fetch",
+      "required": true,
+      "schema": {
+        "type": "string"
+      }
+    }
+    OR
+    {
+      "name": "id",
+      "in": "query",
+      "description": "ID of the object to fetch",
+      "required": false,
+      "schema": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "style": "form",
+      "explode": true
+    }
+    """
+    name: str
+    location: str
+    required: bool
+    schema: Schema
+    description: Optional[str]
+    # example: Optional[Any]
+    # examples: List[Any] = field(default_factory=list)
+    deprecated: Optional[bool] = field(default=False)
+    # style: str
+    # explode: bool
+    # allow_reserved: bool
+
+
+@dataclass
+class Content:
+    """
+    {
+      "application/json": {
+        "schema": {
+             "$ref": "#/components/schemas/Pet"
+        },
+        "examples": {
+          "cat" : {
+            "summary": "An example of a cat",
+            "value":
+              {
+                "name": "Fluffy",
+                "petType": "Cat",
+                "color": "White",
+                "gender": "male",
+                "breed": "Persian"
+              }
+          },
+          "dog": {
+            "summary": "An example of a dog with a cat's name",
+            "value" :  {
+              "name": "Puma",
+              "petType": "Dog",
+              "color": "Black",
+              "gender": "Female",
+              "breed": "Mixed"
+            },
+          "frog": {
+              "$ref": "#/components/examples/frog-example"
+            }
+          }
+        }
+      }
+    }
+    """
+    schema: Schema
+    # example: Optional[Any]
+    # examples: List[Any] = field(default_factory=list)
+    # encoding: Dict[str, Encoding]
+
+
+@dataclass
+class RequestBody:
+    """
+    {
+      "description": "user to add to the system",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/User"
+          },
+          "examples": {
+              "user" : {
+                "summary": "User Example",
+                "externalValue": "http://foo.bar/examples/user-example.json"
+              }
+            }
+        },
+        "*/*": {
+          "examples": {
+            "user" : {
+                "summary": "User example in other format",
+                "externalValue": "http://foo.bar/examples/user-example.whatever"
+            }
+          }
+        }
+      }
+    }
+    """
+    content: Dict[MediaType, Content]
+    description: Optional[str]
+    required: Optional[bool] = field(default=False)
+
+
+@dataclass
+class Header:
+    """
+    {
+      "description": "The number of allowed requests in the current period",
+      "schema": {
+        "type": "integer"
+      }
+    }
+    """
+    required: bool
+    schema: Schema
+    description: Optional[str]
+    deprecated: Optional[bool] = field(default=False)
+
+
+@dataclass
+class Response:
+    """
+    {
+      "description": "A complex object array response",
+      "content": {
+        "application/json": {
+          "schema": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/VeryComplexType"
+            }
+          }
+        }
+      },
+      "headers": {
+        "X-Rate-Limit-Limit": {
+          "description": "The number of allowed requests in the current period",
+          "schema": {
+            "type": "integer"
+          }
+        }
+      }
+    }
+    """
+    description: str
+    content: Dict[MediaType, Content]
+    headers: Dict[str, Header] = field(default_factory=dict)
+    # links: Dict[str, Link]
+
+
+@dataclass
+class Security:
+    """
+    {
+      "type": "apiKey",
+      "name": "api_key",
+      "in": "header",
+      "description": "authorization key to communicate with API"
+    }
+    """
+    type: SecurityType
+    description: Optional[str]
+
+
+@dataclass
+class ApiKeySecurity(Security):
+    """
+    {
+      "type": "apiKey",
+      "name": "api_key",
+      "in": "header"
+    }
+    """
+    name: str
+    location: BaseLocation
+
+
+@dataclass
+class HttpSecurity(Security):
+    """
+    {
+      "type": "http",
+      "scheme": "basic"
+    }
+    OR
+    {
+      "type": "http",
+      "scheme": "bearer",
+      "bearerFormat": "JWT",
+    }
+    """
+    scheme: AuthenticationScheme
+    bearer_format: Optional[str]
+
+
+@dataclass
+class OAuthFlow:
+    """
+    {
+        "implicit": {
+          "authorizationUrl": "https://example.com/api/oauth/dialog",
+          "scopes": {
+            "write:pets": "modify pets in your account",
+            "read:pets": "read your pets"
+          }
+        }
+    }
+    """
+    refresh_url: Optional[str]
+    authorization_url: Optional[str]
+    token_url: Optional[str]
+    scopes: Dict[str, str] = field(default_factory=dict)
+
+
+@dataclass
+class OAuth2Security(Security):
+    """
+    {
+      "type": "oauth2",
+      "flows": {
+        "implicit": {
+          "authorizationUrl": "https://example.com/api/oauth/dialog",
+          "scopes": {
+            "write:pets": "modify pets in your account",
+            "read:pets": "read your pets"
+          }
+        },
+        "authorizationCode": {
+          "authorizationUrl": "https://example.com/api/oauth/dialog",
+          "tokenUrl": "https://example.com/api/oauth/token",
+          "scopes": {
+            "write:pets": "modify pets in your account",
+            "read:pets": "read your pets"
+          }
+        }
+      }
+    }
+    """
+    flows: Dict[OAuthFlowType, OAuthFlow]
+
+
+@dataclass
+class OpenIdConnectSecurity(Security):
+    """
+    {
+        "openIdConnect": {
+          "openIdConnectUrl": "https://example.com/api/openid",
+        }
+    }
+    """
+    url: str
+
+
+@dataclass
+class Operation:
+    """
+    {
+      "tags": [
+        "pet"
+      ],
+      "summary": "Updates a pet in the store with form data",
+      "operationId": "updatePetWithForm",
+      "parameters": [
+        {
+          "name": "petId",
+          "in": "path",
+          "description": "ID of pet that needs to be updated",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "requestBody": {
+        "content": {
+          "application/x-www-form-urlencoded": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "description": "Updated name of the pet",
+                  "type": "string"
+                },
+                "status": {
+                  "description": "Updated status of the pet",
+                  "type": "string"
+                }
+              },
+              "required": ["status"]
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Pet updated.",
+          "content": {
+            "application/json": {},
+            "application/xml": {}
+          }
+        },
+        "405": {
+          "description": "Method Not Allowed",
+          "content": {
+            "application/json": {},
+            "application/xml": {}
+          }
+        }
+      },
+      "security": [
+        {
+          "pet_store_auth": [
+            "write:pets",
+            "read:pets"
+          ]
+        }
+      ]
+    }
+    """
+    summary: Optional[str]
+    description: Optional[str]
+    external_docs: Optional[ExternalDoc]
+    operation_id: Optional[str]
+    request_body: Optional[RequestBody]
+    deprecated: Optional[bool] = field(default=False)
+    responses: Dict[int, Response] = field(default_factory=dict)
+    parameters: List[Parameter] = field(default_factory=list)
+    tags: List[str] = field(default_factory=list)
+    security: List[Security] = field(default_factory=list)
+    # callbacks: Dict[str, Callback] = field(default_factory=dict)
+
+
+@dataclass
+class PathItem:
+    """
+    {
+      "get": {
+        "description": "Returns pets based on ID",
+        "summary": "Find pets by ID",
+        "operationId": "getPetsById",
+        "responses": {
+          "200": {
+            "description": "pet response",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Pet"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "error payload",
+            "content": {
+              "text/html": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            }
+          }
+        }
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "ID of pet to use",
+          "required": true,
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "style": "simple"
+        }
+      ]
+    }
+    """
+    summary: Optional[str]
+    description: Optional[str]
+    operations: Dict[OperationMethod, Operation] = field(default_factory=dict)
+    parameters: List[Parameter] = field(default_factory=list)
+
+
+@dataclass
+class Path:
+    """
+    {
+      "/pets": {
+        "get": {
+          "description": "Returns all pets from the system that the user has access to",
+          "responses": {
+            "200": {
+              "description": "A list of pets.",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/pet"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    """
+    pattern: str
+    item: PathItem
+
+
+@dataclass
+class Tag:
+    """
+    {
+        "name": "pet",
+        "description": "Pets operations"
+    }
+    """
+    name: str
+    description: Optional[str]
+    external_docs: Optional[ExternalDoc]
+
+
+@dataclass
+class Specification:
+    openapi: str
+    info: Info
+    servers: List[Server] = field(default_factory=list)
+    paths: List[Path] = field(default_factory=list)
+    security: List[Security] = field(default_factory=list)
+    tags: List[Tag] = field(default_factory=list)
+    external_docs: List[ExternalDoc] = field(default_factory=list)

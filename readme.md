@@ -2,31 +2,36 @@
 
 A simple package to parse your Swagger API documents into Python object to work with.
 
-# TODO
-
-- readme sections
-    - description
-    - how to install
-    - how to use
-    - details about specification
-- docs about detailed specification
-    - $ref
-    - $allOf
-    
-## Features
-
-- description...
-
 ## How to install
 
-Description
+To install package run the following command
+
+```
+pip install swagger-parser
+```
 
 ## How to use
 
-Description
+Example of parser usage
 
-## Next release features
+```
+>>> from swagger_parser import parse
+>>> content = parse('swagger.yml')
+>>> print(content)
+```
 
-- support user `x-*` attributes
-- support more content types besides `application/json`
-- support properties format (`uuid`, `date-time`, `int32`) as `Enumeration`
+## Features
+
+- [x] Swagger validation with `openapi-spec-validator`
+- [x] Parsing all of the sections into Python `dataclass`
+- [x] Support many `Enum` values to simplify work with `format`, `type`, etc
+- [x] Auto-resolve `$ref` links
+- [ ] Use own parsing method instead of [Prance](https://pypi.org/project/prance) package to resolve `$ref` items' names
+- [ ] Support custom `x-*` [attributes](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.3.md#specification-extensions)
+- [ ] Support merge `allOf` schemas into one
+- [ ] Support `oneOf` schemas
+- [ ] Support `anyOf` schemas
+- [ ] Support `not` schemas
+- [ ] Support `Parameter` [serialization style](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.3.md#fixed-fields-10)
+- [ ] Support `discriminator` model types
+- [ ] Support additional properties in dataclasses (like `example`, `style`, `explode`, etc)
