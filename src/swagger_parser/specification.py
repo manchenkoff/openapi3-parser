@@ -13,9 +13,9 @@ class Contact:
       "email": "support@example.com"
     }
     """
-    name: Optional[str]
-    url: Optional[str]
-    email: Optional[str]
+    name: Optional[str] = None
+    url: Optional[str] = None
+    email: Optional[str] = None
 
 
 @dataclass
@@ -27,7 +27,7 @@ class License:
     }
     """
     name: str
-    url: Optional[str]
+    url: Optional[str] = None
 
 
 @dataclass
@@ -51,10 +51,10 @@ class Info:
     """
     title: str
     version: str
-    description: Optional[str]
-    terms_of_service: Optional[str]
-    contact: Optional[Contact]
-    license: Optional[License]
+    description: Optional[str] = None
+    terms_of_service: Optional[str] = None
+    contact: Optional[Contact] = None
+    license: Optional[License] = None
 
 
 @dataclass
@@ -128,6 +128,7 @@ class Schema:
     write_only: Optional[bool]
     deprecated: Optional[bool]
     external_docs: Optional[ExternalDoc]
+
     # all_of: Any
     # one_of: Any
     # any_of: Any
