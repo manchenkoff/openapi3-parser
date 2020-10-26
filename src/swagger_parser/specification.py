@@ -91,7 +91,7 @@ class ExternalDoc:
     }
     """
     url: str
-    description: Optional[str]
+    description: Optional[str] = None
 
 
 @dataclass
@@ -711,8 +711,8 @@ class Tag:
     }
     """
     name: str
-    description: Optional[str]
-    external_docs: Optional[ExternalDoc]
+    description: Optional[str] = None
+    external_docs: Optional[ExternalDoc] = None
 
 
 @dataclass

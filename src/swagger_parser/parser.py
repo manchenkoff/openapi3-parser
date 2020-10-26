@@ -65,13 +65,43 @@ class ServerBuilder:
         return [self._build_server(item) for item in server_data_list]
 
 
+class TagBuilder:
+    @staticmethod
+    def _create_external_doc(doc_info: Optional[dict]) -> Optional[ExternalDoc]:
+        if doc_info is None:
+            return None
+
+        data = {
+            "url": doc_info['url'],
+            "description": doc_info.get('description')
+        }
+
+        return ExternalDoc(**data)
+
+    def _build_tag(self, tag_info: dict) -> Tag:
+        data = {
+            "name": tag_info['name'],
+            "description": tag_info.get('description'),
+            "external_docs": self._create_external_doc(tag_info.get('externalDocs')),
+        }
+
+        return Tag(**data)
+
+    def build_tag_list(self, tag_data_list: list) -> List[Tag]:
+        return [self._build_tag(item) for item in tag_data_list]
+
+
 class Parser:
     info_builder: InfoBuilder
     server_builder: ServerBuilder
+    tag_builder: TagBuilder
 
-    def __init__(self, info_builder: InfoBuilder, server_builder: ServerBuilder) -> None:
+    def __init__(self, info_builder: InfoBuilder,
+                 server_builder: ServerBuilder,
+                 tags_builder: TagBuilder) -> None:
         self.info_builder = info_builder
         self.server_builder = server_builder
+        self.tag_builder = tags_builder
 
     def load_specification(self, data: dict) -> Specification:
         """
@@ -84,11 +114,13 @@ class Parser:
 
         info = self.info_builder.build(data['info'])
         servers = self.server_builder.build_server_list(data['servers'])
+        tags = self.tag_builder.build_tag_list(data['tags'])
 
         return Specification(
             openapi=version,
             info=info,
-            servers=servers
+            servers=servers,
+            tags=tags
         )
 
 
