@@ -78,8 +78,8 @@ class Server:
     }
     """
     url: str
-    description: Optional[str]
-    variables: Optional[dict]
+    description: Optional[str] = None
+    variables: Optional[dict] = field(default_factory=dict)
 
 
 @dataclass

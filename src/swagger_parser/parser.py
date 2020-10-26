@@ -50,11 +50,28 @@ class InfoBuilder:
         return Info(**info_builder_dict)
 
 
+class ServerBuilder:
+    @staticmethod
+    def _build_server(server_info: dict) -> Server:
+        data = {
+            "url": server_info['url'],
+            "description": server_info.get('description'),
+            "variables": server_info.get('variables', {}),
+        }
+
+        return Server(**data)
+
+    def build_server_list(self, server_data_list: list) -> List[Server]:
+        return [self._build_server(item) for item in server_data_list]
+
+
 class Parser:
     info_builder: InfoBuilder
+    server_builder: ServerBuilder
 
-    def __init__(self, info_builder: InfoBuilder) -> None:
+    def __init__(self, info_builder: InfoBuilder, server_builder: ServerBuilder) -> None:
         self.info_builder = info_builder
+        self.server_builder = server_builder
 
     def load_specification(self, data: dict) -> Specification:
         """
@@ -66,10 +83,12 @@ class Parser:
         version = data['openapi']
 
         info = self.info_builder.build(data['info'])
+        servers = self.server_builder.build_server_list(data['servers'])
 
         return Specification(
             openapi=version,
             info=info,
+            servers=servers
         )
 
 
