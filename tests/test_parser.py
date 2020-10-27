@@ -4,8 +4,8 @@ from unittest import mock
 
 import pytest
 
-from src.swagger_parser import Contact, Info, License, Server, Specification, Tag
-from src.swagger_parser.parser import Parser
+from swagger_parser import Contact, Info, License, Server, Specification, Tag
+from swagger_parser.parser import Parser
 
 SWAGGER_JSON_FILEPATH = './tests/data/swagger.json'
 
@@ -38,22 +38,22 @@ def swagger_specification() -> Specification:
 
 
 def _create_info_builder_mock(info: Info):
-    mock_object = mock.Mock()
-    mock_object.build = mock.MagicMock(return_value=info)
+    mock_object = mock.MagicMock()
+    mock_object.build.return_value = info
 
     return mock_object
 
 
 def _create_server_list_builder_mock(servers: List[Server]):
-    mock_object = mock.Mock()
-    mock_object.build_server_list = mock.MagicMock(return_value=servers)
+    mock_object = mock.MagicMock()
+    mock_object.build_server_list.return_value = servers
 
     return mock_object
 
 
 def _create_tag_list_builder_mock(tags: List[Tag]):
-    mock_object = mock.Mock()
-    mock_object.build_tag_list = mock.MagicMock(return_value=tags)
+    mock_object = mock.MagicMock()
+    mock_object.build_tag_list.return_value = tags
 
     return mock_object
 

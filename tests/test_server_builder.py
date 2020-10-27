@@ -2,8 +2,8 @@ from typing import List
 
 import pytest
 
-from src.swagger_parser import Server
-from src.swagger_parser.parser import ServerBuilder
+from swagger_parser.specification import Server
+from swagger_parser.builders import ServerBuilder
 
 data_provider = [
     [
@@ -58,4 +58,5 @@ data_provider = [
 @pytest.mark.parametrize(['server_data_list', 'expected_server_list'], data_provider)
 def test_build_server_list(server_data_list: list, expected_server_list: List[Server]):
     builder = ServerBuilder()
+
     assert expected_server_list == builder.build_server_list(server_data_list)

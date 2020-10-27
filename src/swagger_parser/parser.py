@@ -1,5 +1,6 @@
 import prance
 
+from .builders import InfoBuilder, ServerBuilder, TagBuilder
 from .specification import *
 
 
@@ -11,92 +12,13 @@ class ParserException(Exception):
     pass
 
 
-class InfoBuilder:
-    @staticmethod
-    def _create_license(license_data: Optional[dict]) -> Optional[License]:
-        if license_data is None:
-            return None
-
-        data = {
-            "name": license_data['name'],
-            "url": license_data.get('url'),
-        }
-
-        return License(**data)
-
-    @staticmethod
-    def _create_contact(contact_data: Optional[dict]) -> Optional[Contact]:
-        if contact_data is None:
-            return None
-
-        data = {
-            "name": contact_data.get('name'),
-            "url": contact_data.get('url'),
-            "email": contact_data.get('email'),
-        }
-
-        return Contact(**data)
-
-    def build(self, info_data: dict) -> Info:
-        info_builder_dict = {
-            "title": info_data['title'],
-            "version": info_data['version'],
-            "description": info_data.get('description'),
-            "terms_of_service": info_data.get('termsOfService'),
-            "license": self._create_license(info_data.get('license')),
-            "contact": self._create_contact(info_data.get('contact')),
-        }
-
-        return Info(**info_builder_dict)
-
-
-class ServerBuilder:
-    @staticmethod
-    def _build_server(server_info: dict) -> Server:
-        data = {
-            "url": server_info['url'],
-            "description": server_info.get('description'),
-            "variables": server_info.get('variables', {}),
-        }
-
-        return Server(**data)
-
-    def build_server_list(self, server_data_list: list) -> List[Server]:
-        return [self._build_server(item) for item in server_data_list]
-
-
-class TagBuilder:
-    @staticmethod
-    def _create_external_doc(doc_info: Optional[dict]) -> Optional[ExternalDoc]:
-        if doc_info is None:
-            return None
-
-        data = {
-            "url": doc_info['url'],
-            "description": doc_info.get('description')
-        }
-
-        return ExternalDoc(**data)
-
-    def _build_tag(self, tag_info: dict) -> Tag:
-        data = {
-            "name": tag_info['name'],
-            "description": tag_info.get('description'),
-            "external_docs": self._create_external_doc(tag_info.get('externalDocs')),
-        }
-
-        return Tag(**data)
-
-    def build_tag_list(self, tag_data_list: list) -> List[Tag]:
-        return [self._build_tag(item) for item in tag_data_list]
-
-
 class Parser:
     info_builder: InfoBuilder
     server_builder: ServerBuilder
     tag_builder: TagBuilder
 
-    def __init__(self, info_builder: InfoBuilder,
+    def __init__(self,
+                 info_builder: InfoBuilder,
                  server_builder: ServerBuilder,
                  tags_builder: TagBuilder) -> None:
         self.info_builder = info_builder
@@ -142,6 +64,6 @@ def parse(uri: str) -> Specification:
 
     specification = swagger_resolver.specification
 
-    parser = Parser()
+    parser = Parser()  # TODO: fix arguments
 
     return parser.load_specification(specification)

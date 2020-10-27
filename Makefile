@@ -1,5 +1,5 @@
 .DEFAULT_GOAL := help
-.PHONY: help build
+.PHONY: help build test
 
 build: ## Build an application
 	@pipenv run python setup.py sdist
@@ -12,14 +12,21 @@ publish: build ## Upload package to PyPI
 	@pipenv run twine upload dist/*
 	@make clean
 
-install: ## Install application to Pip environment
+install: build ## Install application to Pip environment
 	@pipenv run python setup.py install
 
+install-dev: ## Install application to Pip development environment
+	@pipenv run python setup.py develop
+	@make clean
+
+run: ## Run application entrypoint
+	@pipenv run python src/
+
 clean: ## Remove build files
-	@rm -Rf build/ dist/ *.egg-info .pytest_cache/
+	@rm -Rf build/ dist/ *.egg-info .pytest_cache/ .eggs/ src/*.egg-info
 
 test: ## Run code tests
-	@pipenv run pytest -q
+	@pipenv run python -m pytest -q
 
 sync: ## Sync with Pipfile packages list
 	@pipenv sync
