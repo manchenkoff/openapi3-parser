@@ -1,7 +1,7 @@
 import pytest
 
-from swagger_parser.builders import InfoBuilder
-from swagger_parser.specification import Contact, Info, License
+from openapi_parser.builders import InfoBuilder
+from openapi_parser.specification import Contact, Info, License
 
 data_provider = (
     (

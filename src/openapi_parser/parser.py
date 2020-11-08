@@ -1,7 +1,7 @@
 import prance
 
 from .builders import *
-from .resolver import SwaggerResolver
+from .resolver import OpenAPIResolver
 from .specification import *
 
 
@@ -28,7 +28,7 @@ class Parser:
 
     def load_specification(self, data: dict) -> Specification:
         """
-        Load Swagger Specification object from a file or a remote URI.
+        Load OpenAPI Specification object from a file or a remote URI.
         :param data: JSON (dict) of specification data
         :return: Specification object
         """
@@ -63,21 +63,14 @@ def parse(uri: str) -> Specification:
     Parse specification document by URL or filepath
     """
 
-    swagger_resolver = SwaggerResolver(uri)
-
-    swagger_resolver = prance.ResolvingParser(
-        uri,
-        backend='openapi-spec-validator',
-        strict=False,
-        lazy=True
-    )
+    resolver = OpenAPIResolver(uri)
 
     try:
-        swagger_resolver.parse()
+        resolver.parse()
     except prance.ValidationError:
-        raise ParserError("Swagger specification validation error")
+        raise ParserError("OpenAPI specification validation error")
 
-    specification = swagger_resolver.specification
+    specification = resolver.specification
 
     parser = _create_parser()
 

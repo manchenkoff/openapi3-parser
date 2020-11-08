@@ -2,8 +2,8 @@ from typing import List
 
 import pytest
 
-from swagger_parser.builders import PathBuilder
-from swagger_parser.specification import Path, PathItem
+from openapi_parser.builders import PathBuilder
+from openapi_parser.specification import Path, PathItem
 
 data_provider = (
     (

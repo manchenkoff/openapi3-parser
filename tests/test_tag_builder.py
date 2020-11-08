@@ -3,8 +3,8 @@ from unittest import mock
 
 import pytest
 
-from swagger_parser.specification import ExternalDoc, Tag
-from swagger_parser.builders import ExternalDocBuilder, TagBuilder
+from openapi_parser.specification import ExternalDoc, Tag
+from openapi_parser.builders import ExternalDocBuilder, TagBuilder
 
 data_provider = (
     (

@@ -1,13 +1,13 @@
-# Swagger Parser
+# OpenAPI Parser
 
-A simple package to parse your Swagger API documents into Python object to work with.
+A simple package to parse your OpenAPI 3 documents into Python object to work with.
 
 ## How to install
 
 To install package run the following command
 
 ```
-pip install swagger-parser
+pip install openapi-parser
 ```
 
 ## How to use
@@ -15,13 +15,15 @@ pip install swagger-parser
 Example of parser usage
 
 ```
->>> from swagger_parser import parse
+>>> from openapi_parser import parse
 >>> content = parse('swagger.yml')
 >>> print(content)
 ```
 
-## Parsers
-- [x] Info (including Contact, License)
+## Supported specification schemas
+- [x] Contact
+- [x] License
+- [x] Info
 - [x] Server
 - [x] ExternalDoc
 - [x] Tag
@@ -38,7 +40,11 @@ Example of parser usage
 - [ ] Header
 - [ ] Response
 - [ ] Security
+- [ ] ApiKeySecurity
+- [ ] HttpSecurity
 - [ ] OAuthFlow
+- [ ] OAuth2Security
+- [ ] OpenIdConnectSecurity
 - [ ] Operation
 - [ ] PathItem
 - [ ] Path
@@ -46,11 +52,10 @@ Example of parser usage
 
 ## Features
 
-- [x] Swagger validation with `openapi-spec-validator`
+- [x] OpenAPI's validation with `openapi-spec-validator`
 - [x] Parsing all the sections into Python `dataclass`
 - [x] Support many `Enum` values to simplify work with `format`, `type`, etc
-- [x] Auto-resolve `$ref` links
-- [ ] Use own parsing method instead of [Prance](https://pypi.org/project/prance) package to resolve `$ref` items' names
+- [x] Auto-resolve `$ref` links with [Prance](https://pypi.org/project/prance)
 - [ ] Support custom `x-*` [attributes](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.3.md#specification-extensions)
 - [ ] Support merge `allOf` schemas into one
 - [ ] Support `oneOf` schemas

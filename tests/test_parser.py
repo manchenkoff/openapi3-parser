@@ -3,10 +3,10 @@ from unittest import mock
 
 import pytest
 
-from swagger_parser.specification import Contact, Info, License, Server, Specification, Tag
-from swagger_parser.builders.server import ServerList
-from swagger_parser.builders.tag import TagList
-from swagger_parser.parser import Parser
+from openapi_parser.specification import Contact, Info, License, Server, Specification, Tag
+from openapi_parser.builders.server import ServerList
+from openapi_parser.builders.tag import TagList
+from openapi_parser.parser import Parser
 
 SWAGGER_JSON_FILEPATH = './tests/data/swagger.json'
 

@@ -4,26 +4,26 @@ from os.path import dirname, join
 
 from setuptools import find_packages, setup
 
-from src import swagger_parser
+from src import openapi_parser
 
 description_file = join(dirname(__file__), "readme.md")
 
 setup(
-    name=swagger_parser.__title__,
-    author=swagger_parser.__author__,
-    author_email=swagger_parser.__email__,
-    url="https://github.com/manchenkoff/swagger-parser",
+    name=openapi_parser.__title__,
+    author=openapi_parser.__author__,
+    author_email=openapi_parser.__email__,
+    url="https://github.com/manchenkoff/openapi-parser",
     project_urls={
-        "Source": "https://github.com/manchenkoff/swagger-parser",
+        "Source": "https://github.com/manchenkoff/openapi-parser",
     },
-    version=swagger_parser.__version__,
+    version=openapi_parser.__version__,
     packages=find_packages(where='src'),
     package_dir={'': 'src'},
     license="MIT",
-    description=swagger_parser.__description__,
+    description=openapi_parser.__description__,
     long_description=open(description_file).read(),
     long_description_content_type="text/markdown",
-    keywords="swagger, python, swagger-parser, parser, openapi, swagger-api",
+    keywords="swagger, python, openapi-parser, parser, openapi, openapi3, swagger-api",
     classifiers=[
         'Development Status :: 1 - Planning',
         'License :: OSI Approved :: MIT License',

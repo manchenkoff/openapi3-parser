@@ -2,8 +2,8 @@ from typing import List
 
 import pytest
 
-from swagger_parser.builders import ExternalDocBuilder
-from swagger_parser.specification import ExternalDoc
+from openapi_parser.builders import ExternalDocBuilder
+from openapi_parser.specification import ExternalDoc
 
 data_provider = (
     (

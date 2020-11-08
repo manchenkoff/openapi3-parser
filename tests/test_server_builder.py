@@ -2,8 +2,8 @@ from typing import List
 
 import pytest
 
-from swagger_parser.builders import ServerBuilder
-from swagger_parser.specification import Server
+from openapi_parser.builders import ServerBuilder
+from openapi_parser.specification import Server
 
 data_provider = (
     (

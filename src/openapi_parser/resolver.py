@@ -1,3 +1,5 @@
+import prance
+
 OPENAPI_SPEC_VALIDATOR = 'openapi-spec-validator'
 
 
@@ -9,8 +11,11 @@ class ResolverError(Exception):
     pass
 
 
-class SwaggerResolver:
-    uri: str
-
+class OpenAPIResolver(prance.ResolvingParser):
     def __init__(self, uri: str) -> None:
-        self.uri = uri
+        super().__init__(
+            uri,
+            backend='openapi-spec-validator',
+            strict=False,
+            lazy=True
+        )
