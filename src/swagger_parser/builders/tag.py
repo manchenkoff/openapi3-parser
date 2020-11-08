@@ -1,7 +1,7 @@
-from typing import List
+from typing import Optional
 
 from .external_doc import ExternalDocBuilder
-from ..specification import Tag
+from ..specification import Tag, TagList
 
 
 class TagBuilder:
@@ -10,14 +10,17 @@ class TagBuilder:
     def __init__(self, external_doc_builder: ExternalDocBuilder) -> None:
         self.external_doc_builder = external_doc_builder
 
-    def _build_tag(self, tag_info: dict) -> Tag:
-        data = {
-            "name": tag_info['name'],
-            "description": tag_info.get('description'),
-            "external_docs": self.external_doc_builder.build(tag_info.get('externalDocs')),
+    def _build_tag(self, data: dict) -> Tag:
+        attrs = {
+            "name": data['name'],
+            "description": data.get('description'),
+            "external_docs": self.external_doc_builder.build(data.get('externalDocs')),
         }
 
-        return Tag(**data)
+        return Tag(**attrs)
 
-    def build_tag_list(self, tag_data_list: list) -> List[Tag]:
-        return [self._build_tag(item) for item in tag_data_list]
+    def build_list(self, data_list: Optional[list]) -> TagList:
+        if data_list is None:
+            return []
+
+        return [self._build_tag(item) for item in data_list]

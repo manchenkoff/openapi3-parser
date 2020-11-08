@@ -1,18 +1,21 @@
-from typing import List
+from typing import Optional
 
-from ..specification import Server
+from ..specification import Server, ServerList
 
 
 class ServerBuilder:
     @staticmethod
-    def _build_server(server_info: dict) -> Server:
-        data = {
-            "url": server_info['url'],
-            "description": server_info.get('description'),
-            "variables": server_info.get('variables', {}),
+    def _build_server(data: dict) -> Server:
+        attrs = {
+            "url": data['url'],
+            "description": data.get('description'),
+            "variables": data.get('variables', {}),
         }
 
-        return Server(**data)
+        return Server(**attrs)
 
-    def build_server_list(self, server_data_list: list) -> List[Server]:
-        return [self._build_server(item) for item in server_data_list]
+    def build_list(self, data_list: Optional[list]) -> ServerList:
+        if data_list is None:
+            return []
+
+        return [self._build_server(item) for item in data_list]

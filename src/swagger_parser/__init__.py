@@ -5,4 +5,7 @@ __email__ = 'artyom@manchenkoff.me'
 __description__ = 'Swagger API v3 parser'
 
 from .parser import parse
-from .specification import *
+
+__all__ = [
+    "parse"
+]

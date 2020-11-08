@@ -1,10 +1,11 @@
 import prance
 
-from .builders import InfoBuilder, ServerBuilder, TagBuilder
+from .builders import *
+from .resolver import SwaggerResolver
 from .specification import *
 
 
-class ParserException(Exception):
+class ParserError(Exception):
     """
     Base parser exception class.
     Throws when any error occurs.
@@ -35,21 +36,35 @@ class Parser:
         version = data['openapi']
 
         info = self.info_builder.build(data['info'])
-        servers = self.server_builder.build_server_list(data['servers'])
-        tags = self.tag_builder.build_tag_list(data['tags'])
+        servers = self.server_builder.build_list(data['servers'])
+        tags = self.tag_builder.build_list(data['tags'])
 
         return Specification(
             openapi=version,
             info=info,
             servers=servers,
-            tags=tags
+            tags=tags,
         )
+
+
+def _create_parser() -> Parser:
+    info_builder = InfoBuilder()
+    server_builder = ServerBuilder()
+    external_doc_builder = ExternalDocBuilder()
+    tag_builder = TagBuilder(external_doc_builder)
+
+    return Parser(info_builder,
+                  server_builder,
+                  tag_builder)
 
 
 def parse(uri: str) -> Specification:
     """
     Parse specification document by URL or filepath
     """
+
+    swagger_resolver = SwaggerResolver(uri)
+
     swagger_resolver = prance.ResolvingParser(
         uri,
         backend='openapi-spec-validator',
@@ -60,10 +75,10 @@ def parse(uri: str) -> Specification:
     try:
         swagger_resolver.parse()
     except prance.ValidationError:
-        raise ParserException("Swagger specification validation error")
+        raise ParserError("Swagger specification validation error")
 
     specification = swagger_resolver.specification
 
-    parser = Parser()  # TODO: fix arguments
+    parser = _create_parser()
 
     return parser.load_specification(specification)

@@ -3,6 +3,17 @@ from typing import Any, Dict, List, Optional
 
 from .enumeration import *
 
+PropertyList = List['Property']
+ContentType = Dict[MediaType, 'Content']
+HeaderCollection = Dict[str, 'Header']
+ResponseCollection = Dict[int, 'Response']
+SecurityList = List['Security']
+OperationCollection = Dict[OperationMethod, 'Operation']
+ParameterList = List['Parameter']
+ServerList = List['Server']
+TagList = List['Tag']
+PathList = List['Path']
+
 
 @dataclass
 class Contact:
@@ -250,7 +261,7 @@ class Object(Schema):
     max_properties: Optional[int]
     min_properties: Optional[int]
     required: List[str] = field(default_factory=list)
-    properties: List[Property] = field(default_factory=list)
+    properties: PropertyList = field(default_factory=list)
     # additional_properties: Optional[Union[bool, Schema]] = field(default=True)
 
 
@@ -381,7 +392,7 @@ class RequestBody:
       }
     }
     """
-    content: Dict[MediaType, Content]
+    content: ContentType
     description: Optional[str]
     required: Optional[bool] = field(default=False)
 
@@ -428,8 +439,8 @@ class Response:
     }
     """
     description: str
-    content: Dict[MediaType, Content]
-    headers: Dict[str, Header] = field(default_factory=dict)
+    content: ContentType
+    headers: HeaderCollection = field(default_factory=dict)
     # links: Dict[str, Link]
 
 
@@ -608,10 +619,10 @@ class Operation:
     operation_id: Optional[str]
     request_body: Optional[RequestBody]
     deprecated: Optional[bool] = field(default=False)
-    responses: Dict[int, Response] = field(default_factory=dict)
+    responses: ResponseCollection = field(default_factory=dict)
     parameters: List[Parameter] = field(default_factory=list)
     tags: List[str] = field(default_factory=list)
-    security: List[Security] = field(default_factory=list)
+    security: SecurityList = field(default_factory=list)
     # callbacks: Dict[str, Callback] = field(default_factory=dict)
 
 
@@ -668,8 +679,8 @@ class PathItem:
     """
     summary: Optional[str]
     description: Optional[str]
-    operations: Dict[OperationMethod, Operation] = field(default_factory=dict)
-    parameters: List[Parameter] = field(default_factory=list)
+    operations: OperationCollection = field(default_factory=dict)
+    parameters: ParameterList = field(default_factory=list)
 
 
 @dataclass
@@ -719,8 +730,8 @@ class Tag:
 class Specification:
     openapi: str
     info: Info
-    servers: List[Server] = field(default_factory=list)
-    paths: List[Path] = field(default_factory=list)
-    security: List[Security] = field(default_factory=list)
-    tags: List[Tag] = field(default_factory=list)
-    external_docs: List[ExternalDoc] = field(default_factory=list)
+    servers: ServerList = field(default_factory=list)
+    tags: TagList = field(default_factory=list)
+    security: SecurityList = field(default_factory=list)
+    external_docs: Optional[ExternalDoc] = None
+    paths: PathList = field(default_factory=list)

@@ -20,10 +20,34 @@ Example of parser usage
 >>> print(content)
 ```
 
+## Parsers
+- [x] Info (including Contact, License)
+- [x] Server
+- [x] ExternalDoc
+- [x] Tag
+- [ ] Schema
+- [ ] Integer
+- [ ] Number
+- [ ] String
+- [ ] Array
+- [ ] Object
+- [ ] Property
+- [ ] Parameter
+- [ ] Content
+- [ ] RequestBody
+- [ ] Header
+- [ ] Response
+- [ ] Security
+- [ ] OAuthFlow
+- [ ] Operation
+- [ ] PathItem
+- [ ] Path
+- [ ] Specification
+
 ## Features
 
 - [x] Swagger validation with `openapi-spec-validator`
-- [x] Parsing all of the sections into Python `dataclass`
+- [x] Parsing all the sections into Python `dataclass`
 - [x] Support many `Enum` values to simplify work with `format`, `type`, etc
 - [x] Auto-resolve `$ref` links
 - [ ] Use own parsing method instead of [Prance](https://pypi.org/project/prance) package to resolve `$ref` items' names

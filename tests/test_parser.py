@@ -1,10 +1,11 @@
 import json
-from typing import List
 from unittest import mock
 
 import pytest
 
-from swagger_parser import Contact, Info, License, Server, Specification, Tag
+from swagger_parser.specification import Contact, Info, License, Server, Specification, Tag
+from swagger_parser.builders.server import ServerList
+from swagger_parser.builders.tag import TagList
 from swagger_parser.parser import Parser
 
 SWAGGER_JSON_FILEPATH = './tests/data/swagger.json'
@@ -31,10 +32,15 @@ def swagger_specification() -> Specification:
         Tag(name="Users", description="User operations"),
     ]
 
+    path_list = [
+        # TODO: add DTOs
+    ]
+
     return Specification(openapi="3.0.0",
                          info=info,
                          servers=server_list,
-                         tags=tag_list)
+                         tags=tag_list,
+                         paths=path_list)
 
 
 def _create_info_builder_mock(info: Info):
@@ -44,16 +50,16 @@ def _create_info_builder_mock(info: Info):
     return mock_object
 
 
-def _create_server_list_builder_mock(servers: List[Server]):
+def _create_server_list_builder_mock(servers: ServerList):
     mock_object = mock.MagicMock()
-    mock_object.build_server_list.return_value = servers
+    mock_object.build_list.return_value = servers
 
     return mock_object
 
 
-def _create_tag_list_builder_mock(tags: List[Tag]):
+def _create_tag_list_builder_mock(tags: TagList):
     mock_object = mock.MagicMock()
-    mock_object.build_tag_list.return_value = tags
+    mock_object.build_list.return_value = tags
 
     return mock_object
 
