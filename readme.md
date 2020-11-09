@@ -27,13 +27,13 @@ Example of parser usage
 - [x] Server
 - [x] ExternalDoc
 - [x] Tag
-- [ ] Schema
-- [ ] Integer
-- [ ] Number
-- [ ] String
-- [ ] Array
-- [ ] Object
-- [ ] Property
+- [x] Schema
+- [x] Integer schema
+- [x] Number schema
+- [x] String schema
+- [x] Array schema
+- [x] Object schema
+- [x] Property
 - [ ] Parameter
 - [ ] Content
 - [ ] RequestBody
@@ -57,7 +57,7 @@ Example of parser usage
 - [x] Support many `Enum` values to simplify work with `format`, `type`, etc
 - [x] Auto-resolve `$ref` links with [Prance](https://pypi.org/project/prance)
 - [ ] Support custom `x-*` [attributes](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.3.md#specification-extensions)
-- [ ] Support merge `allOf` schemas into one
+- [ ] Support automatic merge `allOf` schemas into one while resolving
 - [ ] Support `oneOf` schemas
 - [ ] Support `anyOf` schemas
 - [ ] Support `not` schemas

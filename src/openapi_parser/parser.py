@@ -1,16 +1,7 @@
-import prance
-
 from .builders import *
+from openapi_parser.builders.schema import SchemaFactory
 from .resolver import OpenAPIResolver
 from .specification import *
-
-
-class ParserError(Exception):
-    """
-    Base parser exception class.
-    Throws when any error occurs.
-    """
-    pass
 
 
 class Parser:
@@ -36,8 +27,8 @@ class Parser:
         version = data['openapi']
 
         info = self.info_builder.build(data['info'])
-        servers = self.server_builder.build_list(data['servers'])
-        tags = self.tag_builder.build_list(data['tags'])
+        servers = self.server_builder.build_list(data.get('servers', []))
+        tags = self.tag_builder.build_list(data.get('tags', []))
 
         return Specification(
             openapi=version,
@@ -52,6 +43,7 @@ def _create_parser() -> Parser:
     server_builder = ServerBuilder()
     external_doc_builder = ExternalDocBuilder()
     tag_builder = TagBuilder(external_doc_builder)
+    schema_factory = SchemaFactory()
 
     return Parser(info_builder,
                   server_builder,
@@ -62,15 +54,8 @@ def parse(uri: str) -> Specification:
     """
     Parse specification document by URL or filepath
     """
-
     resolver = OpenAPIResolver(uri)
-
-    try:
-        resolver.parse()
-    except prance.ValidationError:
-        raise ParserError("OpenAPI specification validation error")
-
-    specification = resolver.specification
+    specification = resolver.resolve()
 
     parser = _create_parser()
 

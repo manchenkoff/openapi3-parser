@@ -31,6 +31,9 @@ test: ## Run code tests
 sync: ## Sync with Pipfile packages list
 	@pipenv sync
 
+lint: ## Run code linters (mypy / pytype)
+	@echo "TODO..." # TODO: use linters
+
 help: ## Show this message
 	@echo "Application management"
 	@echo

@@ -1,6 +1,4 @@
-from typing import Optional
-
-from ..specification import Server, ServerList
+from openapi_parser.specification import Server, ServerList
 
 
 class ServerBuilder:
@@ -14,8 +12,5 @@ class ServerBuilder:
 
         return Server(**attrs)
 
-    def build_list(self, data_list: Optional[list]) -> ServerList:
-        if data_list is None:
-            return []
-
+    def build_list(self, data_list: list) -> ServerList:
         return [self._build_server(item) for item in data_list]

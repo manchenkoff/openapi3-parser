@@ -128,17 +128,16 @@ class Schema:
       }
     }
     """
-    title: Optional[str]
     type: DataType
-    enum: Optional[List[Any]]
-    example: Optional[Any]
-    description: Optional[str]
-    default: Optional[Any]
-    nullable: Optional[bool]
-    read_only: Optional[bool]
-    write_only: Optional[bool]
-    deprecated: Optional[bool]
-    external_docs: Optional[ExternalDoc]
+    title: Optional[str] = None
+    enum: Optional[List[Any]] = None
+    example: Optional[Any] = None
+    description: Optional[str] = None
+    default: Optional[Any] = None
+    nullable: Optional[bool] = None
+    read_only: Optional[bool] = None
+    write_only: Optional[bool] = None
+    deprecated: Optional[bool] = None
 
     # all_of: Any
     # one_of: Any
@@ -169,12 +168,12 @@ class Integer(Schema):
       "format": "int32"
     }
     """
-    multiple_of: Optional[int]
-    maximum: Optional[int]
-    exclusive_maximum: Optional[int]
-    minimum: Optional[int]
-    exclusive_minimum: Optional[int]
-    format: Optional[IntegerFormat]
+    multiple_of: Optional[int] = None
+    maximum: Optional[int] = None
+    exclusive_maximum: Optional[int] = None
+    minimum: Optional[int] = None
+    exclusive_minimum: Optional[int] = None
+    format: Optional[IntegerFormat] = None
 
 
 @dataclass
@@ -185,12 +184,12 @@ class Number(Schema):
       "format": "float"
     }
     """
-    multiple_of: Optional[float]
-    maximum: Optional[float]
-    exclusive_maximum: Optional[float]
-    minimum: Optional[float]
-    exclusive_minimum: Optional[float]
-    format: Optional[NumberFormat]
+    multiple_of: Optional[float] = None
+    maximum: Optional[float] = None
+    exclusive_maximum: Optional[float] = None
+    minimum: Optional[float] = None
+    exclusive_minimum: Optional[float] = None
+    format: Optional[NumberFormat] = None
 
 
 @dataclass
@@ -201,10 +200,10 @@ class String(Schema):
       "format": "email"
     }
     """
-    max_length: Optional[int]
-    min_length: Optional[int]
-    pattern: Optional[str]
-    format: Optional[StringFormat]
+    max_length: Optional[int] = None
+    min_length: Optional[int] = None
+    pattern: Optional[str] = None
+    format: Optional[StringFormat] = None
 
 
 @dataclass
@@ -219,10 +218,10 @@ class Array(Schema):
       }
     }
     """
-    max_items: Optional[int]
-    min_items: Optional[int]
-    unique_items: Optional[bool]
-    items: Schema
+    max_items: Optional[int] = None
+    min_items: Optional[int] = None
+    unique_items: Optional[bool] = None
+    items: Schema = None
 
 
 @dataclass
@@ -258,8 +257,8 @@ class Object(Schema):
       }
     }
     """
-    max_properties: Optional[int]
-    min_properties: Optional[int]
+    max_properties: Optional[int] = None
+    min_properties: Optional[int] = None
     required: List[str] = field(default_factory=list)
     properties: PropertyList = field(default_factory=list)
     # additional_properties: Optional[Union[bool, Schema]] = field(default=True)

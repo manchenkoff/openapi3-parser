@@ -8,10 +8,6 @@ from openapi_parser.builders import ExternalDocBuilder, TagBuilder
 
 data_provider = (
     (
-        None,
-        [],
-    ),
-    (
         [],
         [],
     ),
@@ -46,7 +42,10 @@ data_provider = (
 
 def _create_external_doc_builder_mock(expected_tags: List[Tag]) -> ExternalDocBuilder:
     mock_object = mock.MagicMock()
-    mock_object.build.side_effect = [item.external_docs for item in expected_tags]
+    mock_object.build.side_effect = [
+        item.external_docs for item in expected_tags
+        if item.external_docs is not None
+    ]
 
     return mock_object
 

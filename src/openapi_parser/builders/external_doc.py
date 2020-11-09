@@ -1,14 +1,9 @@
-from typing import Optional
-
-from ..specification import ExternalDoc
+from openapi_parser.specification import ExternalDoc
 
 
 class ExternalDocBuilder:
     @staticmethod
-    def build(data: dict) -> Optional[ExternalDoc]:
-        if data is None:
-            return None
-
+    def build(data: dict) -> ExternalDoc:
         attrs = {
             "url": data['url'],
             "description": data.get('description')

@@ -7,10 +7,6 @@ from openapi_parser.specification import ExternalDoc
 
 data_provider = (
     (
-        None,
-        None,
-    ),
-    (
         {
             "url": "https://example.com"
         },
@@ -29,5 +25,4 @@ data_provider = (
 @pytest.mark.parametrize(['data', 'expected'], data_provider)
 def test_build(data: dict, expected: List[ExternalDoc]):
     builder = ExternalDocBuilder()
-
     assert expected == builder.build(data)

@@ -7,10 +7,6 @@ from openapi_parser.specification import Server
 
 data_provider = (
     (
-        None,
-        [],
-    ),
-    (
         [],
         [],
     ),

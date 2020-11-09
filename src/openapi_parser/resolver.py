@@ -1,5 +1,7 @@
 import prance
 
+from .errors import ParserError
+
 OPENAPI_SPEC_VALIDATOR = 'openapi-spec-validator'
 
 
@@ -11,11 +13,23 @@ class ResolverError(Exception):
     pass
 
 
-class OpenAPIResolver(prance.ResolvingParser):
+class OpenAPIResolver:
+    _resolver: prance.ResolvingParser
+
     def __init__(self, uri: str) -> None:
-        super().__init__(
+        self._resolver = prance.ResolvingParser(
             uri,
-            backend='openapi-spec-validator',
+            backend=OPENAPI_SPEC_VALIDATOR,
             strict=False,
             lazy=True
         )
+
+    def resolve(self) -> dict:
+        try:
+            self._resolver.parse()
+
+            # TODO: merge allOf schemas into one
+
+            return self._resolver.specification
+        except prance.ValidationError:
+            raise ParserError("OpenAPI specification validation error")

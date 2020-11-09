@@ -3,35 +3,35 @@ from enum import Enum, unique
 
 @unique
 class DataType(Enum):
-    integer = 'integer'
-    number = 'number'
-    string = 'string'
-    boolean = 'boolean'
-    array = 'array'
-    object = 'object'
+    INTEGER = 'integer'
+    NUMBER = 'number'
+    STRING = 'string'
+    BOOLEAN = 'boolean'
+    ARRAY = 'array'
+    OBJECT = 'object'
 
 
 @unique
 class IntegerFormat(Enum):
-    int32 = 'int32'
-    int64 = 'int64'
+    INT32 = 'int32'
+    INT64 = 'int64'
 
 
 @unique
 class NumberFormat(Enum):
-    float = 'float'
-    double = 'double'
+    FLOAT = 'float'
+    DOUBLE = 'double'
 
 
 @unique
 class StringFormat(Enum):
-    byte = 'byte'
-    binary = 'binary'
-    date = 'date'
-    datetime = 'date-time'
-    password = 'password'
-    uuid = 'uuid'
-    email = 'email'
+    BYTE = 'byte'
+    BINARY = 'binary'
+    DATE = 'date'
+    DATETIME = 'date-time'
+    PASSWORD = 'password'
+    UUID = 'uuid'
+    EMAIL = 'email'
 
 
 @unique
@@ -48,56 +48,56 @@ class OperationMethod(Enum):
 
 @unique
 class BaseLocation(Enum):
-    header = 'header'
-    query = 'query'
-    cookie = 'cookie'
+    HEADER = 'header'
+    QUERY = 'query'
+    COOKIE = 'cookie'
 
 
 @unique
 class ParameterLocation(Enum):
-    header = 'header'
-    query = 'query'
-    cookie = 'cookie'
-    path = 'path'
+    HEADER = 'header'
+    QUERY = 'query'
+    COOKIE = 'cookie'
+    PATH = 'path'
 
 
 @unique
 class MediaType(Enum):
-    json = 'application/json'
-    xml = 'application/xml'
-    form = 'application/x-www-form-urlencoded'
-    multipart_form = 'multipart_form/form-data'
-    plain_text = 'text/plain; charset=utf-8'
-    html = 'text/html'
-    pdf = 'application/pdf'
-    png = 'image/png'
+    JSON = 'application/json'
+    XML = 'application/xml'
+    FORM = 'application/x-www-form-urlencoded'
+    MULTIPART_FORM = 'multipart_form/form-data'
+    PLAIN_TEXT = 'text/plain; charset=utf-8'
+    HTML = 'text/html'
+    PDF = 'application/pdf'
+    PNG = 'image/png'
 
 
 @unique
 class SecurityType(Enum):
-    api_key = 'apiKey'
-    http = 'http'
-    oauth2 = 'oauth2'
-    open_id_connect = 'openIdConnect'
+    API_KEY = 'apiKey'
+    HTTP = 'http'
+    OAUTH2 = 'oauth2'
+    OPEN_ID_CONNECT = 'openIdConnect'
 
 
 @unique
 class AuthenticationScheme(Enum):
-    basic = 'Basic'
-    bearer = 'Bearer'
-    digest = 'Digest'
-    hoba = 'HOBA'
-    mutual = 'Mutual'
-    negotiate = 'Negotiate'
-    oauth = 'OAuth'
-    scram_sha1 = 'SCRAM-SHA-1'
-    scram_sha256 = 'SCRAM-SHA-256'
-    vapid = 'vapid'
+    BASIC = 'Basic'
+    BEARER = 'Bearer'
+    DIGEST = 'Digest'
+    HOBA = 'HOBA'
+    MUTUAL = 'Mutual'
+    NEGOTIATE = 'Negotiate'
+    OAUTH = 'OAuth'
+    SCRAM_SHA1 = 'SCRAM-SHA-1'
+    SCRAM_SHA256 = 'SCRAM-SHA-256'
+    VAPID = 'vapid'
 
 
 @unique
 class OAuthFlowType(Enum):
-    implicit = 'implicit'
-    password = 'password'
-    client_credentials = 'clientCredentials'
-    authorization_code = 'authorizationCode'
+    IMPLICIT = 'implicit'
+    PASSWORD = 'password'
+    CLIENT_CREDENTIALS = 'clientCredentials'
+    AUTHORIZATION_CODE = 'authorizationCode'
