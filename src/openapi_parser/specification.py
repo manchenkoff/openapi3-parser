@@ -406,9 +406,9 @@ class Header:
       }
     }
     """
-    required: bool
     schema: Schema
-    description: Optional[str]
+    description: Optional[str] = None
+    required: Optional[bool] = field(default=False)
     deprecated: Optional[bool] = field(default=False)
 
 

@@ -35,9 +35,9 @@ Example of parser usage
 - [x] Object schema
 - [x] Property
 - [x] Parameter
+- [x] Header
 - [ ] Content
 - [ ] RequestBody
-- [ ] Header
 - [ ] Response
 - [ ] Security
 - [ ] ApiKeySecurity
