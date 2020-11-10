@@ -34,7 +34,7 @@ Example of parser usage
 - [x] Array schema
 - [x] Object schema
 - [x] Property
-- [ ] Parameter
+- [x] Parameter
 - [ ] Content
 - [ ] RequestBody
 - [ ] Header

@@ -1,4 +1,4 @@
-from openapi_parser.specification import Server, ServerList
+from ..specification import Server, ServerList
 
 
 class ServerBuilder:

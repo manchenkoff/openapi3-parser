@@ -1,5 +1,5 @@
-from openapi_parser.builders.external_doc import ExternalDocBuilder
-from openapi_parser.specification import Tag, TagList
+from ..builders.external_doc import ExternalDocBuilder
+from ..specification import Tag, TagList
 
 
 class TagBuilder:

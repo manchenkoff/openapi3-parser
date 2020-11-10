@@ -1,4 +1,4 @@
-from openapi_parser.specification import Contact, Info, License
+from ..specification import Contact, Info, License
 
 
 class InfoBuilder:

@@ -308,10 +308,10 @@ class Parameter:
     }
     """
     name: str
-    location: str
+    location: ParameterLocation
     required: bool
     schema: Schema
-    description: Optional[str]
+    description: Optional[str] = None
     # example: Optional[Any]
     # examples: List[Any] = field(default_factory=list)
     deprecated: Optional[bool] = field(default=False)

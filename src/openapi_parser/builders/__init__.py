@@ -3,6 +3,7 @@ from .server import ServerBuilder
 from .tag import TagBuilder
 from .external_doc import ExternalDocBuilder
 from .schema import SchemaFactory
+from .parameter import ParameterBuilder
 
 __all__ = [
     "ExternalDocBuilder",
@@ -10,4 +11,5 @@ __all__ = [
     "ServerBuilder",
     "TagBuilder",
     "SchemaFactory",
+    "ParameterBuilder",
 ]

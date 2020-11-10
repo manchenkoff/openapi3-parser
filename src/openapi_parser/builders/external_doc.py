@@ -1,4 +1,4 @@
-from openapi_parser.specification import ExternalDoc
+from ..specification import ExternalDoc
 
 
 class ExternalDocBuilder:

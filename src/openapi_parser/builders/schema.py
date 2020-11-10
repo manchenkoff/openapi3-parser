@@ -1,9 +1,9 @@
 from collections import namedtuple
 from typing import Any, Callable, Dict, Optional
 
-from openapi_parser.enumeration import DataType, IntegerFormat, NumberFormat, StringFormat
-from openapi_parser.errors import ParserError
-from openapi_parser.specification import Array, Integer, Number, Object, Property, Schema, String
+from ..enumeration import DataType, IntegerFormat, NumberFormat, StringFormat
+from ..errors import ParserError
+from ..specification import Array, Integer, Number, Object, Property, Schema, String
 
 SchemaBuilderMethod = Callable[[dict], Schema]
 
