@@ -1,5 +1,4 @@
 from .builders import *
-from openapi_parser.builders.schema import SchemaFactory
 from .resolver import OpenAPIResolver
 from .specification import *
 
@@ -43,7 +42,6 @@ def _create_parser() -> Parser:
     server_builder = ServerBuilder()
     external_doc_builder = ExternalDocBuilder()
     tag_builder = TagBuilder(external_doc_builder)
-    schema_factory = SchemaFactory()
 
     return Parser(info_builder,
                   server_builder,

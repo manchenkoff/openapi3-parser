@@ -1,12 +1,14 @@
 import json
+from typing import Any, List
 from unittest import mock
 
 import pytest
 
-from openapi_parser.builders.server import ServerList
-from openapi_parser.builders.tag import TagList
+from openapi_parser.builders import InfoBuilder
+from openapi_parser.builders.server import ServerBuilder
+from openapi_parser.builders.tag import TagBuilder
 from openapi_parser.parser import Parser
-from openapi_parser.specification import Contact, Info, License, Server, Specification, Tag
+from openapi_parser.specification import Contact, Info, License, Server, ServerList, Specification, Tag, TagList
 
 SWAGGER_JSON_FILEPATH = './tests/data/swagger.json'
 
@@ -32,7 +34,7 @@ def swagger_specification() -> Specification:
         Tag(name="Users", description="User operations"),
     ]
 
-    path_list = [
+    path_list: List[Any] = [
         # TODO: add DTOs
     ]
 
@@ -43,28 +45,28 @@ def swagger_specification() -> Specification:
                          paths=path_list)
 
 
-def _create_info_builder_mock(info: Info):
+def _create_info_builder_mock(info: Info) -> InfoBuilder:
     mock_object = mock.MagicMock()
     mock_object.build.return_value = info
 
     return mock_object
 
 
-def _create_server_list_builder_mock(servers: ServerList):
+def _create_server_list_builder_mock(servers: ServerList) -> ServerBuilder:
     mock_object = mock.MagicMock()
     mock_object.build_list.return_value = servers
 
     return mock_object
 
 
-def _create_tag_list_builder_mock(tags: TagList):
+def _create_tag_list_builder_mock(tags: TagList) -> TagBuilder:
     mock_object = mock.MagicMock()
     mock_object.build_list.return_value = tags
 
     return mock_object
 
 
-def test_load_specification(swagger_specification: Specification):
+def test_load_specification(swagger_specification: Specification) -> None:
     info_builder = _create_info_builder_mock(swagger_specification.info)
     server_list_builder = _create_server_list_builder_mock(swagger_specification.servers)
     tag_list_builder = _create_tag_list_builder_mock(swagger_specification.tags)

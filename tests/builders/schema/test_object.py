@@ -32,6 +32,6 @@ data_provider = (
 
 
 @pytest.mark.parametrize(['data', 'expected'], data_provider)
-def test_integer_builder(data: dict, expected: Object):
+def test_object_builder(data: dict, expected: Object):
     factory = SchemaFactory()
     assert expected == factory.create(data)

@@ -1,6 +1,7 @@
 import pytest
 
 from openapi_parser.builders.schema import SchemaFactory
+from openapi_parser.errors import ParserError
 from openapi_parser.specification import Array, DataType, String
 
 string_schema = String(type=DataType.STRING)
@@ -37,6 +38,14 @@ data_provider = (
 
 
 @pytest.mark.parametrize(['data', 'expected'], data_provider)
-def test_integer_builder(data: dict, expected: Array):
+def test_array_builder(data: dict, expected: Array):
     factory = SchemaFactory()
     assert expected == factory.create(data)
+
+
+def test_create_error():
+    data = {"type": "array"}
+    factory = SchemaFactory()
+
+    with pytest.raises(ParserError, match="Arrays must contain 'items' definition"):
+        factory.create(data)

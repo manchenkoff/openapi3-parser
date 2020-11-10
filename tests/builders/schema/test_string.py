@@ -30,6 +30,6 @@ data_provider = (
 
 
 @pytest.mark.parametrize(['data', 'expected'], data_provider)
-def test_integer_builder(data: dict, expected: String):
+def test_string_builder(data: dict, expected: String):
     factory = SchemaFactory()
     assert expected == factory.create(data)

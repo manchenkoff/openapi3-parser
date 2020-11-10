@@ -35,8 +35,8 @@ def get_common_attrs(data: dict) -> dict:
     return attrs
 
 
-def get_custom_attrs(data: dict, attrs_map: Dict[str, PropertyInfoType]):
-    def cast_value(name: str, value: Any, value_type: Optional[type]):
+def get_custom_attrs(data: dict, attrs_map: Dict[str, PropertyInfoType]) -> Dict[str, Any]:
+    def cast_value(name: str, value: Any, value_type: Optional[type]) -> Any:
         if not value_type:
             return value
 
@@ -54,7 +54,7 @@ def get_custom_attrs(data: dict, attrs_map: Dict[str, PropertyInfoType]):
     return custom_attrs
 
 
-def extract_attrs(data: dict, attrs_map: Dict[str, PropertyInfoType]):
+def extract_attrs(data: dict, attrs_map: Dict[str, PropertyInfoType]) -> Dict[str, Any]:
     attrs = get_common_attrs(data)
     attrs.update(get_custom_attrs(data, attrs_map))
 
@@ -64,7 +64,7 @@ def extract_attrs(data: dict, attrs_map: Dict[str, PropertyInfoType]):
 class SchemaFactory:
     _builders: Dict[DataType, SchemaBuilderMethod]
 
-    def __init__(self):
+    def __init__(self) -> None:
         self._builders = {
             DataType.INTEGER: self._integer,
             DataType.NUMBER: self._number,
@@ -134,12 +134,16 @@ class SchemaFactory:
         }
 
         attrs = extract_attrs(data, attrs_map)
-        attrs['items'] = self.create(attrs['items'])
+
+        try:
+            attrs['items'] = self.create(attrs['items'])
+        except KeyError:
+            raise ParserError("Arrays must contain 'items' definition")
 
         return Array(**attrs)
 
     def _object(self, data: dict) -> Object:
-        def build_parameters(object_attrs: dict):
+        def build_parameters(object_attrs: dict) -> None:
             if not object_attrs.get('properties'):
                 return
 

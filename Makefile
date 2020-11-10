@@ -23,7 +23,8 @@ run: ## Run application entrypoint
 	@pipenv run python src/
 
 clean: ## Remove build files
-	@rm -Rf build/ dist/ *.egg-info .pytest_cache/ .eggs/ src/*.egg-info
+	@rm -Rf build/ dist/ *.egg-info .pytest_cache/ .mypy_cache/ .pytype/ .eggs/ src/*.egg-info
+	@echo "Temporary files were clear"
 
 test: ## Run code tests
 	@pipenv run python -m pytest -q
@@ -32,7 +33,8 @@ sync: ## Sync with Pipfile packages list
 	@pipenv sync
 
 lint: ## Run code linters (mypy / pytype)
-	@echo "TODO..." # TODO: use linters
+	@pipenv run mypy ./src
+	@pipenv run pytype ./src
 
 help: ## Show this message
 	@echo "Application management"

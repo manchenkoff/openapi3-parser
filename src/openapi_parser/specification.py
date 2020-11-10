@@ -144,7 +144,7 @@ class Schema:
     # any_of: Any
     # not: Any
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         """
         Fix to load default values in inherited classes
         """
@@ -221,7 +221,7 @@ class Array(Schema):
     max_items: Optional[int] = None
     min_items: Optional[int] = None
     unique_items: Optional[bool] = None
-    items: Schema = None
+    items: Schema = None  # type: ignore
 
 
 @dataclass

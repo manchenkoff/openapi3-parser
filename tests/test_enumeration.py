@@ -13,11 +13,11 @@ data_type_provider = (
 
 
 @pytest.mark.parametrize(['string_value', 'expected'], data_type_provider)
-def test_data_type(string_value: str, expected: DataType):
+def test_data_type(string_value: str, expected: DataType) -> None:
     assert DataType(string_value) == expected
 
 
-def test_data_type_error():
+def test_data_type_error() -> None:
     with pytest.raises(ValueError):
         DataType("invalid")
 
@@ -29,11 +29,11 @@ integer_format_provider = (
 
 
 @pytest.mark.parametrize(['string_value', 'expected'], integer_format_provider)
-def test_integer_format(string_value: str, expected: IntegerFormat):
+def test_integer_format(string_value: str, expected: IntegerFormat) -> None:
     assert IntegerFormat(string_value) == expected
 
 
-def test_integer_format_error():
+def test_integer_format_error() -> None:
     with pytest.raises(ValueError):
         IntegerFormat("invalid")
 
@@ -45,11 +45,11 @@ number_format_provider = (
 
 
 @pytest.mark.parametrize(['string_value', 'expected'], number_format_provider)
-def test_number_format(string_value: str, expected: NumberFormat):
+def test_number_format(string_value: str, expected: NumberFormat) -> None:
     assert NumberFormat(string_value) == expected
 
 
-def test_number_format_error():
+def test_number_format_error() -> None:
     with pytest.raises(ValueError):
         NumberFormat("invalid")
 
@@ -66,11 +66,11 @@ string_format_provider = (
 
 
 @pytest.mark.parametrize(['string_value', 'expected'], string_format_provider)
-def test_string_format(string_value: str, expected: StringFormat):
+def test_string_format(string_value: str, expected: StringFormat) -> None:
     assert StringFormat(string_value) == expected
 
 
-def test_string_format_error():
+def test_string_format_error() -> None:
     with pytest.raises(ValueError):
         StringFormat("invalid")
 
@@ -88,11 +88,11 @@ operation_method_provider = (
 
 
 @pytest.mark.parametrize(['string_value', 'expected'], operation_method_provider)
-def test_operation_method(string_value: str, expected: OperationMethod):
+def test_operation_method(string_value: str, expected: OperationMethod) -> None:
     assert OperationMethod(string_value) == expected
 
 
-def test_operation_method_error():
+def test_operation_method_error() -> None:
     with pytest.raises(ValueError):
         OperationMethod("invalid")
 
@@ -105,11 +105,11 @@ base_location_provider = (
 
 
 @pytest.mark.parametrize(['string_value', 'expected'], base_location_provider)
-def test_base_location(string_value: str, expected: BaseLocation):
+def test_base_location(string_value: str, expected: BaseLocation) -> None:
     assert BaseLocation(string_value) == expected
 
 
-def test_base_location_error():
+def test_base_location_error() -> None:
     with pytest.raises(ValueError):
         BaseLocation("invalid")
 
@@ -123,11 +123,11 @@ parameter_location_provider = (
 
 
 @pytest.mark.parametrize(['string_value', 'expected'], parameter_location_provider)
-def test_parameter_location(string_value: str, expected: ParameterLocation):
+def test_parameter_location(string_value: str, expected: ParameterLocation) -> None:
     assert ParameterLocation(string_value) == expected
 
 
-def test_parameter_location_error():
+def test_parameter_location_error() -> None:
     with pytest.raises(ValueError):
         ParameterLocation("invalid")
 
@@ -145,11 +145,11 @@ media_type_provider = (
 
 
 @pytest.mark.parametrize(['string_value', 'expected'], media_type_provider)
-def test_media_type(string_value: str, expected: MediaType):
+def test_media_type(string_value: str, expected: MediaType) -> None:
     assert MediaType(string_value) == expected
 
 
-def test_media_type_error():
+def test_media_type_error() -> None:
     with pytest.raises(ValueError):
         MediaType("invalid")
 
@@ -163,11 +163,11 @@ security_type_provider = (
 
 
 @pytest.mark.parametrize(['string_value', 'expected'], security_type_provider)
-def test_security_type(string_value: str, expected: SecurityType):
+def test_security_type(string_value: str, expected: SecurityType) -> None:
     assert SecurityType(string_value) == expected
 
 
-def test_security_type_error():
+def test_security_type_error() -> None:
     with pytest.raises(ValueError):
         SecurityType("invalid")
 
@@ -187,11 +187,11 @@ auth_schema_provider = (
 
 
 @pytest.mark.parametrize(['string_value', 'expected'], auth_schema_provider)
-def test_auth_schema(string_value: str, expected: AuthenticationScheme):
+def test_auth_schema(string_value: str, expected: AuthenticationScheme) -> None:
     assert AuthenticationScheme(string_value) == expected
 
 
-def test_auth_schema_error():
+def test_auth_schema_error() -> None:
     with pytest.raises(ValueError):
         AuthenticationScheme("invalid")
 
@@ -205,10 +205,10 @@ auth_flow_provider = (
 
 
 @pytest.mark.parametrize(['string_value', 'expected'], auth_flow_provider)
-def test_auth_flow(string_value: str, expected: OAuthFlowType):
+def test_auth_flow(string_value: str, expected: OAuthFlowType) -> None:
     assert OAuthFlowType(string_value) == expected
 
 
-def test_auth_flow_error():
+def test_auth_flow_error() -> None:
     with pytest.raises(ValueError):
         OAuthFlowType("invalid")
