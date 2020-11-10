@@ -36,7 +36,7 @@ Example of parser usage
 - [x] Property
 - [x] Parameter
 - [x] Header
-- [ ] Content
+- [x] Content
 - [ ] RequestBody
 - [ ] Response
 - [ ] Security

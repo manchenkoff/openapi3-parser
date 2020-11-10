@@ -2,8 +2,7 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from openapi_parser.builders import SchemaFactory
-from openapi_parser.builders.header import HeaderBuilder
+from openapi_parser.builders import SchemaFactory, HeaderBuilder
 from openapi_parser.enumeration import DataType
 from openapi_parser.specification import Header, Integer, Schema, String
 

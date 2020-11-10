@@ -4,6 +4,8 @@ from .tag import TagBuilder
 from .external_doc import ExternalDocBuilder
 from .schema import SchemaFactory
 from .parameter import ParameterBuilder
+from .header import HeaderBuilder
+from .content import ContentBuilder
 
 __all__ = [
     "ExternalDocBuilder",
@@ -12,4 +14,6 @@ __all__ = [
     "TagBuilder",
     "SchemaFactory",
     "ParameterBuilder",
+    "HeaderBuilder",
+    "ContentBuilder",
 ]
