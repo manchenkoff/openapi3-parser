@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [ master, dev/* ]
+    branches: [ dev/* ]
   pull_request:
-    branches: [ master, dev/* ]
+    branches: [ master ]
 
 jobs:
   test:
@@ -21,8 +21,13 @@ jobs:
       - name: Install dependencies
         run: |
           pip install pipenv
-          pipenv sync && pipenv install pytest
-          python setup.py install
+          pipenv sync
+          pipenv install -e .
+          
+      - name: Run linters
+        run: |
+          pipenv run mypy ./src
+          pipenv run pytype ./src
       
       - name: Run tests
-        run: python -m pytest
+        run: pipenv run python -m pytest
