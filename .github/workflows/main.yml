@@ -24,10 +24,10 @@ jobs:
           pipenv sync
           pipenv run python setup.py install
           
-      - name: Run linters
-        run: |
-          pipenv run mypy ./src
-          pipenv run pytype ./src
+      #- name: Run linters
+        #run: |
+          #pipenv run mypy ./src
+          #pipenv run pytype ./src
       
       - name: Run tests
         run: pipenv run python -m pytest
