@@ -1,7 +1,7 @@
 from typing import Dict
 
 from . import ExternalDocBuilder, ParameterBuilder, RequestBuilder, ResponseBuilder
-from .common import extract_attrs_by_map, PropertyInfoType
+from .common import extract_typed_props, PropertyMeta
 from ..specification import Operation, ResponseCollection
 
 
@@ -23,18 +23,18 @@ class OperationBuilder:
 
     def build(self, data: dict) -> Operation:
         attrs_map = {
-            "responses": PropertyInfoType(name="responses", type=self._get_response_collection),
-            "summary": PropertyInfoType(name="summary", type=str),
-            "description": PropertyInfoType(name="description", type=str),
-            "operation_id": PropertyInfoType(name="operationId", type=str),
-            "external_docs": PropertyInfoType(name="externalDocs", type=self.external_doc_builder.build),
-            "request_body": PropertyInfoType(name="requestBody", type=self.request_builder.build),
-            "deprecated": PropertyInfoType(name="deprecated", type=None),
-            "parameters": PropertyInfoType(name="parameters", type=self.parameter_builder.build_collection),
-            "tags": PropertyInfoType(name="tags", type=None),
+            "responses": PropertyMeta(name="responses", cast=self._get_response_collection),
+            "summary": PropertyMeta(name="summary", cast=str),
+            "description": PropertyMeta(name="description", cast=str),
+            "operation_id": PropertyMeta(name="operationId", cast=str),
+            "external_docs": PropertyMeta(name="externalDocs", cast=self.external_doc_builder.build),
+            "request_body": PropertyMeta(name="requestBody", cast=self.request_builder.build),
+            "deprecated": PropertyMeta(name="deprecated", cast=None),
+            "parameters": PropertyMeta(name="parameters", cast=self.parameter_builder.build_collection),
+            "tags": PropertyMeta(name="tags", cast=None),
         }
 
-        attrs = extract_attrs_by_map(data, attrs_map)
+        attrs = extract_typed_props(data, attrs_map)
 
         return Operation(**attrs)
 

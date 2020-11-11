@@ -1,5 +1,5 @@
 from . import ContentBuilder
-from .common import PropertyInfoType, extract_attrs_by_map
+from .common import PropertyMeta, extract_typed_props
 from ..specification import RequestBody
 
 
@@ -11,11 +11,11 @@ class RequestBuilder:
 
     def build(self, data: dict) -> RequestBody:
         attrs_map = {
-            "content": PropertyInfoType(name="content", type=self.content_builder.build_collection),
-            "description": PropertyInfoType(name="description", type=str),
-            "required": PropertyInfoType(name="required", type=None),
+            "content": PropertyMeta(name="content", cast=self.content_builder.build_collection),
+            "description": PropertyMeta(name="description", cast=str),
+            "required": PropertyMeta(name="required", cast=None),
         }
 
-        attrs = extract_attrs_by_map(data, attrs_map)
+        attrs = extract_typed_props(data, attrs_map)
 
         return RequestBody(**attrs)

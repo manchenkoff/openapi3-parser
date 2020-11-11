@@ -39,7 +39,7 @@ Example of parser usage
 - [x] Content
 - [x] RequestBody
 - [x] Response
-- [ ] Operation
+- [X] Operation
 - [ ] PathItem
 - [ ] Path
 - [ ] Security

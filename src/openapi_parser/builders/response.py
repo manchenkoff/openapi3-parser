@@ -1,5 +1,5 @@
 from . import ContentBuilder, HeaderBuilder
-from .common import extract_attrs_by_map, PropertyInfoType
+from .common import extract_typed_props, PropertyMeta
 from ..specification import Response
 
 
@@ -13,11 +13,11 @@ class ResponseBuilder:
 
     def build(self, data: dict) -> Response:
         attrs_map = {
-            "description": PropertyInfoType(name="description", type=str),
-            "content": PropertyInfoType(name="content", type=self.content_builder.build_collection),
-            "headers": PropertyInfoType(name="headers", type=self.header_builder.build_collection),
+            "description": PropertyMeta(name="description", cast=str),
+            "content": PropertyMeta(name="content", cast=self.content_builder.build_collection),
+            "headers": PropertyMeta(name="headers", cast=self.header_builder.build_collection),
         }
 
-        attrs = extract_attrs_by_map(data, attrs_map)
+        attrs = extract_typed_props(data, attrs_map)
 
         return Response(**attrs)

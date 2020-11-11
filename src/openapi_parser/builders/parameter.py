@@ -1,7 +1,7 @@
 from typing import List
 
 from . import SchemaFactory
-from .common import extract_attrs_by_map, PropertyInfoType
+from .common import extract_typed_props, PropertyMeta
 from ..enumeration import ParameterLocation
 from ..specification import Parameter, ParameterList
 
@@ -14,15 +14,15 @@ class ParameterBuilder:
 
     def build(self, data: dict) -> Parameter:
         attrs_map = {
-            "name": PropertyInfoType(name="name", type=str),
-            "location": PropertyInfoType(name="in", type=ParameterLocation),
-            "required": PropertyInfoType(name="required", type=None),
-            "schema": PropertyInfoType(name="schema", type=self.schema_factory.create),
-            "description": PropertyInfoType(name="description", type=str),
-            "deprecated": PropertyInfoType(name="deprecated", type=None),
+            "name": PropertyMeta(name="name", cast=str),
+            "location": PropertyMeta(name="in", cast=ParameterLocation),
+            "required": PropertyMeta(name="required", cast=None),
+            "schema": PropertyMeta(name="schema", cast=self.schema_factory.create),
+            "description": PropertyMeta(name="description", cast=str),
+            "deprecated": PropertyMeta(name="deprecated", cast=None),
         }
 
-        attrs = extract_attrs_by_map(data, attrs_map)
+        attrs = extract_typed_props(data, attrs_map)
 
         return Parameter(**attrs)
 
