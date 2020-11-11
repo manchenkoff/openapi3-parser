@@ -392,7 +392,7 @@ class RequestBody:
     }
     """
     content: ContentType
-    description: Optional[str]
+    description: Optional[str] = None
     required: Optional[bool] = field(default=False)
 
 

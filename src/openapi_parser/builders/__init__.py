@@ -6,6 +6,7 @@ from .schema import SchemaFactory
 from .parameter import ParameterBuilder
 from .header import HeaderBuilder
 from .content import ContentBuilder
+from .request import RequestBuilder
 
 __all__ = [
     "ExternalDocBuilder",
@@ -16,4 +17,5 @@ __all__ = [
     "ParameterBuilder",
     "HeaderBuilder",
     "ContentBuilder",
+    "RequestBuilder",
 ]
