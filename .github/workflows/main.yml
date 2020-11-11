@@ -20,8 +20,9 @@ jobs:
           
       - name: Install dependencies
         run: |
+          pip install pipenv
+          pipenv sync && pipenv install pytest
           python setup.py install
-          python -m pip install pytest
       
       - name: Run tests
         run: python -m pytest
