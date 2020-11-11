@@ -1,0 +1,27 @@
+name: CI
+
+on:
+  push:
+    branches: [ master, dev/* ]
+  pull_request:
+    branches: [ master, dev/* ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Git
+        uses: actions/checkout@v2
+
+      - name: Install Python 3
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+          
+      - name: Install dependencies
+        run: |
+          python setup.py install
+          python -m pip install pytest
+      
+      - name: Run tests
+        run: python -m pytest
