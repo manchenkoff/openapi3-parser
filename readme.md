@@ -38,7 +38,7 @@ Example of parser usage
 - [x] Header
 - [x] Content
 - [x] RequestBody
-- [ ] Response
+- [x] Response
 - [ ] Security
 - [ ] ApiKeySecurity
 - [ ] HttpSecurity

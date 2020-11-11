@@ -2,26 +2,47 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from openapi_parser.builders import ContentBuilder
+from openapi_parser.builders import ContentBuilder, RequestBuilder
 from openapi_parser.enumeration import DataType, MediaType
-from openapi_parser.specification import Content, Object, Property, RequestBody, String
+from openapi_parser.specification import Content, ContentType, Object, Property, RequestBody, String
 
 
-def _get_content_builder_mock(expected_value: Content) -> ContentBuilder:
+def _get_content_builder_mock(expected_value: ContentType) -> ContentBuilder:
     mock_object = MagicMock()
-    mock_object.build.return_value = expected_value
+    mock_object.build_collection.return_value = expected_value
 
     return mock_object
 
 
-content_schema = Content(
-    schema=Object(
-        type=DataType.OBJECT,
-        properties=[
-            Property(name="login", schema=String(type=DataType.STRING))
-        ]
+content_schema = {
+    MediaType.JSON: Content(
+        schema=Object(
+            type=DataType.OBJECT,
+            properties=[
+                Property(name="login", schema=String(type=DataType.STRING))
+            ]
+        )
     )
-)
+}
+
+extended_content_schema = {
+    MediaType.JSON: Content(
+        schema=Object(
+            type=DataType.OBJECT,
+            properties=[
+                Property(name="login", schema=String(type=DataType.STRING))
+            ]
+        )
+    ),
+    MediaType.FORM: Content(
+        schema=Object(
+            type=DataType.OBJECT,
+            properties=[
+                Property(name="login", schema=String(type=DataType.STRING))
+            ]
+        )
+    ),
+}
 
 data_provider = (
     (
@@ -39,11 +60,7 @@ data_provider = (
                 },
             }
         },
-        RequestBody(
-            content={
-                MediaType.JSON: content_schema,
-            }
-        ),
+        RequestBody(content=content_schema),
         _get_content_builder_mock(content_schema)
     ),
     (
@@ -74,16 +91,15 @@ data_provider = (
         },
         RequestBody(
             description="user to add to the system",
-            content={
-                MediaType.JSON: content_schema,
-                MediaType.FORM: content_schema,
-            }
+            content=extended_content_schema
         ),
-        _get_content_builder_mock(content_schema)
+        _get_content_builder_mock(extended_content_schema)
     ),
 )
 
 
 @pytest.mark.parametrize(['data', 'expected', 'content_builder'], data_provider)
 def test_build(data: dict, expected: RequestBody, content_builder: ContentBuilder):
-    pass
+    builder = RequestBuilder(content_builder)
+
+    assert expected == builder.build(data)

@@ -1,7 +1,6 @@
 from typing import Any, Dict
 
 from . import ContentBuilder
-from ..enumeration import MediaType
 from ..specification import RequestBody
 
 
@@ -15,10 +14,7 @@ class RequestBuilder:
         attrs: Dict[str, Any]
 
         attrs = {
-            "content": {
-                MediaType(key): self.content_builder.build(value)
-                for key, value in data["content"].keys()
-            }
+            "content": self.content_builder.build_collection(data["content"])
         }
 
         if data.get("description") is not None:

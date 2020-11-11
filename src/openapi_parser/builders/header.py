@@ -1,7 +1,7 @@
 from typing import Any, Dict
 
 from . import SchemaFactory
-from ..specification import Header
+from ..specification import Header, HeaderCollection
 
 
 class HeaderBuilder:
@@ -27,3 +27,9 @@ class HeaderBuilder:
             attrs["required"] = data["required"]
 
         return Header(**attrs)
+
+    def build_collection(self, data: dict) -> HeaderCollection:
+        return {
+            header_name: self.build(header_value)
+            for header_name, header_value in data.items()
+        }

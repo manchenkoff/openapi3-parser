@@ -1,7 +1,8 @@
 from typing import Any, Dict
 
 from . import SchemaFactory
-from ..specification import Content
+from ..enumeration import MediaType
+from ..specification import Content, ContentType
 
 
 class ContentBuilder:
@@ -18,3 +19,9 @@ class ContentBuilder:
         }
 
         return Content(**attrs)
+
+    def build_collection(self, data: dict) -> ContentType:
+        return {
+            MediaType(content_type): self.build(content_value)
+            for content_type, content_value in data.items()
+        }
