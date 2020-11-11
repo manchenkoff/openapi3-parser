@@ -2,8 +2,7 @@
 .PHONY: help build test
 
 build: ## Build an application
-	@pipenv run python setup.py sdist
-	@pipenv run python setup.py bdist_wheel
+	@pipenv run python setup.py sdist bdist_wheel
 
 publish-test: ## Upload package to test PyPI
 	@pipenv run twine upload --repository testpypi dist/*

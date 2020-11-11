@@ -1,6 +1,5 @@
-from typing import Any, Dict
-
 from . import ContentBuilder, HeaderBuilder
+from .common import extract_attrs_by_map, PropertyInfoType
 from ..specification import Response
 
 
@@ -13,14 +12,12 @@ class ResponseBuilder:
         self.header_builder = header_builder
 
     def build(self, data: dict) -> Response:
-        attrs: Dict[str, Any]
-
-        attrs = {
-            "description": data["description"],
-            "content": self.content_builder.build_collection(data["content"]),
+        attrs_map = {
+            "description": PropertyInfoType(name="description", type=str),
+            "content": PropertyInfoType(name="content", type=self.content_builder.build_collection),
+            "headers": PropertyInfoType(name="headers", type=self.header_builder.build_collection),
         }
 
-        if data.get("headers") is not None:
-            attrs["headers"] = self.header_builder.build_collection(data["headers"])
+        attrs = extract_attrs_by_map(data, attrs_map)
 
         return Response(**attrs)

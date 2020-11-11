@@ -1,3 +1,4 @@
+from .common import extract_attrs_by_map, PropertyInfoType
 from ..builders.external_doc import ExternalDocBuilder
 from ..specification import Tag, TagList
 
@@ -9,13 +10,13 @@ class TagBuilder:
         self._external_doc_builder = external_doc_builder
 
     def _build_tag(self, data: dict) -> Tag:
-        attrs = {
-            "name": data['name'],
-            "description": data.get('description'),
+        attrs_map = {
+            "name": PropertyInfoType(name="name", type=str),
+            "description": PropertyInfoType(name="description", type=str),
+            "external_docs": PropertyInfoType(name="externalDocs", type=self._external_doc_builder.build),
         }
 
-        if data.get('externalDocs') is not None:
-            attrs['external_docs'] = self._external_doc_builder.build(data['externalDocs'])
+        attrs = extract_attrs_by_map(data, attrs_map)
 
         return Tag(**attrs)
 

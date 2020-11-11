@@ -7,7 +7,7 @@ PropertyList = List['Property']
 ContentType = Dict[MediaType, 'Content']
 HeaderCollection = Dict[str, 'Header']
 ResponseCollection = Dict[int, 'Response']
-SecurityList = List['Security']
+# SecurityList = List['Security']
 OperationCollection = Dict[OperationMethod, 'Operation']
 ParameterList = List['Parameter']
 ServerList = List['Server']
@@ -612,16 +612,16 @@ class Operation:
       ]
     }
     """
-    summary: Optional[str]
-    description: Optional[str]
-    external_docs: Optional[ExternalDoc]
-    operation_id: Optional[str]
-    request_body: Optional[RequestBody]
+    responses: ResponseCollection
+    summary: Optional[str] = None
+    description: Optional[str] = None
+    operation_id: Optional[str] = None
+    external_docs: Optional[ExternalDoc] = None
+    request_body: Optional[RequestBody] = None
     deprecated: Optional[bool] = field(default=False)
-    responses: ResponseCollection = field(default_factory=dict)
-    parameters: List[Parameter] = field(default_factory=list)
+    parameters: ParameterList = field(default_factory=list)
     tags: List[str] = field(default_factory=list)
-    security: SecurityList = field(default_factory=list)
+    # security: SecurityList = field(default_factory=list)
     # callbacks: Dict[str, Callback] = field(default_factory=dict)
 
 
@@ -731,6 +731,6 @@ class Specification:
     info: Info
     servers: ServerList = field(default_factory=list)
     tags: TagList = field(default_factory=list)
-    security: SecurityList = field(default_factory=list)
+    # security: SecurityList = field(default_factory=list)
     external_docs: Optional[ExternalDoc] = None
     paths: PathList = field(default_factory=list)

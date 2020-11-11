@@ -39,15 +39,15 @@ Example of parser usage
 - [x] Content
 - [x] RequestBody
 - [x] Response
+- [ ] Operation
+- [ ] PathItem
+- [ ] Path
 - [ ] Security
 - [ ] ApiKeySecurity
 - [ ] HttpSecurity
 - [ ] OAuthFlow
 - [ ] OAuth2Security
 - [ ] OpenIdConnectSecurity
-- [ ] Operation
-- [ ] PathItem
-- [ ] Path
 - [ ] Specification
 
 ## Features

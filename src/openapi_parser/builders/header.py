@@ -1,6 +1,5 @@
-from typing import Any, Dict
-
 from . import SchemaFactory
+from .common import extract_attrs_by_map, PropertyInfoType
 from ..specification import Header, HeaderCollection
 
 
@@ -11,20 +10,14 @@ class HeaderBuilder:
         self.schema_factory = schema_factory
 
     def build(self, data: dict) -> Header:
-        attrs: Dict[str, Any]
-
-        attrs = {
-            "schema": self.schema_factory.create(data['schema']),
+        attrs_map = {
+            "schema": PropertyInfoType(name="schema", type=self.schema_factory.create),
+            "description": PropertyInfoType(name="description", type=str),
+            "deprecated": PropertyInfoType(name="deprecated", type=None),
+            "required": PropertyInfoType(name="required", type=None),
         }
 
-        if data.get("description") is not None:
-            attrs["description"] = data["description"]
-
-        if data.get("deprecated") is not None:
-            attrs["deprecated"] = data["deprecated"]
-
-        if data.get("required") is not None:
-            attrs["required"] = data["required"]
+        attrs = extract_attrs_by_map(data, attrs_map)
 
         return Header(**attrs)
 

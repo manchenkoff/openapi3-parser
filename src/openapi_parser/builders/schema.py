@@ -1,17 +1,15 @@
-from collections import namedtuple
-from typing import Any, Callable, Dict, Optional
+from typing import Any, Callable, Dict
 
+from .common import extract_attrs_by_map, PropertyInfoType
 from ..enumeration import DataType, IntegerFormat, NumberFormat, StringFormat
 from ..errors import ParserError
-from ..specification import Array, Integer, Number, Object, Property, Schema, String
+from ..specification import Array, Integer, Number, Object, Property, PropertyList, Schema, String
 
 SchemaBuilderMethod = Callable[[dict], Schema]
 
-PropertyInfoType = namedtuple('PropertyInfoType', ['type', 'name'])
 
-
-def get_common_attrs(data: dict) -> dict:
-    attrs_map = {
+def extract_attrs(data: dict, attrs_map: Dict[str, PropertyInfoType]) -> Dict[str, Any]:
+    base_attrs_map = {
         "type": "type",
         "title": "title",
         "enum": "enum",
@@ -26,37 +24,13 @@ def get_common_attrs(data: dict) -> dict:
 
     attrs = {
         key: data[name]
-        for key, name in attrs_map.items()
+        for key, name in base_attrs_map.items()
         if data.get(name) is not None
     }
 
     attrs['type'] = DataType(attrs['type'])
 
-    return attrs
-
-
-def get_custom_attrs(data: dict, attrs_map: Dict[str, PropertyInfoType]) -> Dict[str, Any]:
-    def cast_value(name: str, value: Any, value_type: Optional[type]) -> Any:
-        if not value_type:
-            return value
-
-        try:
-            return value_type(value)
-        except ValueError:
-            raise ParserError(f"Invalid '{name}' property value for type: {value_type}")
-
-    custom_attrs = {
-        attr_name: cast_value(attr_info.name, data[attr_info.name], attr_info.type)
-        for attr_name, attr_info in attrs_map.items()
-        if data.get(attr_info.name) is not None
-    }
-
-    return custom_attrs
-
-
-def extract_attrs(data: dict, attrs_map: Dict[str, PropertyInfoType]) -> Dict[str, Any]:
-    attrs = get_common_attrs(data)
-    attrs.update(get_custom_attrs(data, attrs_map))
+    attrs.update(extract_attrs_by_map(data, attrs_map))
 
     return attrs
 
@@ -130,36 +104,27 @@ class SchemaFactory:
             "max_items": PropertyInfoType(name="maxItems", type=int),
             "min_items": PropertyInfoType(name="minItems", type=int),
             "unique_items": PropertyInfoType(name="uniqueItems", type=None),
-            "items": PropertyInfoType(name="items", type=None),
+            "items": PropertyInfoType(name="items", type=self.create),
         }
 
         attrs = extract_attrs(data, attrs_map)
 
-        try:
-            attrs['items'] = self.create(attrs['items'])
-        except KeyError:
-            raise ParserError("Arrays must contain 'items' definition")
-
         return Array(**attrs)
 
     def _object(self, data: dict) -> Object:
-        def build_parameters(object_attrs: dict) -> None:
-            if not object_attrs.get('properties'):
-                return
-
-            object_attrs['properties'] = [
+        def build_properties(object_attrs: dict) -> PropertyList:
+            return [
                 Property(name, self.create(schema))
-                for name, schema in object_attrs['properties'].items()
+                for name, schema in object_attrs.items()
             ]
 
         attrs_map = {
             "max_properties": PropertyInfoType(name="maxProperties", type=int),
             "min_properties": PropertyInfoType(name="minProperties", type=int),
             "required": PropertyInfoType(name="required", type=None),
-            "properties": PropertyInfoType(name="properties", type=None),
+            "properties": PropertyInfoType(name="properties", type=build_properties),
         }
 
         attrs = extract_attrs(data, attrs_map)
-        build_parameters(attrs)
 
         return Object(**attrs)

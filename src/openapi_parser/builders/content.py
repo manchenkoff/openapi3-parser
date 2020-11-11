@@ -1,5 +1,3 @@
-from typing import Any, Dict
-
 from . import SchemaFactory
 from ..enumeration import MediaType
 from ..specification import Content, ContentType
@@ -12,13 +10,7 @@ class ContentBuilder:
         self.schema_factory = schema_factory
 
     def build(self, data: dict) -> Content:
-        attrs: Dict[str, Any]
-
-        attrs = {
-            "schema": self.schema_factory.create(data['schema']),
-        }
-
-        return Content(**attrs)
+        return Content(schema=self.schema_factory.create(data['schema']))
 
     def build_collection(self, data: dict) -> ContentType:
         return {

@@ -8,6 +8,7 @@ from .header import HeaderBuilder
 from .content import ContentBuilder
 from .request import RequestBuilder
 from .response import ResponseBuilder
+from .operation import OperationBuilder
 
 __all__ = [
     "ExternalDocBuilder",
@@ -20,4 +21,5 @@ __all__ = [
     "ContentBuilder",
     "RequestBuilder",
     "ResponseBuilder",
+    "OperationBuilder",
 ]
