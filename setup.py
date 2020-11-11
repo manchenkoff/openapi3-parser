@@ -2,11 +2,13 @@
 
 from os.path import dirname, join
 
+from iniconfig import IniConfig
 from setuptools import find_packages, setup
 
 from src import openapi_parser
 
 description_file = join(dirname(__file__), "readme.md")
+packages = list(IniConfig("Pipfile").sections['packages'].keys())
 
 setup(
     name=openapi_parser.__title__,
@@ -32,8 +34,5 @@ setup(
         'Programming Language :: Python :: 3.8',
         'Topic :: Software Development :: Libraries',
     ],
-    install_requires=[
-        "prance",
-        "openapi-spec-validator",
-    ],
+    install_requires=packages,
 )
