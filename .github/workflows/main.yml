@@ -22,7 +22,7 @@ jobs:
         run: |
           pip install pipenv
           pipenv sync
-          pipenv install -e .
+          pipenv run python setup.py install
           
       - name: Run linters
         run: |
