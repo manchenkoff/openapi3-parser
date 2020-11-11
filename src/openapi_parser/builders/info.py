@@ -3,6 +3,20 @@ from ..specification import Contact, Info, License
 
 
 class InfoBuilder:
+    def build(self, data: dict) -> Info:
+        attrs_map = {
+            "title": PropertyMeta(name="title", cast=str),
+            "version": PropertyMeta(name="version", cast=str),
+            "description": PropertyMeta(name="description", cast=str),
+            "terms_of_service": PropertyMeta(name="termsOfService", cast=str),
+            "license": PropertyMeta(name="license", cast=self._create_license),
+            "contact": PropertyMeta(name="contact", cast=self._create_contact),
+        }
+
+        attrs = extract_typed_props(data, attrs_map)
+
+        return Info(**attrs)
+
     @staticmethod
     def _create_license(data: dict) -> License:
         attrs = {
@@ -21,17 +35,3 @@ class InfoBuilder:
         }
 
         return Contact(**attrs)
-
-    def build(self, data: dict) -> Info:
-        attrs_map = {
-            "title": PropertyMeta(name="title", cast=str),
-            "version": PropertyMeta(name="version", cast=str),
-            "description": PropertyMeta(name="description", cast=str),
-            "terms_of_service": PropertyMeta(name="termsOfService", cast=str),
-            "license": PropertyMeta(name="license", cast=self._create_license),
-            "contact": PropertyMeta(name="contact", cast=self._create_contact),
-        }
-
-        attrs = extract_typed_props(data, attrs_map)
-
-        return Info(**attrs)

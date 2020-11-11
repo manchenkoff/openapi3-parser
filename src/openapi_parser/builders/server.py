@@ -3,6 +3,9 @@ from ..specification import Server, ServerList
 
 
 class ServerBuilder:
+    def build_list(self, data_list: list) -> ServerList:
+        return [self._build_server(item) for item in data_list]
+
     @staticmethod
     def _build_server(data: dict) -> Server:
         attrs_map = {
@@ -14,6 +17,3 @@ class ServerBuilder:
         attrs = extract_typed_props(data, attrs_map)
 
         return Server(**attrs)
-
-    def build_list(self, data_list: list) -> ServerList:
-        return [self._build_server(item) for item in data_list]

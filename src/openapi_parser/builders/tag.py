@@ -9,6 +9,9 @@ class TagBuilder:
     def __init__(self, external_doc_builder: ExternalDocBuilder) -> None:
         self._external_doc_builder = external_doc_builder
 
+    def build_list(self, data_list: list) -> TagList:
+        return [self._build_tag(item) for item in data_list]
+
     def _build_tag(self, data: dict) -> Tag:
         attrs_map = {
             "name": PropertyMeta(name="name", cast=str),
@@ -19,6 +22,3 @@ class TagBuilder:
         attrs = extract_typed_props(data, attrs_map)
 
         return Tag(**attrs)
-
-    def build_list(self, data_list: list) -> TagList:
-        return [self._build_tag(item) for item in data_list]

@@ -9,6 +9,12 @@ class HeaderBuilder:
     def __init__(self, schema_factory: SchemaFactory) -> None:
         self.schema_factory = schema_factory
 
+    def build_collection(self, data: dict) -> HeaderCollection:
+        return {
+            header_name: self.build(header_value)
+            for header_name, header_value in data.items()
+        }
+
     def build(self, data: dict) -> Header:
         attrs_map = {
             "schema": PropertyMeta(name="schema", cast=self.schema_factory.create),
@@ -20,9 +26,3 @@ class HeaderBuilder:
         attrs = extract_typed_props(data, attrs_map)
 
         return Header(**attrs)
-
-    def build_collection(self, data: dict) -> HeaderCollection:
-        return {
-            header_name: self.build(header_value)
-            for header_name, header_value in data.items()
-        }

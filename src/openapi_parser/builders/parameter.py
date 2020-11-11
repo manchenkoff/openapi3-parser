@@ -12,6 +12,9 @@ class ParameterBuilder:
     def __init__(self, schema_factory: SchemaFactory) -> None:
         self.schema_factory = schema_factory
 
+    def build_collection(self, parameters: List[dict]) -> ParameterList:
+        return [self.build(parameter) for parameter in parameters]
+
     def build(self, data: dict) -> Parameter:
         attrs_map = {
             "name": PropertyMeta(name="name", cast=str),
@@ -25,6 +28,3 @@ class ParameterBuilder:
         attrs = extract_typed_props(data, attrs_map)
 
         return Parameter(**attrs)
-
-    def build_collection(self, parameters: List[dict]) -> ParameterList:
-        return [self.build(parameter) for parameter in parameters]
