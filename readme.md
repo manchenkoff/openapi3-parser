@@ -40,8 +40,8 @@ Example of parser usage
 - [x] RequestBody
 - [x] Response
 - [X] Operation
-- [ ] PathItem
-- [ ] Path
+- [x] PathItem
+- [x] Path
 - [ ] Security
 - [ ] ApiKeySecurity
 - [ ] HttpSecurity

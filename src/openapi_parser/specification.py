@@ -676,8 +676,8 @@ class PathItem:
       ]
     }
     """
-    summary: Optional[str]
-    description: Optional[str]
+    summary: Optional[str] = None
+    description: Optional[str] = None
     operations: OperationCollection = field(default_factory=dict)
     parameters: ParameterList = field(default_factory=list)
 

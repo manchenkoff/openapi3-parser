@@ -9,6 +9,7 @@ from .content import ContentBuilder
 from .request import RequestBuilder
 from .response import ResponseBuilder
 from .operation import OperationBuilder
+from .path import PathBuilder
 
 __all__ = [
     "ExternalDocBuilder",
@@ -22,4 +23,5 @@ __all__ = [
     "RequestBuilder",
     "ResponseBuilder",
     "OperationBuilder",
+    "PathBuilder",
 ]
