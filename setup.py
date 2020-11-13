@@ -1,28 +1,38 @@
+#!/usr/bin/env python
+
 from os.path import dirname, join
 
+from iniconfig import IniConfig
 from setuptools import find_packages, setup
 
-from src import swagger_parser
+from src import openapi_parser
 
 description_file = join(dirname(__file__), "readme.md")
+packages = list(IniConfig("Pipfile").sections['packages'].keys())
 
 setup(
-    name="swagger_parser",
-    author="Artyom Manchenkov",
-    author_email="artyom@manchenkoff.me",
-    url="https://github.com/manchenkoff/swagger-parser",
+    name=openapi_parser.__title__,
+    author=openapi_parser.__author__,
+    author_email=openapi_parser.__email__,
+    url="https://github.com/manchenkoff/openapi-parser",
     project_urls={
-        "Source": "https://github.com/manchenkoff/swagger-parser",
+        "Source": "https://github.com/manchenkoff/openapi-parser",
     },
-    version=swagger_parser.__version__,
-    packages=find_packages(where="src/swagger_parser"),
+    version=openapi_parser.__version__,
+    packages=find_packages(where='src'),
+    package_dir={'': 'src'},
     license="MIT",
-    description="Swagger API v3 parser",
+    description=openapi_parser.__description__,
     long_description=open(description_file).read(),
     long_description_content_type="text/markdown",
-    keywords="swagger, python, swagger-parser, parser, openapi, swagger-api",
-    install_requires=[
-        "prance",
-        "openapi-spec-validator",
+    keywords="swagger, python, version-parser, parser, version, openapi3, swagger-api",
+    classifiers=[
+        'Development Status :: 1 - Planning',
+        'License :: OSI Approved :: MIT License',
+        'Operating System :: OS Independent',
+        'Intended Audience :: Developers',
+        'Programming Language :: Python :: 3.8',
+        'Topic :: Software Development :: Libraries',
     ],
+    install_requires=packages,
 )

@@ -7,6 +7,8 @@ verify_ssl = true
 twine = "==3.2.0"
 wheel = "==0.35.1"
 pytest = "*"
+mypy = "*"
+pytype = "*"
 
 [packages]
 prance = "==0.19.0"
