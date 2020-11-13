@@ -1,4 +1,6 @@
 from .builders import *
+from .builders.common import extract_typed_props, PropertyMeta
+from .errors import ParserError
 from .resolver import OpenAPIResolver
 from .specification import *
 
@@ -7,14 +9,20 @@ class Parser:
     info_builder: InfoBuilder
     server_builder: ServerBuilder
     tag_builder: TagBuilder
+    external_doc_builder: ExternalDocBuilder
+    path_builder: PathBuilder
 
     def __init__(self,
                  info_builder: InfoBuilder,
                  server_builder: ServerBuilder,
-                 tags_builder: TagBuilder) -> None:
+                 tags_builder: TagBuilder,
+                 external_doc_builder: ExternalDocBuilder,
+                 path_builder: PathBuilder) -> None:
         self.info_builder = info_builder
         self.server_builder = server_builder
         self.tag_builder = tags_builder
+        self.external_doc_builder = external_doc_builder
+        self.path_builder = path_builder
 
     def load_specification(self, data: dict) -> Specification:
         """
@@ -23,18 +31,24 @@ class Parser:
         :return: Specification object
         """
 
-        version = data['openapi']
+        try:
+            version = data['openapi']
+        except KeyError:
+            raise ParserError("Invalid OpenAPI schema version")
 
-        info = self.info_builder.build(data['info'])
-        servers = self.server_builder.build_list(data.get('servers', []))
-        tags = self.tag_builder.build_list(data.get('tags', []))
+        attrs_map = {
+            "servers": PropertyMeta(name="servers", cast=self.server_builder.build_list),
+            "tags": PropertyMeta(name="tags", cast=self.tag_builder.build_list),
+            "external_docs": PropertyMeta(name="externalDocs", cast=self.external_doc_builder.build),
+            "paths": PropertyMeta(name="paths", cast=self.path_builder.build_collection),
+        }
 
-        return Specification(
-            openapi=version,
-            info=info,
-            servers=servers,
-            tags=tags,
-        )
+        attrs = extract_typed_props(data, attrs_map)
+
+        attrs["version"] = version
+        attrs["info"] = self.info_builder.build(data['info'])
+
+        return Specification(**attrs)
 
 
 def _create_parser() -> Parser:
@@ -42,10 +56,23 @@ def _create_parser() -> Parser:
     server_builder = ServerBuilder()
     external_doc_builder = ExternalDocBuilder()
     tag_builder = TagBuilder(external_doc_builder)
+    schema_factory = SchemaFactory()
+    content_builder = ContentBuilder(schema_factory)
+    header_builder = HeaderBuilder(schema_factory)
+    parameter_builder = ParameterBuilder(schema_factory)
+    response_builder = ResponseBuilder(content_builder, header_builder)
+    request_builder = RequestBuilder(content_builder)
+    operation_builder = OperationBuilder(response_builder,
+                                         external_doc_builder,
+                                         request_builder,
+                                         parameter_builder)
+    path_builder = PathBuilder(operation_builder, parameter_builder)
 
     return Parser(info_builder,
                   server_builder,
-                  tag_builder)
+                  tag_builder,
+                  external_doc_builder,
+                  path_builder)
 
 
 def parse(uri: str) -> Specification:

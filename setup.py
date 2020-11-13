@@ -25,7 +25,7 @@ setup(
     description=openapi_parser.__description__,
     long_description=open(description_file).read(),
     long_description_content_type="text/markdown",
-    keywords="swagger, python, openapi-parser, parser, openapi, openapi3, swagger-api",
+    keywords="swagger, python, version-parser, parser, version, openapi3, swagger-api",
     classifiers=[
         'Development Status :: 1 - Planning',
         'License :: OSI Approved :: MIT License',

@@ -18,9 +18,6 @@ install-dev: ## Install application to Pip development environment
 	@pipenv run python setup.py develop
 	@make clean
 
-run: ## Run application entrypoint
-	@pipenv run python src/
-
 clean: ## Remove build files
 	@rm -Rf build/ dist/ *.egg-info .pytest_cache/ .mypy_cache/ .pytype/ .eggs/ src/*.egg-info
 	@echo "Temporary files were clear"

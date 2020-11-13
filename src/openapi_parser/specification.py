@@ -438,7 +438,7 @@ class Response:
     }
     """
     description: str
-    content: ContentType
+    content: Optional[ContentType] = None
     headers: HeaderCollection = field(default_factory=dict)
     # links: Dict[str, Link]
 
@@ -727,7 +727,7 @@ class Tag:
 
 @dataclass
 class Specification:
-    openapi: str
+    version: str
     info: Info
     servers: ServerList = field(default_factory=list)
     tags: TagList = field(default_factory=list)

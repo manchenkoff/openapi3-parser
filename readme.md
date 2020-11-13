@@ -48,7 +48,7 @@ Example of parser usage
 - [ ] OAuthFlow
 - [ ] OAuth2Security
 - [ ] OpenIdConnectSecurity
-- [ ] Specification
+- [x] Specification
 
 ## Features
 

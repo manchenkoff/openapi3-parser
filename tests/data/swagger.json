@@ -190,7 +190,7 @@
         }
       },
       "InternalServerError": {
-        "description": "Bad request or parameters",
+        "description": "Internal error",
         "content": {
           "application/json": {
             "schema": {

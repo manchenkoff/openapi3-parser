@@ -1,81 +1,54 @@
-import json
-from typing import Any, List
 from unittest import mock
 
 import pytest
 
-from openapi_parser.builders import InfoBuilder
-from openapi_parser.builders.server import ServerBuilder
-from openapi_parser.builders.tag import TagBuilder
 from openapi_parser.parser import Parser
-from openapi_parser.specification import Contact, Info, License, Server, ServerList, Specification, Tag, TagList
+from openapi_parser.resolver import OpenAPIResolver
+from openapi_parser.specification import Specification
+from .openapi_fixture import create_specification
 
 SWAGGER_JSON_FILEPATH = './tests/data/swagger.json'
 
 
-@pytest.fixture
-def swagger_specification() -> Specification:
-    info = Info(title="User example service",
-                version="1.0.0",
-                description="Example service specification to work with user storage",
-                license=License(name="MIT"),
-                contact=Contact(name="manchenkoff", email="artyom@manchenkoff.me"))
-
-    server_list = [
-        Server(url="https://users.app",
-               description="production"),
-        Server(url="http://stage.users.app",
-               description="staging"),
-        Server(url="http://users.local",
-               description="development"),
-    ]
-
-    tag_list = [
-        Tag(name="Users", description="User operations"),
-    ]
-
-    path_list: List[Any] = [
-        # TODO: add DTOs
-    ]
-
-    return Specification(openapi="3.0.0",
-                         info=info,
-                         servers=server_list,
-                         tags=tag_list,
-                         paths=path_list)
+@pytest.fixture()
+def swagger_specification():
+    return create_specification()
 
 
-def _create_info_builder_mock(info: Info) -> InfoBuilder:
+def _create_builder_mock(item):
     mock_object = mock.MagicMock()
-    mock_object.build.return_value = info
+    mock_object.build.return_value = item
 
     return mock_object
 
 
-def _create_server_list_builder_mock(servers: ServerList) -> ServerBuilder:
+def _create_list_builder_mock(items):
     mock_object = mock.MagicMock()
-    mock_object.build_list.return_value = servers
+    mock_object.build_list.return_value = items
 
     return mock_object
 
 
-def _create_tag_list_builder_mock(tags: TagList) -> TagBuilder:
+def _create_collection_builder_mock(collection):
     mock_object = mock.MagicMock()
-    mock_object.build_list.return_value = tags
+    mock_object.build_collection.return_value = collection
 
     return mock_object
 
 
 def test_load_specification(swagger_specification: Specification) -> None:
-    info_builder = _create_info_builder_mock(swagger_specification.info)
-    server_list_builder = _create_server_list_builder_mock(swagger_specification.servers)
-    tag_list_builder = _create_tag_list_builder_mock(swagger_specification.tags)
+    info_builder = _create_builder_mock(swagger_specification.info)
+    server_list_builder = _create_list_builder_mock(swagger_specification.servers)
+    tag_list_builder = _create_list_builder_mock(swagger_specification.tags)
+    external_doc_builder = _create_builder_mock(swagger_specification.external_docs)
+    path_builder = _create_collection_builder_mock(swagger_specification.paths)
 
     parser = Parser(info_builder,
                     server_list_builder,
-                    tag_list_builder)
+                    tag_list_builder,
+                    external_doc_builder,
+                    path_builder)
 
-    with open(SWAGGER_JSON_FILEPATH) as input_json:
-        swagger_json = json.load(input_json)
+    swagger_json = OpenAPIResolver(SWAGGER_JSON_FILEPATH).resolve()
 
     assert swagger_specification == parser.load_specification(swagger_json)
