@@ -7,7 +7,7 @@ A simple package to parse your OpenAPI 3 documents into Python object to work wi
 To install package run the following command
 
 ```
-pip install openapi-parser
+pip install openapi3-parser
 ```
 
 ## How to use

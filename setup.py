@@ -27,7 +27,7 @@ setup(
     long_description_content_type="text/markdown",
     keywords="swagger, python, version-parser, parser, version, openapi3, swagger-api",
     classifiers=[
-        'Development Status :: 1 - Planning',
+        'Development Status :: 4 - Beta',
         'License :: OSI Approved :: MIT License',
         'Operating System :: OS Independent',
         'Intended Audience :: Developers',
