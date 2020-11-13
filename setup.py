@@ -14,9 +14,9 @@ setup(
     name=openapi_parser.__title__,
     author=openapi_parser.__author__,
     author_email=openapi_parser.__email__,
-    url="https://github.com/manchenkoff/openapi-parser",
+    url="https://github.com/manchenkoff/openapi3-parser",
     project_urls={
-        "Source": "https://github.com/manchenkoff/openapi-parser",
+        "Source": "https://github.com/manchenkoff/openapi3-parser",
     },
     version=openapi_parser.__version__,
     packages=find_packages(where='src'),
