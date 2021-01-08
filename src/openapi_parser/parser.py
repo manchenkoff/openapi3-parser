@@ -51,7 +51,9 @@ class Parser:
 
         attrs["version"] = version
         attrs["info"] = self.info_builder.build(data['info'])
-        attrs["security_schemas"] = self.security_builder.build_collection(data['components']['securitySchemes'])
+
+        if data.get('components') and data['components'].get('securitySchemes'):
+            attrs["security_schemas"] = self.security_builder.build_collection(data['components']['securitySchemes'])
 
         return Specification(**attrs)
 
