@@ -42,12 +42,8 @@ Example of parser usage
 - [X] Operation
 - [x] PathItem
 - [x] Path
-- [ ] Security
-- [ ] ApiKeySecurity
-- [ ] HttpSecurity
-- [ ] OAuthFlow
-- [ ] OAuth2Security
-- [ ] OpenIdConnectSecurity
+- [x] Security
+- [x] OAuthFlow
 - [x] Specification
 
 ## Features
@@ -63,4 +59,4 @@ Example of parser usage
 - [ ] Support `not` schemas
 - [ ] Support `Parameter` [serialization style](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.3.md#fixed-fields-10)
 - [ ] Support `discriminator` model types
-- [ ] Support additional properties in dataclasses (like `example`, `style`, `explode`, etc)
+- [ ] Support additional properties in dataclasses (like `example`, `style`, `explode`, etc). See TODOs in code

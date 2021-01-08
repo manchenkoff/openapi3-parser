@@ -10,6 +10,8 @@ from .request import RequestBuilder
 from .response import ResponseBuilder
 from .operation import OperationBuilder
 from .path import PathBuilder
+from .oauth_flow import OAuthFlowBuilder
+from .security import SecurityBuilder
 
 __all__ = [
     "ExternalDocBuilder",
@@ -24,4 +26,6 @@ __all__ = [
     "ResponseBuilder",
     "OperationBuilder",
     "PathBuilder",
+    "OAuthFlowBuilder",
+    "SecurityBuilder",
 ]

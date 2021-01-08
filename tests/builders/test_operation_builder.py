@@ -109,6 +109,9 @@ data_provider = (
             "tags": [
                 "pet",
             ],
+            "security": [
+                {"Basic": []}
+            ],
             "summary": "Updates a pet in the store with form data",
             "operationId": "updatePetWithForm",
             "parameters": [
@@ -152,6 +155,7 @@ data_provider = (
                 200: response_schema
             },
             tags=["pet"],
+            security=[{"Basic": []}],
             summary="Updates a pet in the store with form data",
             operation_id="updatePetWithForm",
             parameters=parameter_list,

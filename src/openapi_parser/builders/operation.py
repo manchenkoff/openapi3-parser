@@ -32,6 +32,7 @@ class OperationBuilder:
             "deprecated": PropertyMeta(name="deprecated", cast=None),
             "parameters": PropertyMeta(name="parameters", cast=self.parameter_builder.build_collection),
             "tags": PropertyMeta(name="tags", cast=None),
+            "security": PropertyMeta(name="security", cast=None),
         }
 
         attrs = extract_typed_props(data, attrs_map)

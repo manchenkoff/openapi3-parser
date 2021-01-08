@@ -173,15 +173,15 @@ def test_security_type_error() -> None:
 
 
 auth_schema_provider = (
-    ("Basic", AuthenticationScheme.BASIC),
-    ("Bearer", AuthenticationScheme.BEARER),
-    ("Digest", AuthenticationScheme.DIGEST),
-    ("HOBA", AuthenticationScheme.HOBA),
-    ("Mutual", AuthenticationScheme.MUTUAL),
-    ("Negotiate", AuthenticationScheme.NEGOTIATE),
-    ("OAuth", AuthenticationScheme.OAUTH),
-    ("SCRAM-SHA-1", AuthenticationScheme.SCRAM_SHA1),
-    ("SCRAM-SHA-256", AuthenticationScheme.SCRAM_SHA256),
+    ("basic", AuthenticationScheme.BASIC),
+    ("bearer", AuthenticationScheme.BEARER),
+    ("digest", AuthenticationScheme.DIGEST),
+    ("hoba", AuthenticationScheme.HOBA),
+    ("mutual", AuthenticationScheme.MUTUAL),
+    ("negotiate", AuthenticationScheme.NEGOTIATE),
+    ("oauth", AuthenticationScheme.OAUTH),
+    ("scram-sha-1", AuthenticationScheme.SCRAM_SHA1),
+    ("scram-sha-256", AuthenticationScheme.SCRAM_SHA256),
     ("vapid", AuthenticationScheme.VAPID),
 )
 

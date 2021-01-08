@@ -1,5 +1,8 @@
 openapi: 3.0.0
 
+security:
+  - Basic: []
+
 info:
   title: 'User example service'
   version: 1.0.0
@@ -46,6 +49,8 @@ paths:
       summary: 'Add new user'
       description: 'Method to add new user'
       operationId: AddUser
+      security:
+        - Basic: []
       tags:
         - Users
       requestBody:
@@ -88,6 +93,11 @@ paths:
           $ref: '#/components/responses/Empty'
 
 components:
+  securitySchemes:
+    Basic:
+      type: http
+      scheme: basic
+
   parameters:
     Limit:
       name: limit

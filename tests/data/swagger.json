@@ -12,6 +12,11 @@
       "email": "artyom@manchenkoff.me"
     }
   },
+  "security": [
+    {
+      "Basic": []
+    }
+  ],
   "servers": [
     {
       "url": "https://users.app",
@@ -130,6 +135,12 @@
     }
   },
   "components": {
+    "securitySchemes": {
+      "Basic": {
+        "type": "http",
+        "scheme": "basic"
+      }
+    },
     "parameters": {
       "Limit": {
         "name": "limit",

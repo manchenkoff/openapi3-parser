@@ -83,15 +83,15 @@ class SecurityType(Enum):
 
 @unique
 class AuthenticationScheme(Enum):
-    BASIC = 'Basic'
-    BEARER = 'Bearer'
-    DIGEST = 'Digest'
-    HOBA = 'HOBA'
-    MUTUAL = 'Mutual'
-    NEGOTIATE = 'Negotiate'
-    OAUTH = 'OAuth'
-    SCRAM_SHA1 = 'SCRAM-SHA-1'
-    SCRAM_SHA256 = 'SCRAM-SHA-256'
+    BASIC = 'basic'
+    BEARER = 'bearer'
+    DIGEST = 'digest'
+    HOBA = 'hoba'
+    MUTUAL = 'mutual'
+    NEGOTIATE = 'negotiate'
+    OAUTH = 'oauth'
+    SCRAM_SHA1 = 'scram-sha-1'
+    SCRAM_SHA256 = 'scram-sha-256'
     VAPID = 'vapid'
 
 

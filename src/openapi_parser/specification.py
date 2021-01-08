@@ -7,7 +7,8 @@ PropertyList = List['Property']
 ContentType = Dict[MediaType, 'Content']
 HeaderCollection = Dict[str, 'Header']
 ResponseCollection = Dict[int, 'Response']
-# SecurityList = List['Security']
+SecurityCollection = Dict[str, 'Security']
+SecurityList = List[Dict[str, Any]]
 OperationCollection = Dict[OperationMethod, 'Operation']
 ParameterList = List['Parameter']
 ServerList = List['Server']
@@ -139,10 +140,10 @@ class Schema:
     write_only: Optional[bool] = None
     deprecated: Optional[bool] = None
 
-    # all_of: Any
-    # one_of: Any
-    # any_of: Any
-    # not: Any
+    # all_of: Any  # TODO
+    # one_of: Any  # TODO
+    # any_of: Any  # TODO
+    # not: Any  # TODO
 
     def __post_init__(self) -> None:
         """
@@ -261,7 +262,7 @@ class Object(Schema):
     min_properties: Optional[int] = None
     required: List[str] = field(default_factory=list)
     properties: PropertyList = field(default_factory=list)
-    # additional_properties: Optional[Union[bool, Schema]] = field(default=True)
+    # additional_properties: Optional[Union[bool, Schema]] = field(default=True)  # TODO
 
 
 @dataclass
@@ -312,12 +313,12 @@ class Parameter:
     required: bool
     schema: Schema
     description: Optional[str] = None
-    # example: Optional[Any]
-    # examples: List[Any] = field(default_factory=list)
+    # example: Optional[Any]  # TODO
+    # examples: List[Any] = field(default_factory=list)  # TODO
     deprecated: Optional[bool] = field(default=False)
-    # style: str
-    # explode: bool
-    # allow_reserved: bool
+    # style: str  # TODO
+    # explode: bool  # TODO
+    # allow_reserved: bool  # TODO
 
 
 @dataclass
@@ -358,9 +359,9 @@ class Content:
     }
     """
     schema: Schema
-    # example: Optional[Any]
-    # examples: List[Any] = field(default_factory=list)
-    # encoding: Dict[str, Encoding]
+    # example: Optional[Any]  # TODO
+    # examples: List[Any] = field(default_factory=list)  # TODO
+    # encoding: Dict[str, Encoding]  # TODO
 
 
 @dataclass
@@ -440,52 +441,7 @@ class Response:
     description: str
     content: Optional[ContentType] = None
     headers: HeaderCollection = field(default_factory=dict)
-    # links: Dict[str, Link]
-
-
-@dataclass
-class Security:
-    """
-    {
-      "type": "apiKey",
-      "name": "api_key",
-      "in": "header",
-      "description": "authorization key to communicate with API"
-    }
-    """
-    type: SecurityType
-    description: Optional[str]
-
-
-@dataclass
-class ApiKeySecurity(Security):
-    """
-    {
-      "type": "apiKey",
-      "name": "api_key",
-      "in": "header"
-    }
-    """
-    name: str
-    location: BaseLocation
-
-
-@dataclass
-class HttpSecurity(Security):
-    """
-    {
-      "type": "http",
-      "scheme": "basic"
-    }
-    OR
-    {
-      "type": "http",
-      "scheme": "bearer",
-      "bearerFormat": "JWT",
-    }
-    """
-    scheme: AuthenticationScheme
-    bearer_format: Optional[str]
+    # links: Dict[str, Link]  # TODO
 
 
 @dataclass
@@ -501,15 +457,33 @@ class OAuthFlow:
         }
     }
     """
-    refresh_url: Optional[str]
-    authorization_url: Optional[str]
-    token_url: Optional[str]
+    refresh_url: Optional[str] = None
+    authorization_url: Optional[str] = None
+    token_url: Optional[str] = None
     scopes: Dict[str, str] = field(default_factory=dict)
 
 
 @dataclass
-class OAuth2Security(Security):
+class Security:
     """
+    {
+      "type": "apiKey",
+      "name": "api_key",
+      "in": "header",
+      "description": "authorization key to communicate with API"
+    }
+    OR
+    {
+      "type": "http",
+      "scheme": "basic"
+    }
+    OR
+    {
+      "type": "http",
+      "scheme": "bearer",
+      "bearerFormat": "JWT",
+    }
+    OR
     {
       "type": "oauth2",
       "flows": {
@@ -530,20 +504,20 @@ class OAuth2Security(Security):
         }
       }
     }
-    """
-    flows: Dict[OAuthFlowType, OAuthFlow]
-
-
-@dataclass
-class OpenIdConnectSecurity(Security):
-    """
+    OR
     {
-        "openIdConnect": {
-          "openIdConnectUrl": "https://example.com/api/openid",
-        }
+      "type": "openIdConnect",
+      "openIdConnectUrl": "https://example.com/api/openid",
     }
     """
-    url: str
+    type: SecurityType
+    location: Optional[BaseLocation] = None
+    description: Optional[str] = None
+    name: Optional[str] = None
+    scheme: Optional[AuthenticationScheme] = None
+    bearer_format: Optional[str] = None
+    flows: Dict[OAuthFlowType, OAuthFlow] = field(default_factory=dict)
+    url: Optional[str] = None
 
 
 @dataclass
@@ -621,8 +595,8 @@ class Operation:
     deprecated: Optional[bool] = field(default=False)
     parameters: ParameterList = field(default_factory=list)
     tags: List[str] = field(default_factory=list)
-    # security: SecurityList = field(default_factory=list)
-    # callbacks: Dict[str, Callback] = field(default_factory=dict)
+    security: SecurityList = field(default_factory=list)
+    # callbacks: Dict[str, Callback] = field(default_factory=dict)  # TODO
 
 
 @dataclass
@@ -731,6 +705,7 @@ class Specification:
     info: Info
     servers: ServerList = field(default_factory=list)
     tags: TagList = field(default_factory=list)
-    # security: SecurityList = field(default_factory=list)
+    security_schemas: SecurityCollection = field(default_factory=dict)
+    security: SecurityList = field(default_factory=list)
     external_docs: Optional[ExternalDoc] = None
     paths: PathList = field(default_factory=list)

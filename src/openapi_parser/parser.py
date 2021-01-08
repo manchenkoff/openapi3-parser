@@ -11,18 +11,21 @@ class Parser:
     tag_builder: TagBuilder
     external_doc_builder: ExternalDocBuilder
     path_builder: PathBuilder
+    security_builder: SecurityBuilder
 
     def __init__(self,
                  info_builder: InfoBuilder,
                  server_builder: ServerBuilder,
                  tags_builder: TagBuilder,
                  external_doc_builder: ExternalDocBuilder,
-                 path_builder: PathBuilder) -> None:
+                 path_builder: PathBuilder,
+                 security_builder: SecurityBuilder) -> None:
         self.info_builder = info_builder
         self.server_builder = server_builder
         self.tag_builder = tags_builder
         self.external_doc_builder = external_doc_builder
         self.path_builder = path_builder
+        self.security_builder = security_builder
 
     def load_specification(self, data: dict) -> Specification:
         """
@@ -41,12 +44,14 @@ class Parser:
             "tags": PropertyMeta(name="tags", cast=self.tag_builder.build_list),
             "external_docs": PropertyMeta(name="externalDocs", cast=self.external_doc_builder.build),
             "paths": PropertyMeta(name="paths", cast=self.path_builder.build_collection),
+            "security": PropertyMeta(name="security", cast=None),
         }
 
         attrs = extract_typed_props(data, attrs_map)
 
         attrs["version"] = version
         attrs["info"] = self.info_builder.build(data['info'])
+        attrs["security_schemas"] = self.security_builder.build_collection(data['components']['securitySchemes'])
 
         return Specification(**attrs)
 
@@ -67,12 +72,15 @@ def _create_parser() -> Parser:
                                          request_builder,
                                          parameter_builder)
     path_builder = PathBuilder(operation_builder, parameter_builder)
+    oauth_flow_builder = OAuthFlowBuilder()
+    security_builder = SecurityBuilder(oauth_flow_builder)
 
     return Parser(info_builder,
                   server_builder,
                   tag_builder,
                   external_doc_builder,
-                  path_builder)
+                  path_builder,
+                  security_builder)
 
 
 def parse(uri: str) -> Specification:

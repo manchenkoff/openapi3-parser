@@ -1,7 +1,8 @@
-from openapi_parser.enumeration import DataType, MediaType, OperationMethod, ParameterLocation, StringFormat
+from openapi_parser.enumeration import AuthenticationScheme, DataType, MediaType, OperationMethod, ParameterLocation, \
+    SecurityType, StringFormat
 from openapi_parser.specification import Array, Contact, Content, Info, Integer, \
     License, Object, Operation, Parameter, Path, PathItem, PathList, Property, \
-    RequestBody, Response, Server, Specification, String, Tag
+    RequestBody, Response, Security, Server, Specification, String, Tag
 
 schema_user = Object(
     type=DataType.OBJECT,
@@ -147,6 +148,17 @@ def create_specification() -> Specification:
         Tag(name="Users", description="User operations"),
     ]
 
+    security_schemes = {
+        "Basic": Security(
+            type=SecurityType.HTTP,
+            scheme=AuthenticationScheme.BASIC
+        ),
+    }
+
+    security = [
+        {"Basic": []}
+    ]
+
     path_list: PathList = [
         Path(
             pattern="/users",
@@ -277,4 +289,6 @@ def create_specification() -> Specification:
                          info=info,
                          servers=server_list,
                          tags=tag_list,
-                         paths=path_list)
+                         paths=path_list,
+                         security_schemas=security_schemes,
+                         security=security)

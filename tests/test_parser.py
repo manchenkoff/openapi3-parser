@@ -42,12 +42,14 @@ def test_load_specification(swagger_specification: Specification) -> None:
     tag_list_builder = _create_list_builder_mock(swagger_specification.tags)
     external_doc_builder = _create_builder_mock(swagger_specification.external_docs)
     path_builder = _create_collection_builder_mock(swagger_specification.paths)
+    security_builder = _create_collection_builder_mock(swagger_specification.security_schemas)
 
     parser = Parser(info_builder,
                     server_list_builder,
                     tag_list_builder,
                     external_doc_builder,
-                    path_builder)
+                    path_builder,
+                    security_builder)
 
     swagger_json = OpenAPIResolver(SWAGGER_JSON_FILEPATH).resolve()
 
