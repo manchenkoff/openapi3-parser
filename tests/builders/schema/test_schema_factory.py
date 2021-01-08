@@ -3,6 +3,7 @@ from unittest.mock import MagicMock
 
 import pytest
 
+from openapi_parser.builders.common import extract_extension_attributes
 from openapi_parser.builders.schema import merge_all_of_schemas, SchemaFactory
 from openapi_parser.enumeration import DataType
 from openapi_parser.errors import ParserError
@@ -206,3 +207,32 @@ merge_schemas_data_provider = (
 @pytest.mark.parametrize(['original_data', 'expected'], merge_schemas_data_provider)
 def test_merge_all_of_schemas(original_data: dict, expected: dict):
     assert merge_all_of_schemas(original_data) == expected
+
+
+extension_schema_provider = (
+    (
+        {
+            "type": "object",
+            "title": "Object with extension attributes",
+            "x-number-attribute": 123,
+            "x-boolean-attribute": False,
+            "x-object-attribute": {
+                "key1": "value",
+                "key2": "another value"
+            },
+        },
+        {
+            "number_attribute": 123,
+            "boolean_attribute": False,
+            "object_attribute": {
+                "key1": "value",
+                "key2": "another value"
+            },
+        },
+    ),
+)
+
+
+@pytest.mark.parametrize(['original_data', 'expected'], extension_schema_provider)
+def test_extension_attributes_extracting(original_data: dict, expected: dict):
+    assert extract_extension_attributes(original_data) == expected

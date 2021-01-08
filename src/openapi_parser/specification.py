@@ -139,6 +139,7 @@ class Schema:
     read_only: Optional[bool] = None
     write_only: Optional[bool] = None
     deprecated: Optional[bool] = None
+    extensions: Optional[dict] = field(default_factory=dict)
 
     # all_of: Any  # TODO
     # one_of: Any  # TODO

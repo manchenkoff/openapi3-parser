@@ -52,7 +52,7 @@ Example of parser usage
 - [x] Parsing all the sections into Python `dataclass`
 - [x] Support many `Enum` values to simplify work with `format`, `type`, etc
 - [x] Auto-resolve `$ref` links with [Prance](https://pypi.org/project/prance)
-- [ ] Support custom `x-*` [attributes](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.3.md#specificationExtensions)
+- [x] Support custom `x-*` [attributes](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.3.md#specificationExtensions)
 - [x] Support automatic merge `allOf` schemas into one while resolving
 - [ ] Support `oneOf` schemas
 - [ ] Support `anyOf` schemas

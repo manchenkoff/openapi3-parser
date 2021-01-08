@@ -1,6 +1,6 @@
 from typing import Any, Callable, Dict
 
-from .common import extract_typed_props, PropertyMeta
+from .common import extract_extension_attributes, extract_typed_props, merge_dicts, PropertyMeta
 from ..enumeration import DataType, IntegerFormat, NumberFormat, StringFormat
 from ..errors import ParserError
 from ..specification import Array, Integer, Number, Object, Property, PropertyList, Schema, String
@@ -34,6 +34,8 @@ def extract_attrs(data: dict, attrs_map: Dict[str, PropertyMeta]) -> Dict[str, A
 
     attrs.update(extract_typed_props(data, attrs_map))
 
+    attrs['extensions'] = extract_extension_attributes(data)
+
     return attrs
 
 
@@ -41,20 +43,9 @@ def merge_all_of_schemas(original_data: dict) -> dict:
     schema_dict: dict = {}
 
     for nested_schema_dict in original_data[ALL_OF_SCHEMAS_KEY]:
-        schema_dict = _merge_dicts(schema_dict, nested_schema_dict)
+        schema_dict = merge_dicts(schema_dict, nested_schema_dict)
 
     return schema_dict
-
-
-def _merge_dicts(original: dict, other: dict) -> dict:
-    source = original.copy()
-
-    for key, value in other.items():
-        source[key] = value \
-            if key not in source \
-            else (_merge_dicts(source[key], value) if isinstance(value, dict) else value)
-
-    return source
 
 
 class SchemaFactory:
