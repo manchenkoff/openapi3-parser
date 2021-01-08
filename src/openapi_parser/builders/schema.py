@@ -7,6 +7,8 @@ from ..specification import Array, Integer, Number, Object, Property, PropertyLi
 
 SchemaBuilderMethod = Callable[[dict], Schema]
 
+ALL_OF_SCHEMAS_KEY = 'allOf'
+
 
 def extract_attrs(data: dict, attrs_map: Dict[str, PropertyMeta]) -> Dict[str, Any]:
     base_attrs_map = {
@@ -35,6 +37,26 @@ def extract_attrs(data: dict, attrs_map: Dict[str, PropertyMeta]) -> Dict[str, A
     return attrs
 
 
+def merge_all_of_schemas(original_data: dict) -> dict:
+    schema_dict: dict = {}
+
+    for nested_schema_dict in original_data[ALL_OF_SCHEMAS_KEY]:
+        schema_dict = _merge_dicts(schema_dict, nested_schema_dict)
+
+    return schema_dict
+
+
+def _merge_dicts(original: dict, other: dict) -> dict:
+    source = original.copy()
+
+    for key, value in other.items():
+        source[key] = value \
+            if key not in source \
+            else (_merge_dicts(source[key], value) if isinstance(value, dict) else value)
+
+    return source
+
+
 class SchemaFactory:
     _builders: Dict[DataType, SchemaBuilderMethod]
 
@@ -54,6 +76,9 @@ class SchemaFactory:
             data_type = DataType(schema_type)
         except ValueError:
             raise ParserError(f"Invalid schema type '{schema_type}'")
+
+        if ALL_OF_SCHEMAS_KEY in data.keys():
+            data = merge_all_of_schemas(data)
 
         try:
             builder_func = self._builders[data_type]

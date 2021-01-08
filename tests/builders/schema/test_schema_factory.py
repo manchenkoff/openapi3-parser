@@ -3,7 +3,7 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from openapi_parser.builders.schema import SchemaFactory
+from openapi_parser.builders.schema import merge_all_of_schemas, SchemaFactory
 from openapi_parser.enumeration import DataType
 from openapi_parser.errors import ParserError
 
@@ -17,7 +17,7 @@ def container():
     }
 
 
-data_provider = (
+schema_data_provider = (
     (
         {"type": "integer"},
         DataType.INTEGER
@@ -41,7 +41,7 @@ data_provider = (
 )
 
 
-@pytest.mark.parametrize(['data', 'expected_type'], data_provider)
+@pytest.mark.parametrize(['data', 'expected_type'], schema_data_provider)
 def test_create(data: dict, expected_type: DataType, container: Dict[DataType, MagicMock]):
     factory = SchemaFactory()
     factory._builders = container
@@ -66,3 +66,143 @@ def test_container_error():
 
     with pytest.raises(ParserError, match="Unsupported schema type"):
         factory.create(data)
+
+
+merge_schemas_data_provider = (
+    (
+        {
+            "allOf": [
+                {
+                    "type": "object",
+                },
+                {
+                    "title": "UserDTO",
+                    "description": "User Data Transfer Object",
+                },
+                {
+                    "title": "UserDTO",
+                    "description": "Replaced Description",
+                },
+            ],
+        },
+        {
+            "type": "object",
+            "title": "UserDTO",
+            "description": "Replaced Description",
+        }
+    ),
+    (
+        {
+            "allOf": [
+                {
+                    "type": "object",
+                },
+                {
+                    "title": "UserDTO",
+                    "description": "User Data Transfer Object",
+                },
+                {
+                    "description": "Replaced Description",
+                },
+                {
+                    "properties": {
+                        "login": {"type": "string"},
+                        "email": {"type": "string"},
+                    },
+                },
+                {
+                    "properties": {
+                        "firstname": {"type": "string"},
+                        "lastname": {"type": "string"},
+                    },
+                },
+            ],
+        },
+        {
+            "type": "object",
+            "title": "UserDTO",
+            "description": "Replaced Description",
+            "properties": {
+                "login": {"type": "string"},
+                "email": {"type": "string"},
+                "firstname": {"type": "string"},
+                "lastname": {"type": "string"},
+            }
+        }
+    ),
+    (
+        {
+            "allOf": [
+                {
+                    "type": "object",
+                    "title": "UserDTO",
+                    "description": "User Data Transfer Object",
+                },
+                {
+                    "properties": {
+                        "login": {"type": "string"},
+                        "email": {"type": "object"},
+                        "info": {
+                            "type": "object",
+                            "properties": {
+                                "first_name": {"type": "string"},
+                                "last_name": {"type": "string"},
+                                "card": {
+                                    "type": "object",
+                                    "properties": {
+                                        "holder": {"type": "string", "required": True},
+                                        "number": {"type": "integer", "required": True},
+                                    }
+                                },
+                            },
+                        },
+                    },
+                },
+                {
+                    "properties": {
+                        "email": {"type": "string", "example": "john@doe.com"},
+                        "info": {
+                            "properties": {
+                                "last_name": {"type": "string", "required": True},
+                                "card": {
+                                    "properties": {
+                                        "cvc": {"type": "integer", "required": True},
+                                    }
+                                }
+                            },
+                        },
+                    },
+                },
+            ],
+        },
+        {
+            "type": "object",
+            "title": "UserDTO",
+            "description": "User Data Transfer Object",
+            "properties": {
+                "login": {"type": "string"},
+                "email": {"type": "string", "example": "john@doe.com"},
+                "info": {
+                    "type": "object",
+                    "properties": {
+                        "first_name": {"type": "string"},
+                        "last_name": {"type": "string", "required": True},
+                        "card": {
+                            "type": "object",
+                            "properties": {
+                                "holder": {"type": "string", "required": True},
+                                "number": {"type": "integer", "required": True},
+                                "cvc": {"type": "integer", "required": True},
+                            }
+                        },
+                    },
+                },
+            }
+        }
+    ),
+)
+
+
+@pytest.mark.parametrize(['original_data', 'expected'], merge_schemas_data_provider)
+def test_merge_all_of_schemas(original_data: dict, expected: dict):
+    assert merge_all_of_schemas(original_data) == expected

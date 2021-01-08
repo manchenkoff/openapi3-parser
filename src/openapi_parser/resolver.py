@@ -28,8 +28,6 @@ class OpenAPIResolver:
         try:
             self._resolver.parse()
 
-            # TODO: merge allOf schemas into one
-
             return self._resolver.specification
         except prance.ValidationError:
             raise ParserError("OpenAPI specification validation error")
