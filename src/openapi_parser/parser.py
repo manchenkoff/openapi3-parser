@@ -94,7 +94,4 @@ def parse(uri: str) -> Specification:
 
     parser = _create_parser()
 
-    # TODO: Raise errors in edge-cases of validation and parsing
-    # Example: openapi_parser.builders.schema.extract_attrs - DataType -> ValueError if not exists
-
     return parser.load_specification(specification)

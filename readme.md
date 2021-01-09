@@ -20,44 +20,57 @@ Example of parser usage
 >>> print(content)
 ```
 
-## Supported specification schemas
-- [x] Contact
-- [x] License
-- [x] Info
-- [x] Server
-- [x] ExternalDoc
-- [x] Tag
-- [x] Schema
-- [x] Integer schema
-- [x] Number schema
-- [x] String schema
-- [x] Array schema
-- [x] Object schema
-- [x] Property
-- [x] Parameter
-- [x] Header
-- [x] Content
-- [x] RequestBody
-- [x] Response
-- [X] Operation
-- [x] PathItem
-- [x] Path
-- [x] Security
-- [x] OAuthFlow
-- [x] Specification
+Get application servers
 
-## Features
+```python
+from openapi_parser import parse
 
-- [x] OpenAPI's validation with `openapi-spec-validator`
-- [x] Parsing all the sections into Python `dataclass`
-- [x] Support many `Enum` values to simplify work with `format`, `type`, etc
-- [x] Auto-resolve `$ref` links with [Prance](https://pypi.org/project/prance)
-- [x] Support custom `x-*` [attributes](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.3.md#specificationExtensions)
-- [x] Support automatic merge `allOf` schemas into one while resolving
-- [ ] Support `oneOf` schemas
-- [ ] Support `anyOf` schemas
-- [ ] Support `not` schemas
-- [ ] Support `Parameter` [serialization style](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.3.md#fixed-fields-10)
-- [ ] Support `discriminator` model types
-- [ ] Support additional properties in dataclasses (like `example`, `style`, `explode`, etc). See TODOs in code
-- [ ] Functions and methods documentation
+specification = parse('data/swagger.yml')
+
+print("Application servers")
+
+for server in specification.servers:
+    print(f"{server.description} - {server.url}")
+
+# Output
+#
+# >> Application servers
+# >> production - https://users.app
+# >> staging - http://stage.users.app
+# >> development - http://users.local
+```
+
+Get list of application URLs
+
+```python
+from openapi_parser import parse
+
+specification = parse('tests/data/swagger.yml')
+
+urls = [x.pattern for x in specification.paths]
+
+print(urls)
+
+# Output
+#
+# >> ['/users', '/users/{uuid}']
+```
+
+Get operation with supported HTTP methods
+
+```python
+from openapi_parser import parse
+
+specification = parse('tests/data/swagger.yml')
+
+for operation in specification.paths:
+    pattern = operation.pattern
+    supported_methods = ','.join([x.name for x in operation.item.operations])
+    
+    print(f"Operation: {pattern}, methods: {supported_methods}")
+
+# Output
+#
+# >> Operation: /users, methods: GET,POST
+# >> Operation: /users/{uuid}, methods: GET,PUT
+```
