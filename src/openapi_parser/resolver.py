@@ -29,5 +29,5 @@ class OpenAPIResolver:
             self._resolver.parse()
 
             return self._resolver.specification
-        except prance.ValidationError:
-            raise ParserError("OpenAPI specification validation error")
+        except prance.ValidationError as error:
+            raise ParserError(f"OpenAPI specification validation error: {error}")
