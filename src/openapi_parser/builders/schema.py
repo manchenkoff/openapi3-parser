@@ -3,7 +3,7 @@ from typing import Any, Callable, Dict
 from .common import extract_extension_attributes, extract_typed_props, merge_dicts, PropertyMeta
 from ..enumeration import DataType, IntegerFormat, NumberFormat, StringFormat
 from ..errors import ParserError
-from ..specification import Array, Integer, Number, Object, Property, PropertyList, Schema, String
+from ..specification import Array, Boolean, Integer, Number, Object, Property, PropertyList, Schema, String
 
 SchemaBuilderMethod = Callable[[dict], Schema]
 
@@ -56,6 +56,7 @@ class SchemaFactory:
             DataType.INTEGER: self._integer,
             DataType.NUMBER: self._number,
             DataType.STRING: self._string,
+            DataType.BOOLEAN: self._boolean,
             DataType.ARRAY: self._array,
             DataType.OBJECT: self._object,
         }
@@ -114,6 +115,10 @@ class SchemaFactory:
         }
 
         return String(**extract_attrs(data, attrs_map))
+
+    @staticmethod
+    def _boolean(data: dict) -> Boolean:
+        return Boolean(**extract_attrs(data, {}))
 
     def _array(self, data: dict) -> Array:
         attrs_map = {
