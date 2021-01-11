@@ -1,6 +1,6 @@
 from typing import Any, Callable, Dict
 
-from .common import extract_extension_attributes, extract_typed_props, merge_dicts, PropertyMeta
+from .common import extract_extension_attributes, extract_typed_props, merge_schema, PropertyMeta
 from ..enumeration import DataType, IntegerFormat, NumberFormat, StringFormat
 from ..errors import ParserError
 from ..specification import Array, Boolean, Integer, Number, Object, Property, PropertyList, Schema, String
@@ -47,7 +47,7 @@ def merge_all_of_schemas(original_data: dict) -> dict:
 
     for nested_schema_dict in original_data[ALL_OF_SCHEMAS_KEY]:
         merged_nested_schema = merge_all_of_schemas(nested_schema_dict)
-        schema_dict = merge_dicts(schema_dict, merged_nested_schema)
+        schema_dict = merge_schema(schema_dict, merged_nested_schema)
 
     return schema_dict
 

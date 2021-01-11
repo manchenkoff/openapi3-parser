@@ -12,7 +12,7 @@ schema_user = Object(
             name="uuid",
             schema=String(
                 type=DataType.STRING,
-                description="Unique user id",
+                description="Unique object id",
                 example="12345678-1234-5678-1234-567812345678",
                 format=StringFormat.UUID,
             )
@@ -196,10 +196,13 @@ def create_specification() -> Specification:
                         description="Method to add new user",
                         operation_id="AddUser",
                         tags=["Users"],
+                        security=[
+                            {'Basic': []}
+                        ],
                         request_body=RequestBody(
                             description="New user model request",
                             content={
-                                MediaType.JSON: Content(schema=user_list_schema),
+                                MediaType.JSON: Content(schema=schema_user),
                             }
                         ),
                         responses={
@@ -213,7 +216,7 @@ def create_specification() -> Specification:
                                             properties=[
                                                 Property(
                                                     name="user",
-                                                    schema=user_list_schema,
+                                                    schema=schema_user,
                                                 ),
                                             ],
                                         ),
@@ -259,7 +262,7 @@ def create_specification() -> Specification:
                                             properties=[
                                                 Property(
                                                     name="user",
-                                                    schema=user_list_schema,
+                                                    schema=schema_user,
                                                 ),
                                             ],
                                         ),

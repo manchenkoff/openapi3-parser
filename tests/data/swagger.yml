@@ -1,7 +1,7 @@
 openapi: 3.0.0
 
 security:
-  - Basic: []
+  - Basic: [ ]
 
 info:
   title: 'User example service'
@@ -39,29 +39,29 @@ paths:
         - $ref: '#/components/parameters/Limit'
         - $ref: '#/components/parameters/Offset'
       responses:
+        200:
+          $ref: '#/components/responses/GetUserListResponse'
         400:
           $ref: '#/components/responses/BadRequest'
         500:
           $ref: '#/components/responses/InternalServerError'
-        200:
-          $ref: '#/components/responses/GetUserListResponse'
     post:
       summary: 'Add new user'
       description: 'Method to add new user'
       operationId: AddUser
       security:
-        - Basic: []
+        - Basic: [ ]
       tags:
         - Users
       requestBody:
         $ref: '#/components/requestBodies/AddUserRequest'
       responses:
+        201:
+          $ref: '#/components/responses/AddUserResponse'
         400:
           $ref: '#/components/responses/BadRequest'
         500:
           $ref: '#/components/responses/InternalServerError'
-        201:
-          $ref: '#/components/responses/AddUserResponse'
 
   /users/{uuid}:
     parameters:
@@ -73,24 +73,24 @@ paths:
       tags:
         - Users
       responses:
+        200:
+          $ref: '#/components/responses/UserResponse'
         400:
           $ref: '#/components/responses/BadRequest'
         500:
           $ref: '#/components/responses/InternalServerError'
-        200:
-          $ref: '#/components/responses/UserResponse'
     put:
       summary: 'Update existed user model'
       operationId: UpdateUser
       tags:
         - Users
       responses:
+        200:
+          $ref: '#/components/responses/Empty'
         400:
           $ref: '#/components/responses/BadRequest'
         500:
           $ref: '#/components/responses/InternalServerError'
-        200:
-          $ref: '#/components/responses/Empty'
 
 components:
   securitySchemes:
@@ -229,24 +229,30 @@ components:
           example: 'Unexpected server error'
           description: 'Error details'
 
-    User:
+    UUIDObject:
       type: object
       required:
         - uuid
-        - login
-        - email
       properties:
         uuid:
           type: string
           format: uuid
           example: '12345678-1234-5678-1234-567812345678'
-          description: 'Unique user id'
-        login:
-          type: string
-          example: 'super-admin'
-          description: 'User login or nickname'
-        email:
-          type: string
-          format: email
-          example: 'user@mail.com'
-          description: 'User E-mail address'
+          description: 'Unique object id'
+
+    User:
+      allOf:
+        - $ref: '#/components/schemas/UUIDObject'
+        - required:
+            - login
+            - email
+        - properties:
+            login:
+              type: string
+              example: 'super-admin'
+              description: 'User login or nickname'
+            email:
+              type: string
+              format: email
+              example: 'user@mail.com'
+              description: 'User E-mail address'

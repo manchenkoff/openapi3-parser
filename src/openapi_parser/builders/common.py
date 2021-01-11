@@ -24,13 +24,19 @@ def extract_typed_props(data: dict, attrs_map: Dict[str, PropertyMeta]) -> Dict[
     return custom_attrs
 
 
-def merge_dicts(original: dict, other: dict) -> dict:
+def merge_schema(original: dict, other: dict) -> dict:
     source = original.copy()
 
     for key, value in other.items():
-        source[key] = value \
-            if key not in source \
-            else (merge_dicts(source[key], value) if isinstance(value, dict) else value)
+        if key not in source:
+            source[key] = value
+        else:
+            if isinstance(value, list):
+                source[key].extend(value)
+            elif isinstance(value, dict):
+                source[key] = merge_schema(source[key], value)
+            else:
+                source[key] = value
 
     return source
 
