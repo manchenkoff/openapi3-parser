@@ -67,7 +67,7 @@ class MediaType(Enum):
     XML = 'application/xml'
     FORM = 'application/x-www-form-urlencoded'
     MULTIPART_FORM = 'multipart_form/form-data'
-    PLAIN_TEXT = 'text/plain; charset=utf-8'
+    PLAIN_TEXT = 'text/plain'
     HTML = 'text/html'
     PDF = 'application/pdf'
     PNG = 'image/png'

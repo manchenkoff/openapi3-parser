@@ -40,10 +40,14 @@ def extract_attrs(data: dict, attrs_map: Dict[str, PropertyMeta]) -> Dict[str, A
 
 
 def merge_all_of_schemas(original_data: dict) -> dict:
+    if ALL_OF_SCHEMAS_KEY not in original_data.keys():
+        return original_data
+
     schema_dict: dict = {}
 
     for nested_schema_dict in original_data[ALL_OF_SCHEMAS_KEY]:
-        schema_dict = merge_dicts(schema_dict, nested_schema_dict)
+        merged_nested_schema = merge_all_of_schemas(nested_schema_dict)
+        schema_dict = merge_dicts(schema_dict, merged_nested_schema)
 
     return schema_dict
 
@@ -62,8 +66,7 @@ class SchemaFactory:
         }
 
     def create(self, data: dict) -> Schema:
-        if ALL_OF_SCHEMAS_KEY in data.keys():
-            data = merge_all_of_schemas(data)
+        data = merge_all_of_schemas(data)
 
         schema_type = data['type']
 

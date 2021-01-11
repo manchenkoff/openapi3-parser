@@ -137,7 +137,7 @@ media_type_provider = (
     ("application/xml", MediaType.XML),
     ("application/x-www-form-urlencoded", MediaType.FORM),
     ("multipart_form/form-data", MediaType.MULTIPART_FORM),
-    ("text/plain; charset=utf-8", MediaType.PLAIN_TEXT),
+    ("text/plain", MediaType.PLAIN_TEXT),
     ("text/html", MediaType.HTML),
     ("application/pdf", MediaType.PDF),
     ("image/png", MediaType.PNG),

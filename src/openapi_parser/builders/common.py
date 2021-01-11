@@ -13,7 +13,7 @@ def extract_typed_props(data: dict, attrs_map: Dict[str, PropertyMeta]) -> Dict[
                 if type_cast_func is not None \
                 else value
         except ValueError:
-            raise ParserError(f"Invalid '{name}' property value for type: {type_cast_func}")
+            raise ParserError(f"Invalid '{name}' property value of value: {value}")
 
     custom_attrs = {
         attr_name: cast_value(attr_info.name, data[attr_info.name], attr_info.cast)
