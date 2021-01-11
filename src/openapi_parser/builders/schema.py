@@ -62,15 +62,15 @@ class SchemaFactory:
         }
 
     def create(self, data: dict) -> Schema:
+        if ALL_OF_SCHEMAS_KEY in data.keys():
+            data = merge_all_of_schemas(data)
+
         schema_type = data['type']
 
         try:
             data_type = DataType(schema_type)
         except ValueError:
             raise ParserError(f"Invalid schema type '{schema_type}'")
-
-        if ALL_OF_SCHEMAS_KEY in data.keys():
-            data = merge_all_of_schemas(data)
 
         try:
             builder_func = self._builders[data_type]
