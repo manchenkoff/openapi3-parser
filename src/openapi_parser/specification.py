@@ -209,6 +209,15 @@ class String(Schema):
 
 
 @dataclass
+class Boolean(Schema):
+    """
+    {
+      "type": "boolean",
+    }
+    """
+
+
+@dataclass
 class Array(Schema):
     """
     {
