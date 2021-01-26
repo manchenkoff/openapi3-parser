@@ -3,9 +3,8 @@ from unittest.mock import MagicMock
 import pytest
 
 from openapi_parser.builders import OperationBuilder, ParameterBuilder, PathBuilder
-from openapi_parser.enumeration import DataType, MediaType, OperationMethod, ParameterLocation
-from openapi_parser.specification import Array, Content, Operation, Parameter, Path, PathItem, PathList, Response, \
-    String
+from openapi_parser.enumeration import ContentType, DataType, OperationMethod, ParameterLocation
+from openapi_parser.specification import Array, Content, Operation, Parameter, Path, Response, String
 
 
 def _get_builder_mock(expected_value):
@@ -15,9 +14,9 @@ def _get_builder_mock(expected_value):
     return mock_object
 
 
-def _get_builder_collection_mock(expected_value):
+def _get_builder_list_mock(expected_value):
     mock_object = MagicMock()
-    mock_object.build_collection.return_value = expected_value
+    mock_object.build_list.return_value = expected_value
 
     return mock_object
 
@@ -35,15 +34,17 @@ parameters_list = [
 ]
 
 operation_object = Operation(
+    method=OperationMethod.GET,
     description="Returns pets based on ID",
     summary="Find pets by ID",
     operation_id="getPetsById",
-    responses={
-        200: Response(
+    responses=[
+        Response(
+            code=200,
             description="pet response",
-            content={MediaType.JSON: Content(schema=array_schema)}
+            content=[Content(type=ContentType.JSON, schema=array_schema)]
         )
-    },
+    ],
 )
 
 data_provider = (
@@ -74,16 +75,12 @@ data_provider = (
         },
         [
             Path(
-                pattern="/pets/{id}",
-                item=PathItem(
-                    operations={
-                        OperationMethod.GET: operation_object
-                    },
-                )
+                url="/pets/{id}",
+                operations=[operation_object]
             )
         ],
         _get_builder_mock(operation_object),
-        _get_builder_collection_mock(None),
+        _get_builder_list_mock(None),
     ),
     (
         {
@@ -128,28 +125,24 @@ data_provider = (
         },
         [
             Path(
-                pattern="/pets/{id}",
-                item=PathItem(
-                    summary="Summary description",
-                    description="Long description",
-                    parameters=parameters_list,
-                    operations={
-                        OperationMethod.GET: operation_object
-                    },
-                )
+                url="/pets/{id}",
+                summary="Summary description",
+                description="Long description",
+                parameters=parameters_list,
+                operations=[operation_object],
             )
         ],
         _get_builder_mock(operation_object),
-        _get_builder_collection_mock(parameters_list),
+        _get_builder_list_mock(parameters_list),
     ),
 )
 
 
 @pytest.mark.parametrize(['data', 'expected', 'operation_builder', 'parameter_builder'], data_provider)
 def test_build(data: dict,
-               expected: PathList,
+               expected: list[Path],
                operation_builder: OperationBuilder,
                parameter_builder: ParameterBuilder):
     builder = PathBuilder(operation_builder, parameter_builder)
 
-    assert expected == builder.build_collection(data)
+    assert expected == builder.build_list(data)

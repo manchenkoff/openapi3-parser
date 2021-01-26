@@ -1,9 +1,9 @@
 from .common import PropertyMeta, extract_typed_props
-from ..specification import Server, ServerList
+from ..specification import Server
 
 
 class ServerBuilder:
-    def build_list(self, data_list: list) -> ServerList:
+    def build_list(self, data_list: list) -> list[Server]:
         return [self._build_server(item) for item in data_list]
 
     @staticmethod

@@ -4,7 +4,7 @@ import pytest
 
 from openapi_parser.builders import ParameterBuilder, SchemaFactory
 from openapi_parser.enumeration import DataType, ParameterLocation
-from openapi_parser.specification import Parameter, ParameterList, Schema, String
+from openapi_parser.specification import Parameter, Schema, String
 
 
 def _get_schema_factory_mock(expected_value: Schema) -> SchemaFactory:
@@ -108,7 +108,7 @@ def test_build(data: dict, expected: Parameter, schema_factory: SchemaFactory):
 
 
 @pytest.mark.parametrize(['data_list', 'expected', 'schema_factory'], collection_data_provider)
-def test_build_collection(data_list: list, expected: ParameterList, schema_factory: SchemaFactory):
+def test_build_collection(data_list: list, expected: list[Parameter], schema_factory: SchemaFactory):
     builder = ParameterBuilder(schema_factory)
 
-    assert expected == builder.build_collection(data_list)
+    assert expected == builder.build_list(data_list)

@@ -5,14 +5,6 @@ from .errors import ParserError
 OPENAPI_SPEC_VALIDATOR = 'openapi-spec-validator'
 
 
-class ResolverError(Exception):
-    """
-    Base resolver error class.
-    Throws when any error occurs.
-    """
-    pass
-
-
 class OpenAPIResolver:
     _resolver: prance.ResolvingParser
 
@@ -30,4 +22,6 @@ class OpenAPIResolver:
 
             return self._resolver.specification
         except prance.ValidationError as error:
-            raise ParserError(f"OpenAPI specification validation error: {error}")
+            raise ParserError(f"OpenAPI validation error: {error}")
+        except prance.util.formats.ParseError as error:
+            raise ParserError(f"OpenAPI file parsing error: {error}")

@@ -3,7 +3,7 @@ from typing import Any, Callable, Dict
 from .common import extract_extension_attributes, extract_typed_props, merge_schema, PropertyMeta
 from ..enumeration import DataType, IntegerFormat, NumberFormat, StringFormat
 from ..errors import ParserError
-from ..specification import Array, Boolean, Integer, Number, Object, Property, PropertyList, Schema, String
+from ..specification import Array, Boolean, Integer, Number, Object, Property, Schema, String
 
 SchemaBuilderMethod = Callable[[dict], Schema]
 
@@ -136,7 +136,7 @@ class SchemaFactory:
         return Array(**attrs)
 
     def _object(self, data: dict) -> Object:
-        def build_properties(object_attrs: dict) -> PropertyList:
+        def build_properties(object_attrs: dict) -> list[Property]:
             return [
                 Property(name, self.create(schema))
                 for name, schema in object_attrs.items()

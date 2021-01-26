@@ -1,8 +1,4 @@
-from openapi_parser.enumeration import AuthenticationScheme, DataType, MediaType, OperationMethod, ParameterLocation, \
-    SecurityType, StringFormat
-from openapi_parser.specification import Array, Contact, Content, Info, Integer, \
-    License, Object, Operation, Parameter, Path, PathItem, PathList, Property, \
-    RequestBody, Response, Security, Server, Specification, String, Tag
+from openapi_parser.specification import *
 
 schema_user = Object(
     type=DataType.OBJECT,
@@ -59,18 +55,22 @@ user_list_schema = Object(
 )
 
 get_user_list_response = Response(
+    code=200,
     description="Successful user list response",
-    content={
-        MediaType.JSON: Content(
+    content=[
+        Content(
+            type=ContentType.JSON,
             schema=user_list_schema
         ),
-    }
+    ]
 )
 
 bad_request_response = Response(
+    code=400,
     description="Bad request or parameters",
-    content={
-        MediaType.JSON: Content(
+    content=[
+        Content(
+            type=ContentType.JSON,
             schema=Object(
                 type=DataType.OBJECT,
                 required=["code", "error"],
@@ -94,13 +94,15 @@ bad_request_response = Response(
                 ],
             )
         ),
-    },
+    ],
 )
 
 internal_error_response = Response(
+    code=500,
     description="Internal error",
-    content={
-        MediaType.JSON: Content(
+    content=[
+        Content(
+            type=ContentType.JSON,
             schema=Object(
                 type=DataType.OBJECT,
                 required=["code", "error"],
@@ -124,7 +126,7 @@ internal_error_response = Response(
                 ],
             )
         ),
-    },
+    ],
 )
 
 
@@ -159,132 +161,136 @@ def create_specification() -> Specification:
         {"Basic": []}
     ]
 
-    path_list: PathList = [
+    path_list: list[Path] = [
         Path(
-            pattern="/users",
-            item=PathItem(
-                operations={
-                    OperationMethod.GET: Operation(
-                        summary="Get user list",
-                        description="Method to get user list",
-                        operation_id="GetUserList",
-                        tags=["Users"],
-                        parameters=[
-                            Parameter(
-                                name="limit",
-                                location=ParameterLocation.QUERY,
-                                description="Result items limit",
-                                required=True,
-                                schema=Integer(type=DataType.INTEGER)
-                            ),
-                            Parameter(
-                                name="offset",
-                                location=ParameterLocation.QUERY,
-                                description="Result items start offset",
-                                required=True,
-                                schema=Integer(type=DataType.INTEGER)
-                            ),
-                        ],
-                        responses={
-                            200: get_user_list_response,
-                            400: bad_request_response,
-                            500: internal_error_response,
-                        }
-                    ),
-                    OperationMethod.POST: Operation(
-                        summary="Add new user",
-                        description="Method to add new user",
-                        operation_id="AddUser",
-                        tags=["Users"],
-                        security=[
-                            {'Basic': []}
-                        ],
-                        request_body=RequestBody(
-                            description="New user model request",
-                            content={
-                                MediaType.JSON: Content(schema=schema_user),
-                            }
+            url="/users",
+            operations=[
+                Operation(
+                    method=OperationMethod.GET,
+                    summary="Get user list",
+                    description="Method to get user list",
+                    operation_id="GetUserList",
+                    tags=["Users"],
+                    parameters=[
+                        Parameter(
+                            name="limit",
+                            location=ParameterLocation.QUERY,
+                            description="Result items limit",
+                            required=True,
+                            schema=Integer(type=DataType.INTEGER)
                         ),
-                        responses={
-                            201: Response(
-                                description="Successful addition user response",
-                                content={
-                                    MediaType.JSON: Content(
-                                        schema=Object(
-                                            type=DataType.OBJECT,
-                                            required=["user"],
-                                            properties=[
-                                                Property(
-                                                    name="user",
-                                                    schema=schema_user,
-                                                ),
-                                            ],
-                                        ),
-                                    ),
-                                }
-                            ),
-                            400: bad_request_response,
-                            500: internal_error_response,
-                        },
+                        Parameter(
+                            name="offset",
+                            location=ParameterLocation.QUERY,
+                            description="Result items start offset",
+                            required=True,
+                            schema=Integer(type=DataType.INTEGER)
+                        ),
+                    ],
+                    responses=[
+                        get_user_list_response,
+                        bad_request_response,
+                        internal_error_response,
+                    ]
+                ),
+                Operation(
+                    method=OperationMethod.POST,
+                    summary="Add new user",
+                    description="Method to add new user",
+                    operation_id="AddUser",
+                    tags=["Users"],
+                    security=[
+                        {'Basic': []}
+                    ],
+                    request_body=RequestBody(
+                        description="New user model request",
+                        content=[
+                            Content(type=ContentType.JSON, schema=schema_user),
+                        ]
                     ),
-                }
-            )
+                    responses=[
+                        Response(
+                            code=201,
+                            description="Successful addition user response",
+                            content=[
+                                Content(
+                                    type=ContentType.JSON,
+                                    schema=Object(
+                                        type=DataType.OBJECT,
+                                        required=["user"],
+                                        properties=[
+                                            Property(
+                                                name="user",
+                                                schema=schema_user,
+                                            ),
+                                        ],
+                                    ),
+                                ),
+                            ]
+                        ),
+                        bad_request_response,
+                        internal_error_response,
+                    ],
+                ),
+            ]
         ),
         Path(
-            pattern="/users/{uuid}",
-            item=PathItem(
-                parameters=[
-                    Parameter(
-                        name="uuid",
-                        location=ParameterLocation.PATH,
-                        description="User unique id",
-                        required=True,
-                        schema=String(
-                            type=DataType.STRING,
-                            format=StringFormat.UUID,
-                        ),
+            url="/users/{uuid}",
+            parameters=[
+                Parameter(
+                    name="uuid",
+                    location=ParameterLocation.PATH,
+                    description="User unique id",
+                    required=True,
+                    schema=String(
+                        type=DataType.STRING,
+                        format=StringFormat.UUID,
                     ),
-                ],
-                operations={
-                    OperationMethod.GET: Operation(
-                        summary="Get user model",
-                        description="Method to get user details",
-                        operation_id="GetUser",
-                        tags=["Users"],
-                        responses={
-                            200: Response(
-                                description="Successful user response",
-                                content={
-                                    MediaType.JSON: Content(
-                                        schema=Object(
-                                            type=DataType.OBJECT,
-                                            required=["user"],
-                                            properties=[
-                                                Property(
-                                                    name="user",
-                                                    schema=schema_user,
-                                                ),
-                                            ],
-                                        ),
+                ),
+            ],
+            operations=[
+                Operation(
+                    method=OperationMethod.GET,
+                    summary="Get user model",
+                    description="Method to get user details",
+                    operation_id="GetUser",
+                    tags=["Users"],
+                    responses=[
+                        Response(
+                            code=200,
+                            description="Successful user response",
+                            content=[
+                                Content(
+                                    type=ContentType.JSON,
+                                    schema=Object(
+                                        type=DataType.OBJECT,
+                                        required=["user"],
+                                        properties=[
+                                            Property(
+                                                name="user",
+                                                schema=schema_user,
+                                            ),
+                                        ],
                                     ),
-                                }
-                            ),
-                            400: bad_request_response,
-                            500: internal_error_response,
-                        },
-                    ),
-                    OperationMethod.PUT: Operation(
-                        summary="Update existed user model",
-                        operation_id="UpdateUser",
-                        tags=["Users"],
-                        responses={
-                            200: Response(description="Empty successful response"),
-                            400: bad_request_response,
-                            500: internal_error_response,
-                        },
-                    ),
-                }
-            )
+                                ),
+                            ]
+                        ),
+                        bad_request_response,
+                        internal_error_response,
+                    ],
+                ),
+                Operation(
+                    method=OperationMethod.PUT,
+                    summary="Update existed user model",
+                    operation_id="UpdateUser",
+                    tags=["Users"],
+                    responses=[
+                        Response(code=200, description="Empty successful response"),
+                        bad_request_response,
+                        internal_error_response,
+                    ],
+                ),
+            ]
         ),
     ]
 

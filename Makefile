@@ -28,9 +28,9 @@ test: ## Run code tests
 sync: ## Sync with Pipfile packages list
 	@pipenv sync
 
-lint: ## Run code linters (mypy / pytype)
+lint: ## Run code linters
+	@echo "Run code linters..."
 	@pipenv run mypy ./src
-	@pipenv run pytype ./src
 
 help: ## Show this message
 	@echo "Application management"

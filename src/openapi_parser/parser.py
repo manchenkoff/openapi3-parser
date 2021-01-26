@@ -28,10 +28,16 @@ class Parser:
         self.security_builder = security_builder
 
     def load_specification(self, data: dict) -> Specification:
-        """
-        Load OpenAPI Specification object from a file or a remote URI.
-        :param data: JSON (dict) of specification data
-        :return: Specification object
+        """Load OpenAPI Specification object from a file or a remote URI.
+
+        Args:
+            data (dict): Parsed YAML/JSON dictionary of OpenAPI specification
+
+        Returns:
+            Specification: Specification object
+
+        Raises:
+            ParserError: If OpenAPI schema is invalid
         """
 
         try:
@@ -43,7 +49,7 @@ class Parser:
             "servers": PropertyMeta(name="servers", cast=self.server_builder.build_list),
             "tags": PropertyMeta(name="tags", cast=self.tag_builder.build_list),
             "external_docs": PropertyMeta(name="externalDocs", cast=self.external_doc_builder.build),
-            "paths": PropertyMeta(name="paths", cast=self.path_builder.build_collection),
+            "paths": PropertyMeta(name="paths", cast=self.path_builder.build_list),
             "security": PropertyMeta(name="security", cast=None),
         }
 
@@ -86,8 +92,10 @@ def _create_parser() -> Parser:
 
 
 def parse(uri: str) -> Specification:
-    """
-    Parse specification document by URL or filepath
+    """Parse specification document by URL or filepath
+
+    Args:
+        uri (str): Path or URL to OpenAPI file
     """
     resolver = OpenAPIResolver(uri)
     specification = resolver.resolve()

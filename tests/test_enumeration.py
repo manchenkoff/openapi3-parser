@@ -133,25 +133,25 @@ def test_parameter_location_error() -> None:
 
 
 media_type_provider = (
-    ("application/json", MediaType.JSON),
-    ("application/xml", MediaType.XML),
-    ("application/x-www-form-urlencoded", MediaType.FORM),
-    ("multipart_form/form-data", MediaType.MULTIPART_FORM),
-    ("text/plain", MediaType.PLAIN_TEXT),
-    ("text/html", MediaType.HTML),
-    ("application/pdf", MediaType.PDF),
-    ("image/png", MediaType.PNG),
+    ("application/json", ContentType.JSON),
+    ("application/xml", ContentType.XML),
+    ("application/x-www-form-urlencoded", ContentType.FORM),
+    ("multipart_form/form-data", ContentType.MULTIPART_FORM),
+    ("text/plain", ContentType.PLAIN_TEXT),
+    ("text/html", ContentType.HTML),
+    ("application/pdf", ContentType.PDF),
+    ("image/png", ContentType.PNG),
 )
 
 
 @pytest.mark.parametrize(['string_value', 'expected'], media_type_provider)
-def test_media_type(string_value: str, expected: MediaType) -> None:
-    assert MediaType(string_value) == expected
+def test_media_type(string_value: str, expected: ContentType) -> None:
+    assert ContentType(string_value) == expected
 
 
 def test_media_type_error() -> None:
     with pytest.raises(ValueError):
-        MediaType("invalid")
+        ContentType("invalid")
 
 
 security_type_provider = (

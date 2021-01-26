@@ -62,7 +62,7 @@ class ParameterLocation(Enum):
 
 
 @unique
-class MediaType(Enum):
+class ContentType(Enum):
     JSON = 'application/json'
     XML = 'application/xml'
     FORM = 'application/x-www-form-urlencoded'
