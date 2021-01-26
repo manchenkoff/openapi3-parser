@@ -47,7 +47,7 @@ from openapi_parser import parse
 
 specification = parse('tests/data/swagger.yml')
 
-urls = [x.pattern for x in specification.paths]
+urls = [x.url for x in specification.paths]
 
 print(urls)
 
@@ -63,14 +63,13 @@ from openapi_parser import parse
 
 specification = parse('tests/data/swagger.yml')
 
-for operation in specification.paths:
-    pattern = operation.pattern
-    supported_methods = ','.join([x.name for x in operation.item.operations])
-    
-    print(f"Operation: {pattern}, methods: {supported_methods}")
+for path in specification.paths:
+    supported_methods = ','.join([x.method.value for x in path.operations])
+
+    print(f"Operation: {path.url}, methods: {supported_methods}")
 
 # Output
 #
-# >> Operation: /users, methods: GET,POST
-# >> Operation: /users/{uuid}, methods: GET,PUT
+# >> Operation: /users, methods: get,post
+# >> Operation: /users/{uuid}, methods: get,put
 ```

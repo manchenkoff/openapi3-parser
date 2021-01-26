@@ -11,13 +11,15 @@ class ResponseBuilder:
         self.content_builder = content_builder
         self.header_builder = header_builder
 
-    def build(self, data: dict) -> Response:
+    def build(self, code: int, data: dict) -> Response:
         attrs_map = {
             "description": PropertyMeta(name="description", cast=str),
-            "content": PropertyMeta(name="content", cast=self.content_builder.build_collection),
-            "headers": PropertyMeta(name="headers", cast=self.header_builder.build_collection),
+            "content": PropertyMeta(name="content", cast=self.content_builder.build_list),
+            "headers": PropertyMeta(name="headers", cast=self.header_builder.build_list),
         }
 
         attrs = extract_typed_props(data, attrs_map)
+
+        attrs['code'] = code
 
         return Response(**attrs)

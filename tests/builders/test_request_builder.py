@@ -1,21 +1,23 @@
+from typing import Any
 from unittest.mock import MagicMock
 
 import pytest
 
 from openapi_parser.builders import ContentBuilder, RequestBuilder
-from openapi_parser.enumeration import DataType, MediaType
+from openapi_parser.enumeration import DataType
 from openapi_parser.specification import Content, ContentType, Object, Property, RequestBody, String
 
 
-def _get_content_builder_mock(expected_value: ContentType) -> ContentBuilder:
+def _get_content_builder_mock(expected_value: Any) -> ContentBuilder:
     mock_object = MagicMock()
-    mock_object.build_collection.return_value = expected_value
+    mock_object.build_list.return_value = expected_value
 
     return mock_object
 
 
-content_schema = {
-    MediaType.JSON: Content(
+content_schema = [
+    Content(
+        type=ContentType.JSON,
         schema=Object(
             type=DataType.OBJECT,
             properties=[
@@ -23,10 +25,11 @@ content_schema = {
             ]
         )
     )
-}
+]
 
-extended_content_schema = {
-    MediaType.JSON: Content(
+extended_content_schema = [
+    Content(
+        type=ContentType.JSON,
         schema=Object(
             type=DataType.OBJECT,
             properties=[
@@ -34,7 +37,8 @@ extended_content_schema = {
             ]
         )
     ),
-    MediaType.FORM: Content(
+    Content(
+        type=ContentType.FORM,
         schema=Object(
             type=DataType.OBJECT,
             properties=[
@@ -42,7 +46,7 @@ extended_content_schema = {
             ]
         )
     ),
-}
+]
 
 data_provider = (
     (

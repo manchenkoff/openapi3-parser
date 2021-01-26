@@ -3,7 +3,7 @@ from typing import Dict
 from . import OperationBuilder, ParameterBuilder
 from .common import extract_typed_props, PropertyMeta
 from ..enumeration import OperationMethod
-from ..specification import Path, PathItem, PathList
+from ..specification import Path
 
 
 class PathBuilder:
@@ -14,25 +14,27 @@ class PathBuilder:
         self.operation_builder = operation_builder
         self.parameter_builder = parameter_builder
 
-    def build_collection(self, data: Dict[str, dict]) -> PathList:
+    def build_list(self, data: Dict[str, dict]) -> list[Path]:
         return [
-            Path(url, self._build_path_item(path))
+            self._build_path(url, path)
             for url, path in data.items()
         ]
 
-    def _build_path_item(self, data: dict) -> PathItem:
+    def _build_path(self, url: str, data: dict) -> Path:
         attrs_map = {
             "summary": PropertyMeta(name="summary", cast=str),
             "description": PropertyMeta(name="description", cast=str),
-            "parameters": PropertyMeta(name="parameters", cast=self.parameter_builder.build_collection),
+            "parameters": PropertyMeta(name="parameters", cast=self.parameter_builder.build_list),
         }
 
         attrs = extract_typed_props(data, attrs_map)
 
-        attrs["operations"] = {
-            method: self.operation_builder.build(data[method.value])
+        attrs['url'] = url
+
+        attrs["operations"] = [
+            self.operation_builder.build(method, data[method.value])
             for method in OperationMethod
             if method.value in data
-        }
+        ]
 
-        return PathItem(**attrs)
+        return Path(**attrs)

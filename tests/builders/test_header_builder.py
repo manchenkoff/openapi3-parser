@@ -17,35 +17,6 @@ def _get_schema_factory_mock(expected_value: Schema) -> SchemaFactory:
 string_schema = String(type=DataType.STRING)
 integer_schema = Integer(type=DataType.INTEGER)
 
-schema_data_provider = (
-    (
-        {
-            "schema": {
-                "type": "string"
-            }
-        },
-        Header(schema=string_schema),
-        _get_schema_factory_mock(string_schema)
-    ),
-    (
-        {
-            "description": "The number of allowed requests in the current period",
-            "required": True,
-            "deprecated": True,
-            "schema": {
-                "type": "integer",
-            },
-        },
-        Header(
-            required=True,
-            description="The number of allowed requests in the current period",
-            deprecated=True,
-            schema=integer_schema
-        ),
-        _get_schema_factory_mock(integer_schema)
-    ),
-)
-
 collection_data_provider = (
     (
         {
@@ -55,9 +26,9 @@ collection_data_provider = (
                 }
             }
         },
-        {
-            "X-Header": Header(schema=string_schema),
-        },
+        [
+            Header(schema=string_schema, name="X-Header"),
+        ],
         _get_schema_factory_mock(string_schema)
     ),
     (
@@ -71,28 +42,22 @@ collection_data_provider = (
                 },
             }
         },
-        {
-            "X-Header": Header(
+        [
+            Header(
+                name="X-Header",
                 required=True,
                 description="The number of allowed requests in the current period",
                 deprecated=True,
                 schema=integer_schema
             )
-        },
+        ],
         _get_schema_factory_mock(integer_schema)
     ),
 )
-
-
-@pytest.mark.parametrize(['data', 'expected', 'schema_factory'], schema_data_provider)
-def test_build(data: dict, expected: Header, schema_factory: SchemaFactory):
-    builder = HeaderBuilder(schema_factory)
-
-    assert expected == builder.build(data)
 
 
 @pytest.mark.parametrize(['data', 'expected', 'schema_factory'], collection_data_provider)
 def test_build_collection(data: dict, expected: Header, schema_factory: SchemaFactory):
     builder = HeaderBuilder(schema_factory)
 
-    assert expected == builder.build_collection(data)
+    assert expected == builder.build_list(data)

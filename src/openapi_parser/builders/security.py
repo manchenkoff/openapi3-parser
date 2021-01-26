@@ -1,7 +1,7 @@
 from .common import extract_typed_props, PropertyMeta
 from .oauth_flow import OAuthFlowBuilder
 from ..enumeration import AuthenticationScheme, BaseLocation, SecurityType
-from ..specification import Security, SecurityCollection
+from ..specification import Security
 
 
 class SecurityBuilder:
@@ -26,7 +26,7 @@ class SecurityBuilder:
 
         return Security(**attrs)
 
-    def build_collection(self, data: dict) -> SecurityCollection:
+    def build_collection(self, data: dict) -> dict:
         return {
             oauth_title: self.build(oauth_value)
             for oauth_title, oauth_value

@@ -1,23 +1,24 @@
-from typing import Union
+from typing import Any, Union
 from unittest.mock import MagicMock
 
 import pytest
 
 from openapi_parser.builders import ContentBuilder, HeaderBuilder, ResponseBuilder
-from openapi_parser.enumeration import DataType, MediaType
-from openapi_parser.specification import Content, ContentType, Header, HeaderCollection, \
+from openapi_parser.enumeration import DataType
+from openapi_parser.specification import Content, ContentType, Header, \
     Integer, Object, Property, RequestBody, Response, String
 
 
-def _get_builder_mock(expected_value: Union[ContentType, HeaderCollection]) -> Union[ContentBuilder, HeaderBuilder]:
+def _get_builder_mock(expected_value: Any) -> Union[ContentBuilder, HeaderBuilder]:
     mock_object = MagicMock()
-    mock_object.build_collection.return_value = expected_value
+    mock_object.build_list.return_value = expected_value
 
     return mock_object
 
 
-content_schema = {
-    MediaType.JSON: Content(
+content_schema = [
+    Content(
+        type=ContentType.JSON,
         schema=Object(
             type=DataType.OBJECT,
             properties=[
@@ -25,14 +26,15 @@ content_schema = {
             ]
         )
     )
-}
+]
 
-header_schema = {
-    "X-Rate-Limit-Limit": Header(
+header_schema = [
+    Header(
+        name="X-Rate-Limit-Limit",
         description="The number of allowed requests in the current period",
         schema=Integer(type=DataType.INTEGER)
     )
-}
+]
 
 data_provider = (
     (
@@ -55,6 +57,7 @@ data_provider = (
             }
         },
         Response(
+            code=200,
             description="A string response",
             content=content_schema,
             headers=header_schema
@@ -69,4 +72,4 @@ data_provider = (
 def test_build(data: dict, expected: RequestBody, content_builder: ContentBuilder, header_builder: HeaderBuilder):
     build = ResponseBuilder(content_builder, header_builder)
 
-    assert expected == build.build(data)
+    assert expected == build.build(200, data)

@@ -16,7 +16,7 @@ jobs:
       - name: Install Python 3
         uses: actions/setup-python@v2
         with:
-          python-version: 3.8
+          python-version: 3.9
 
       - name: Install dependencies
         run: |
@@ -27,7 +27,6 @@ jobs:
       - name: Run linters
         run: |
           pipenv run mypy ./src
-          pipenv run pytype ./src
 
       - name: Run tests
         run: |

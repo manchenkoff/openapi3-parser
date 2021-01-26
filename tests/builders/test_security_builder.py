@@ -5,7 +5,7 @@ import pytest
 from openapi_parser.builders import OAuthFlowBuilder
 from openapi_parser.builders.security import SecurityBuilder
 from openapi_parser.enumeration import AuthenticationScheme, BaseLocation, OAuthFlowType, SecurityType
-from openapi_parser.specification import OAuthFlow, Security, SecurityCollection
+from openapi_parser.specification import OAuthFlow, Security
 
 
 def _get_oauth_flow_builder_mock(expected) -> OAuthFlowBuilder:
@@ -152,7 +152,7 @@ collection_data_provider = (
 
 
 @pytest.mark.parametrize(['data', 'expected', 'oauth_flow_builder'], collection_data_provider)
-def test_build_collection(data: dict, expected: SecurityCollection, oauth_flow_builder: OAuthFlowBuilder):
+def test_build_collection(data: dict, expected: dict, oauth_flow_builder: OAuthFlowBuilder):
     builder = SecurityBuilder(oauth_flow_builder)
 
     assert builder.build_collection(data) == expected

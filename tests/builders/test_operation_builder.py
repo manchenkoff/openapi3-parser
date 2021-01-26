@@ -4,7 +4,7 @@ import pytest
 
 from openapi_parser.builders import ExternalDocBuilder, OperationBuilder, ParameterBuilder, RequestBuilder, \
     ResponseBuilder
-from openapi_parser.enumeration import DataType, MediaType, ParameterLocation
+from openapi_parser.enumeration import DataType, ContentType, OperationMethod, ParameterLocation
 from openapi_parser.specification import Content, ExternalDoc, Object, Operation, Parameter, Property, RequestBody, \
     Response, String
 
@@ -16,16 +16,17 @@ def _get_builder_mock(expected):
     return mock_object
 
 
-def _get_collection_builder_mock(expected):
+def _get_list_builder_mock(expected):
     mock_object = MagicMock()
-    mock_object.build_collection.return_value = expected
+    mock_object.build_list.return_value = expected
 
     return mock_object
 
 
 response_schema = Response(
+    code=200,
     description="Pet updated.",
-    content={MediaType.JSON: Content(schema=Object(type=DataType.OBJECT))}
+    content=[Content(type=ContentType.JSON, schema=Object(type=DataType.OBJECT))]
 )
 
 parameter_list = [
@@ -41,8 +42,9 @@ parameter_list = [
 external_doc = ExternalDoc(description="Find more info here", url="https://example.com")
 
 request_body = RequestBody(
-    content={
-        MediaType.FORM: Content(
+    content=[
+        Content(
+            type=ContentType.FORM,
             schema=Object(
                 type=DataType.OBJECT, required=["status"],
                 properties=[
@@ -62,7 +64,7 @@ request_body = RequestBody(
                 ],
             )
         ),
-    }
+    ]
 )
 
 
@@ -83,14 +85,13 @@ data_provider = (
             },
         },
         Operation(
-            responses={
-                200: response_schema
-            }
+            responses=[response_schema],
+            method=OperationMethod.GET,
         ),
         _get_builder_mock(response_schema),
         _get_builder_mock(None),
         _get_builder_mock(None),
-        _get_collection_builder_mock(None),
+        _get_list_builder_mock(None),
     ),
     (
         {
@@ -151,9 +152,8 @@ data_provider = (
             }
         },
         Operation(
-            responses={
-                200: response_schema
-            },
+            method=OperationMethod.GET,
+            responses=[response_schema],
             tags=["pet"],
             security=[{"Basic": []}],
             summary="Updates a pet in the store with form data",
@@ -165,7 +165,7 @@ data_provider = (
         _get_builder_mock(response_schema),
         _get_builder_mock(external_doc),
         _get_builder_mock(request_body),
-        _get_collection_builder_mock(parameter_list),
+        _get_list_builder_mock(parameter_list),
     ),
 )
 
@@ -190,4 +190,4 @@ def test_build(data: dict,
         parameter_builder
     )
 
-    assert expected_operation == builder.build(data)
+    assert expected_operation == builder.build(OperationMethod.GET, data)

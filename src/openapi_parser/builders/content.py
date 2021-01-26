@@ -1,6 +1,6 @@
 from . import SchemaFactory
-from ..enumeration import MediaType
-from ..specification import Content, ContentType
+from ..enumeration import ContentType
+from ..specification import Content
 
 
 class ContentBuilder:
@@ -9,11 +9,12 @@ class ContentBuilder:
     def __init__(self, schema_factory: SchemaFactory) -> None:
         self.schema_factory = schema_factory
 
-    def build_collection(self, data: dict) -> ContentType:
-        return {
-            MediaType(content_type): self.build(content_value)
-            for content_type, content_value in data.items()
-        }
-
-    def build(self, data: dict) -> Content:
-        return Content(schema=self.schema_factory.create(data['schema']))
+    def build_list(self, data: dict) -> list[Content]:
+        return [
+            Content(
+                type=ContentType(content_type),
+                schema=self.schema_factory.create(content_value['schema'])
+            )
+            for content_type, content_value
+            in data.items()
+        ]

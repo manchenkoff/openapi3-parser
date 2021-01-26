@@ -11,7 +11,7 @@ class RequestBuilder:
 
     def build(self, data: dict) -> RequestBody:
         attrs_map = {
-            "content": PropertyMeta(name="content", cast=self.content_builder.build_collection),
+            "content": PropertyMeta(name="content", cast=self.content_builder.build_list),
             "description": PropertyMeta(name="description", cast=str),
             "required": PropertyMeta(name="required", cast=None),
         }
