@@ -1,9 +1,12 @@
+import logging
 from typing import Dict
 
 from . import OperationBuilder, ParameterBuilder
 from .common import extract_typed_props, PropertyMeta
 from ..enumeration import OperationMethod
 from ..specification import Path
+
+logger = logging.getLogger(__name__)
 
 
 class PathBuilder:
@@ -21,6 +24,8 @@ class PathBuilder:
         ]
 
     def _build_path(self, url: str, data: dict) -> Path:
+        logger.info(f"Path item parsing [url={url}]")
+
         attrs_map = {
             "summary": PropertyMeta(name="summary", cast=str),
             "description": PropertyMeta(name="description", cast=str),

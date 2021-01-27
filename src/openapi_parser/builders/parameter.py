@@ -1,9 +1,12 @@
+import logging
 from typing import List
 
 from . import SchemaFactory
 from .common import extract_typed_props, PropertyMeta
 from ..enumeration import ParameterLocation
 from ..specification import Parameter
+
+logger = logging.getLogger(__name__)
 
 
 class ParameterBuilder:
@@ -16,6 +19,8 @@ class ParameterBuilder:
         return [self.build(parameter) for parameter in parameters]
 
     def build(self, data: dict) -> Parameter:
+        logger.debug(f"Parameter parsing [name={data['name']}]")
+
         attrs_map = {
             "name": PropertyMeta(name="name", cast=str),
             "location": PropertyMeta(name="in", cast=ParameterLocation),

@@ -1,6 +1,10 @@
+import logging
+
 from . import SchemaFactory
 from .common import extract_typed_props, PropertyMeta
 from ..specification import Header
+
+logger = logging.getLogger(__name__)
 
 
 class HeaderBuilder:
@@ -17,6 +21,8 @@ class HeaderBuilder:
         ]
 
     def _build(self, name: str, data: dict) -> Header:
+        logger.debug(f"Header parsing: {name}")
+
         attrs_map = {
             "schema": PropertyMeta(name="schema", cast=self.schema_factory.create),
             "description": PropertyMeta(name="description", cast=str),

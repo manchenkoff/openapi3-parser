@@ -14,10 +14,10 @@ from .oauth_flow import OAuthFlowBuilder
 from .security import SecurityBuilder
 
 __all__ = [
-    "ExternalDocBuilder",
     "InfoBuilder",
     "ServerBuilder",
     "TagBuilder",
+    "ExternalDocBuilder",
     "SchemaFactory",
     "ParameterBuilder",
     "HeaderBuilder",
