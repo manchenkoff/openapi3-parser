@@ -1,9 +1,15 @@
-from .common import PropertyMeta, extract_typed_props
+import logging
+
+from .common import extract_typed_props, PropertyMeta
 from ..specification import Contact, Info, License
+
+logger = logging.getLogger(__name__)
 
 
 class InfoBuilder:
     def build(self, data: dict) -> Info:
+        logger.debug(f"Info section parsing [title={data['title']}]")
+
         attrs_map = {
             "title": PropertyMeta(name="title", cast=str),
             "version": PropertyMeta(name="version", cast=str),

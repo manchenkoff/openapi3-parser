@@ -1,5 +1,9 @@
-from .common import PropertyMeta, extract_typed_props
+import logging
+
+from .common import extract_typed_props, PropertyMeta
 from ..specification import Server
+
+logger = logging.getLogger(__name__)
 
 
 class ServerBuilder:
@@ -8,6 +12,8 @@ class ServerBuilder:
 
     @staticmethod
     def _build_server(data: dict) -> Server:
+        logger.debug(f"Server item parsing [{data['url']}]")
+
         attrs_map = {
             "url": PropertyMeta(name="url", cast=str),
             "description": PropertyMeta(name="description", cast=str),

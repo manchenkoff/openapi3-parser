@@ -1,6 +1,10 @@
+import logging
+
 from . import ContentBuilder
-from .common import PropertyMeta, extract_typed_props
+from .common import extract_typed_props, PropertyMeta
 from ..specification import RequestBody
+
+logger = logging.getLogger(__name__)
 
 
 class RequestBuilder:
@@ -10,6 +14,8 @@ class RequestBuilder:
         self.content_builder = content_builder
 
     def build(self, data: dict) -> RequestBody:
+        logger.debug(f"Request building")
+
         attrs_map = {
             "content": PropertyMeta(name="content", cast=self.content_builder.build_list),
             "description": PropertyMeta(name="description", cast=str),

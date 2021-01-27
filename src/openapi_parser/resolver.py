@@ -1,8 +1,12 @@
+import logging
+
 import prance
 
 from .errors import ParserError
 
 OPENAPI_SPEC_VALIDATOR = 'openapi-spec-validator'
+
+logger = logging.getLogger(__name__)
 
 
 class OpenAPIResolver:
@@ -17,9 +21,17 @@ class OpenAPIResolver:
         )
 
     def resolve(self) -> dict:
-        try:
-            self._resolver.parse()
+        """Resolve OpenAPI specification with Prance parser
 
+        Returns:
+            dict: Normalized and parsed specification as a dictionary
+
+        Raises:
+            ParserError: If some validation or parsing error occurred
+        """
+        try:
+            logger.debug(f"Resolving specification file")
+            self._resolver.parse()
             return self._resolver.specification
         except prance.ValidationError as error:
             raise ParserError(f"OpenAPI validation error: {error}")

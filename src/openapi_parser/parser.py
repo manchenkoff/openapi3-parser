@@ -1,8 +1,12 @@
+import logging
+
 from .builders import *
 from .builders.common import extract_typed_props, PropertyMeta
 from .errors import ParserError
 from .resolver import OpenAPIResolver
 from .specification import *
+
+logger = logging.getLogger(__name__)
 
 
 class Parser:
@@ -40,10 +44,12 @@ class Parser:
             ParserError: If OpenAPI schema is invalid
         """
 
+        logger.debug("Building Specification objects")
+
         try:
             version = data['openapi']
         except KeyError:
-            raise ParserError("Invalid OpenAPI schema version")
+            raise ParserError("Invalid OpenAPI version, check 'openapi' property in the document") from None
 
         attrs_map = {
             "servers": PropertyMeta(name="servers", cast=self.server_builder.build_list),
@@ -61,10 +67,14 @@ class Parser:
         if data.get('components') and data['components'].get('securitySchemes'):
             attrs["security_schemas"] = self.security_builder.build_collection(data['components']['securitySchemes'])
 
+        logger.debug("Specification parsed successfully")
+
         return Specification(**attrs)
 
 
 def _create_parser() -> Parser:
+    logger.info("Initializing parser")
+
     info_builder = InfoBuilder()
     server_builder = ServerBuilder()
     external_doc_builder = ExternalDocBuilder()

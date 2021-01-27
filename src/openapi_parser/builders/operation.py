@@ -1,9 +1,12 @@
+import logging
 from typing import Dict
 
 from . import ExternalDocBuilder, ParameterBuilder, RequestBuilder, ResponseBuilder
 from .common import extract_typed_props, PropertyMeta
 from ..enumeration import OperationMethod
 from ..specification import Operation, Response
+
+logger = logging.getLogger(__name__)
 
 
 class OperationBuilder:
@@ -23,6 +26,8 @@ class OperationBuilder:
         self.parameter_builder = parameter_builder
 
     def build(self, method: OperationMethod, data: dict) -> Operation:
+        logger.info(f"Operation item parsing [method={method.value}, id={data.get('operationId')}]")
+
         attrs_map = {
             "responses": PropertyMeta(name="responses", cast=self._get_response_list),
             "summary": PropertyMeta(name="summary", cast=str),

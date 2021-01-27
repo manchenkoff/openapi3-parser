@@ -1,3 +1,4 @@
+import logging
 from typing import Any, Callable, Dict
 
 from .common import extract_extension_attributes, extract_typed_props, merge_schema, PropertyMeta
@@ -9,8 +10,19 @@ SchemaBuilderMethod = Callable[[dict], Schema]
 
 ALL_OF_SCHEMAS_KEY = 'allOf'
 
+logger = logging.getLogger(__name__)
+
 
 def extract_attrs(data: dict, attrs_map: Dict[str, PropertyMeta]) -> Dict[str, Any]:
+    """Extract attributes of schema description with specific type-casting mapping
+
+    Args:
+        data (dict): Source dictionary with schema data
+        attrs_map (Dict[str, PropertyMeta]): Type-casting mapping
+
+    Returns:
+        Dict[str, Any]: Extracted dictionary with typed values
+    """
     base_attrs_map = {
         "type": "type",
         "title": "title",
@@ -36,12 +48,25 @@ def extract_attrs(data: dict, attrs_map: Dict[str, PropertyMeta]) -> Dict[str, A
 
     attrs['extensions'] = extract_extension_attributes(data)
 
+    if attrs['extensions']:
+        logger.debug(f"Extracted custom properties [{attrs['extensions'].keys()}]")
+
     return attrs
 
 
 def merge_all_of_schemas(original_data: dict) -> dict:
+    """Recursive merge schemas with 'allOf' type into single schema dictionary
+
+    Args:
+        original_data (dict): Dictionary with schema description
+
+    Returns:
+        dict: Merged dictionary of schema item
+    """
     if ALL_OF_SCHEMAS_KEY not in original_data.keys():
         return original_data
+
+    logger.debug(f"Merging 'allOf' schemas")
 
     schema_dict: dict = {}
 
@@ -73,12 +98,14 @@ class SchemaFactory:
         try:
             data_type = DataType(schema_type)
         except ValueError:
-            raise ParserError(f"Invalid schema type '{schema_type}'")
+            raise ParserError(f"Invalid schema type '{schema_type}'") from None
 
         try:
             builder_func = self._builders[data_type]
         except KeyError:
-            raise ParserError(f"Unsupported schema type: '{schema_type}'")
+            raise ParserError(f"Unsupported schema type: '{schema_type}'") from None
+
+        logger.debug(f"Building schema [type={data_type}]")
 
         return builder_func(data)
 
@@ -131,9 +158,7 @@ class SchemaFactory:
             "items": PropertyMeta(name="items", cast=self.create),
         }
 
-        attrs = extract_attrs(data, attrs_map)
-
-        return Array(**attrs)
+        return Array(**extract_attrs(data, attrs_map))
 
     def _object(self, data: dict) -> Object:
         def build_properties(object_attrs: dict) -> list[Property]:
@@ -149,6 +174,4 @@ class SchemaFactory:
             "properties": PropertyMeta(name="properties", cast=build_properties),
         }
 
-        attrs = extract_attrs(data, attrs_map)
-
-        return Object(**attrs)
+        return Object(**extract_attrs(data, attrs_map))

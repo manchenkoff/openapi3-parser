@@ -1,6 +1,10 @@
+import logging
+
 from . import ContentBuilder, HeaderBuilder
 from .common import extract_typed_props, PropertyMeta
 from ..specification import Response
+
+logger = logging.getLogger(__name__)
 
 
 class ResponseBuilder:
@@ -12,6 +16,8 @@ class ResponseBuilder:
         self.header_builder = header_builder
 
     def build(self, code: int, data: dict) -> Response:
+        logger.debug(f"Response building [code={code}]")
+
         attrs_map = {
             "description": PropertyMeta(name="description", cast=str),
             "content": PropertyMeta(name="content", cast=self.content_builder.build_list),
