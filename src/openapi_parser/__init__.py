@@ -1,4 +1,4 @@
-__version__ = '1.0.0'
+__version__ = '1.1.0'
 __title__ = 'openapi3-parser'
 __author__ = 'Artyom Manchenkov'
 __email__ = 'artyom@manchenkoff.me'
