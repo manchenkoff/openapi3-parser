@@ -9,6 +9,7 @@ class DataType(Enum):
     BOOLEAN = 'boolean'
     ARRAY = 'array'
     OBJECT = 'object'
+    ONE_OF = 'oneOf'
 
 
 @unique

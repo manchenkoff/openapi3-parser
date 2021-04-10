@@ -23,11 +23,11 @@
       "description": "production"
     },
     {
-      "url": "http://stage.users.app",
+      "url": "https://stage.users.app",
       "description": "staging"
     },
     {
-      "url": "http://users.local",
+      "url": "https://users.local",
       "description": "development"
     }
   ],

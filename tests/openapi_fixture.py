@@ -140,9 +140,9 @@ def create_specification() -> Specification:
     server_list = [
         Server(url="https://users.app",
                description="production"),
-        Server(url="http://stage.users.app",
+        Server(url="https://stage.users.app",
                description="staging"),
-        Server(url="http://users.local",
+        Server(url="https://users.local",
                description="development"),
     ]
 
