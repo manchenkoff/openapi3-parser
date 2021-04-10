@@ -4,7 +4,7 @@ from typing import Any, Callable, Dict
 from .common import extract_extension_attributes, extract_typed_props, merge_schema, PropertyMeta
 from ..enumeration import DataType, IntegerFormat, NumberFormat, StringFormat
 from ..errors import ParserError
-from ..specification import Array, Boolean, Integer, Number, Object, Property, Schema, String
+from ..specification import Array, Boolean, Discriminator, Integer, Number, Object, OneOf, Property, Schema, String
 
 SchemaBuilderMethod = Callable[[dict], Schema]
 
@@ -88,12 +88,19 @@ class SchemaFactory:
             DataType.BOOLEAN: self._boolean,
             DataType.ARRAY: self._array,
             DataType.OBJECT: self._object,
+            DataType.ONE_OF: self._one_of,
         }
 
     def create(self, data: dict) -> Schema:
         data = merge_all_of_schemas(data)
 
-        schema_type = data['type']
+        if 'oneOf' in data.keys():
+            data['type'] = DataType.ONE_OF
+
+        try:
+            schema_type = data['type']
+        except KeyError:
+            raise ParserError("Schema does not contain 'type' property")
 
         try:
             data_type = DataType(schema_type)
@@ -175,3 +182,25 @@ class SchemaFactory:
         }
 
         return Object(**extract_attrs(data, attrs_map))
+
+    def _one_of(self, data: dict) -> OneOf:
+        def create_inner_schemas(schemas: list) -> list[Schema]:
+            return [self.create(x) for x in schemas]
+
+        def build_discriminator(discriminator_data: dict) -> Discriminator:
+            discriminator = Discriminator(property_name=discriminator_data['propertyName'])
+
+            if 'mapping' in discriminator_data:
+                discriminator.mapping = {
+                    key: self.create(schema) for key, schema
+                    in discriminator_data['mapping'].items()
+                }
+
+            return discriminator
+
+        attrs_map = {
+            "schemas": PropertyMeta(name="oneOf", cast=create_inner_schemas),
+            "discriminator": PropertyMeta(name="discriminator", cast=build_discriminator),
+        }
+
+        return OneOf(**extract_attrs(data, attrs_map))

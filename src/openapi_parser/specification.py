@@ -115,6 +115,18 @@ class Array(Schema):
 
 
 @dataclass
+class Discriminator:
+    property_name: str
+    mapping: Optional[dict] = field(default_factory=dict)
+
+
+@dataclass
+class OneOf(Schema):
+    schemas: list[Schema] = field(default_factory=list)
+    discriminator: Optional[Discriminator] = None
+
+
+@dataclass
 class Property:
     name: str
     schema: Schema
