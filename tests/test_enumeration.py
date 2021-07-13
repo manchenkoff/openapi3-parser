@@ -141,6 +141,7 @@ media_type_provider = (
     ("text/html", ContentType.HTML),
     ("application/pdf", ContentType.PDF),
     ("image/png", ContentType.PNG),
+    ("application/octet-stream", ContentType.BINARY),
 )
 
 
