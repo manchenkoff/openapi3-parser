@@ -145,8 +145,8 @@ class Object(Schema):
 class Parameter:
     name: str
     location: ParameterLocation
-    required: bool
     schema: Schema
+    required: Optional[bool] = field(default=False)
     description: Optional[str] = None
     # example: Optional[Any]  # TODO
     # examples: list[Any] = field(default_factory=list)  # TODO

@@ -72,6 +72,7 @@ class ContentType(Enum):
     HTML = 'text/html'
     PDF = 'application/pdf'
     PNG = 'image/png'
+    BINARY = 'application/octet-stream'
 
 
 @unique
