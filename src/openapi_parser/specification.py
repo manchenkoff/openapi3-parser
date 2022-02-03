@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import Any, Optional
+from typing import Any, Optional, List
 
 from .enumeration import *
 
@@ -122,7 +122,7 @@ class Discriminator:
 
 @dataclass
 class OneOf(Schema):
-    schemas: list[Schema] = field(default_factory=list)
+    schemas: List[Schema] = field(default_factory=list)
     discriminator: Optional[Discriminator] = None
 
 
@@ -136,8 +136,8 @@ class Property:
 class Object(Schema):
     max_properties: Optional[int] = None
     min_properties: Optional[int] = None
-    required: list[str] = field(default_factory=list)
-    properties: list[Property] = field(default_factory=list)
+    required: List[str] = field(default_factory=list)
+    properties: List[Property] = field(default_factory=list)
     # additional_properties: Optional[Union[bool, Schema]] = field(default=True)  # TODO
 
 
@@ -149,7 +149,7 @@ class Parameter:
     required: Optional[bool] = field(default=False)
     description: Optional[str] = None
     # example: Optional[Any]  # TODO
-    # examples: list[Any] = field(default_factory=list)  # TODO
+    # examples: List[Any] = field(default_factory=list)  # TODO
     deprecated: Optional[bool] = field(default=False)
     # style: str  # TODO
     # explode: bool  # TODO
@@ -161,13 +161,13 @@ class Content:
     type: ContentType
     schema: Schema
     # example: Optional[Any]  # TODO
-    # examples: list[Any] = field(default_factory=list)  # TODO
+    # examples: List[Any] = field(default_factory=list)  # TODO
     # encoding: dict[str, Encoding]  # TODO
 
 
 @dataclass
 class RequestBody:
-    content: list[Content]
+    content: List[Content]
     description: Optional[str] = None
     required: Optional[bool] = field(default=False)
 
@@ -185,8 +185,8 @@ class Header:
 class Response:
     code: int
     description: str
-    content: Optional[list[Content]] = None
-    headers: list[Header] = field(default_factory=list)
+    content: Optional[List[Content]] = None
+    headers: List[Header] = field(default_factory=list)
     # links: dict[str, Link]  # TODO
 
 
@@ -213,16 +213,16 @@ class Security:
 @dataclass
 class Operation:
     method: OperationMethod
-    responses: list[Response]
+    responses: List[Response]
     summary: Optional[str] = None
     description: Optional[str] = None
     operation_id: Optional[str] = None
     external_docs: Optional[ExternalDoc] = None
     request_body: Optional[RequestBody] = None
     deprecated: Optional[bool] = field(default=False)
-    parameters: list[Parameter] = field(default_factory=list)
-    tags: list[str] = field(default_factory=list)
-    security: list[dict[str, Any]] = field(default_factory=list)
+    parameters: List[Parameter] = field(default_factory=list)
+    tags: List[str] = field(default_factory=list)
+    security: List[dict[str, Any]] = field(default_factory=list)
     # callbacks: dict[str, Callback] = field(default_factory=dict)  # TODO
 
 
@@ -231,8 +231,8 @@ class Path:
     url: str
     summary: Optional[str] = None
     description: Optional[str] = None
-    operations: list[Operation] = field(default_factory=list)
-    parameters: list[Parameter] = field(default_factory=list)
+    operations: List[Operation] = field(default_factory=list)
+    parameters: List[Parameter] = field(default_factory=list)
 
 
 @dataclass
@@ -246,9 +246,9 @@ class Tag:
 class Specification:
     version: str
     info: Info
-    servers: list[Server] = field(default_factory=list)
-    tags: list[Tag] = field(default_factory=list)
+    servers: List[Server] = field(default_factory=list)
+    tags: List[Tag] = field(default_factory=list)
     security_schemas: dict[str, Security] = field(default_factory=dict)
-    security: list[dict[str, Any]] = field(default_factory=list)
+    security: List[dict[str, Any]] = field(default_factory=list)
     external_docs: Optional[ExternalDoc] = None
-    paths: list[Path] = field(default_factory=list)
+    paths: List[Path] = field(default_factory=list)
