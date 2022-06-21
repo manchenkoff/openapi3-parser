@@ -250,5 +250,6 @@ class Specification:
     tags: list[Tag] = field(default_factory=list)
     security_schemas: dict[str, Security] = field(default_factory=dict)
     security: list[dict[str, Any]] = field(default_factory=list)
+    schemas: dict[str, Schema] = field(default_factory=dict)
     external_docs: Optional[ExternalDoc] = None
     paths: list[Path] = field(default_factory=list)
