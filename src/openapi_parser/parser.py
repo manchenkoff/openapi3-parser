@@ -16,6 +16,7 @@ class Parser:
     external_doc_builder: ExternalDocBuilder
     path_builder: PathBuilder
     security_builder: SecurityBuilder
+    schemas_builder: SchemasBuilder
 
     def __init__(self,
                  info_builder: InfoBuilder,
@@ -23,13 +24,15 @@ class Parser:
                  tags_builder: TagBuilder,
                  external_doc_builder: ExternalDocBuilder,
                  path_builder: PathBuilder,
-                 security_builder: SecurityBuilder) -> None:
+                 security_builder: SecurityBuilder,
+                 schemas_builder: SchemasBuilder) -> None:
         self.info_builder = info_builder
         self.server_builder = server_builder
         self.tag_builder = tags_builder
         self.external_doc_builder = external_doc_builder
         self.path_builder = path_builder
         self.security_builder = security_builder
+        self.schemas_builder = schemas_builder
 
     def load_specification(self, data: dict) -> Specification:
         """Load OpenAPI Specification object from a file or a remote URI.
@@ -67,6 +70,9 @@ class Parser:
         if data.get('components') and data['components'].get('securitySchemes'):
             attrs["security_schemas"] = self.security_builder.build_collection(data['components']['securitySchemes'])
 
+        if data.get('components') and data['components'].get('schemas'):
+            attrs["schemas"] = self.schemas_builder.build_collection(data['components']['schemas'])
+
         logger.debug("Specification parsed successfully")
 
         return Specification(**attrs)
@@ -83,6 +89,7 @@ def _create_parser() -> Parser:
     content_builder = ContentBuilder(schema_factory)
     header_builder = HeaderBuilder(schema_factory)
     parameter_builder = ParameterBuilder(schema_factory)
+    schemas_builder = SchemasBuilder(schema_factory)
     response_builder = ResponseBuilder(content_builder, header_builder)
     request_builder = RequestBuilder(content_builder)
     operation_builder = OperationBuilder(response_builder,
@@ -98,7 +105,8 @@ def _create_parser() -> Parser:
                   tag_builder,
                   external_doc_builder,
                   path_builder,
-                  security_builder)
+                  security_builder,
+                  schemas_builder)
 
 
 def parse(uri: str) -> Specification:

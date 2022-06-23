@@ -157,6 +157,100 @@ def create_specification() -> Specification:
         ),
     }
 
+    schemas = {
+        "BadRequestError" : Object(
+            type=DataType.OBJECT,
+            required=["code", "error"],
+            properties=[
+                Property(
+                    name="code",
+                    schema=Integer(
+                        type=DataType.INTEGER,
+                        example=1044,
+                        description="Internal error code",
+                    )
+                ),
+                Property(
+                    name="error",
+                    schema=String(
+                        type=DataType.STRING,
+                        example="Invalid user id value",
+                        description="Error details",
+                    )
+                ),
+            ],
+        ),
+        "InternalServerError": Object(
+            type=DataType.OBJECT,
+            required=["code", "error"],
+            properties=[
+                Property(
+                    name="code",
+                    schema=Integer(
+                        type=DataType.INTEGER,
+                        example=1,
+                        description="Internal error code",
+                    )
+                ),
+                Property(
+                    name="error",
+                    schema=String(
+                        type=DataType.STRING,
+                        example="Unexpected server error",
+                        description="Error details",
+                    )
+                ),
+            ],
+        ),
+        "UUIDObject": Object(
+            type=DataType.OBJECT,
+            required=["uuid"],
+            properties=[
+                Property(
+                    name="uuid",
+                    schema=String(
+                        type=DataType.STRING,
+                        format=StringFormat.UUID,
+                        example="12345678-1234-5678-1234-567812345678",
+                        description="Unique object id",
+                    )
+                ),
+            ],
+        ),
+        "User": Object(
+            type=DataType.OBJECT,
+            required=["uuid","login", "email"],
+            properties=[
+                Property(
+                    name="uuid",
+                    schema=String(
+                        type=DataType.STRING,
+                        format=StringFormat.UUID,
+                        example="12345678-1234-5678-1234-567812345678",
+                        description="Unique object id",
+                    )
+                ),
+                Property(
+                    name="login",
+                    schema=String(
+                        type=DataType.STRING,
+                        example="super-admin",
+                        description="User login or nickname",
+                    )
+                ),
+                Property(
+                    name="email",
+                    schema=String(
+                        type=DataType.STRING,
+                        format=StringFormat.EMAIL,
+                        example="user@mail.com",
+                        description="User E-mail address",
+                    )
+                ),
+            ],
+        )
+    }
+
     security = [
         {"Basic": []}
     ]
@@ -300,4 +394,5 @@ def create_specification() -> Specification:
                          tags=tag_list,
                          paths=path_list,
                          security_schemas=security_schemes,
-                         security=security)
+                         security=security,
+                         schemas=schemas)

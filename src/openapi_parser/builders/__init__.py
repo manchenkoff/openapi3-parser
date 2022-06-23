@@ -12,6 +12,7 @@ from .operation import OperationBuilder
 from .path import PathBuilder
 from .oauth_flow import OAuthFlowBuilder
 from .security import SecurityBuilder
+from .schemas import SchemasBuilder
 
 __all__ = [
     "InfoBuilder",
@@ -28,4 +29,5 @@ __all__ = [
     "PathBuilder",
     "OAuthFlowBuilder",
     "SecurityBuilder",
+    "SchemasBuilder",
 ]
