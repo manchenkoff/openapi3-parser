@@ -85,6 +85,8 @@ paths:
       tags:
         - Users
       responses:
+        default:
+          $ref: '#/components/responses/Empty'
         200:
           $ref: '#/components/responses/Empty'
         400:

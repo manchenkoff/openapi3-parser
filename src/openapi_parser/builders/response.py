@@ -1,4 +1,5 @@
 import logging
+from typing import Union
 
 from . import ContentBuilder, HeaderBuilder
 from .common import extract_typed_props, PropertyMeta
@@ -15,7 +16,7 @@ class ResponseBuilder:
         self.content_builder = content_builder
         self.header_builder = header_builder
 
-    def build(self, code: int, data: dict) -> Response:
+    def build(self, code: Union[int, str], data: dict) -> Response:
         logger.debug(f"Response building [code={code}]")
 
         attrs_map = {
@@ -26,6 +27,11 @@ class ResponseBuilder:
 
         attrs = extract_typed_props(data, attrs_map)
 
-        attrs['code'] = code
+        attrs['is_default'] = code == "default"
+
+        try:
+            attrs['code'] = int(code)
+        except ValueError:
+            logger.debug(f"Response code is not an integer [code={code}]")
 
         return Response(**attrs)

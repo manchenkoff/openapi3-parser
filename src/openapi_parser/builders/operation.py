@@ -49,6 +49,6 @@ class OperationBuilder:
 
     def _get_response_list(self, data: Dict[int, dict]) -> list[Response]:
         return [
-            self.response_builder.build(int(http_code), response)
+            self.response_builder.build(http_code, response)
             for http_code, response in data.items()
         ]

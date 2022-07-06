@@ -6,7 +6,7 @@ import pytest
 from openapi_parser.builders import ContentBuilder, HeaderBuilder, ResponseBuilder
 from openapi_parser.enumeration import DataType
 from openapi_parser.specification import Content, ContentType, Header, \
-    Integer, Object, Property, RequestBody, Response, String
+    Integer, Object, Property, Response, String
 
 
 def _get_builder_mock(expected_value: Any) -> Union[ContentBuilder, HeaderBuilder]:
@@ -60,7 +60,8 @@ data_provider = (
             code=200,
             description="A string response",
             content=content_schema,
-            headers=header_schema
+            headers=header_schema,
+            is_default=False,
         ),
         _get_builder_mock(content_schema),
         _get_builder_mock(header_schema),
@@ -69,7 +70,20 @@ data_provider = (
 
 
 @pytest.mark.parametrize(['data', 'expected', 'content_builder', 'header_builder'], data_provider)
-def test_build(data: dict, expected: RequestBody, content_builder: ContentBuilder, header_builder: HeaderBuilder):
-    build = ResponseBuilder(content_builder, header_builder)
+def test_build(data: dict, expected: Response, content_builder: ContentBuilder, header_builder: HeaderBuilder) -> None:
+    builder = ResponseBuilder(content_builder, header_builder)
 
-    assert expected == build.build(200, data)
+    assert expected == builder.build(expected.code, data)
+
+
+def test_build_default_response() -> None:
+    builder = ResponseBuilder(
+        _get_builder_mock(None),
+        _get_builder_mock(None),
+    )
+
+    response_data = {"description": "A string response"}
+    actual = builder.build("default", response_data)
+
+    assert actual.is_default
+    assert actual.code is None
