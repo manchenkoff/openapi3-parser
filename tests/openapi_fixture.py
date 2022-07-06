@@ -384,6 +384,7 @@ def create_specification() -> Specification:
                     operation_id="UpdateUser",
                     tags=["Users"],
                     responses=[
+                        Response(code=None, description="Empty successful response", is_default=True),
                         Response(code=200, description="Empty successful response", is_default=False),
                         bad_request_response,
                         internal_error_response,
