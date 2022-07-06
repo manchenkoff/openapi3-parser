@@ -26,7 +26,8 @@ def _get_list_builder_mock(expected):
 response_schema = Response(
     code=200,
     description="Pet updated.",
-    content=[Content(type=ContentType.JSON, schema=Object(type=DataType.OBJECT))]
+    content=[Content(type=ContentType.JSON, schema=Object(type=DataType.OBJECT))],
+    is_default=False,
 )
 
 parameter_list = [

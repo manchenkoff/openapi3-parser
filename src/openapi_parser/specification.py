@@ -183,8 +183,9 @@ class Header:
 
 @dataclass
 class Response:
-    code: int
+    is_default: bool
     description: str
+    code: Optional[int] = None
     content: Optional[list[Content]] = None
     headers: list[Header] = field(default_factory=list)
     # links: dict[str, Link]  # TODO

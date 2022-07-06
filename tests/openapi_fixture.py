@@ -62,11 +62,13 @@ get_user_list_response = Response(
             type=ContentType.JSON,
             schema=user_list_schema
         ),
-    ]
+    ],
+    is_default=False,
 )
 
 bad_request_response = Response(
     code=400,
+    is_default=False,
     description="Bad request or parameters",
     content=[
         Content(
@@ -99,6 +101,7 @@ bad_request_response = Response(
 
 internal_error_response = Response(
     code=500,
+    is_default=False,
     description="Internal error",
     content=[
         Content(
@@ -158,7 +161,7 @@ def create_specification() -> Specification:
     }
 
     schemas = {
-        "BadRequestError" : Object(
+        "BadRequestError": Object(
             type=DataType.OBJECT,
             required=["code", "error"],
             properties=[
@@ -219,7 +222,7 @@ def create_specification() -> Specification:
         ),
         "User": Object(
             type=DataType.OBJECT,
-            required=["uuid","login", "email"],
+            required=["uuid", "login", "email"],
             properties=[
                 Property(
                     name="uuid",
@@ -305,6 +308,7 @@ def create_specification() -> Specification:
                     responses=[
                         Response(
                             code=201,
+                            is_default=False,
                             description="Successful addition user response",
                             content=[
                                 Content(
@@ -352,6 +356,7 @@ def create_specification() -> Specification:
                     responses=[
                         Response(
                             code=200,
+                            is_default=False,
                             description="Successful user response",
                             content=[
                                 Content(
@@ -379,7 +384,7 @@ def create_specification() -> Specification:
                     operation_id="UpdateUser",
                     tags=["Users"],
                     responses=[
-                        Response(code=200, description="Empty successful response"),
+                        Response(code=200, description="Empty successful response", is_default=False),
                         bad_request_response,
                         internal_error_response,
                     ],
