@@ -14,4 +14,4 @@ prance = ">=0.20.2"
 openapi-spec-validator = ">=0.2.9"
 
 [requires]
-python_version = ">=3.9"
+python_version = "3.9"
