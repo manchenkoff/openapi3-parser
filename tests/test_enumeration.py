@@ -62,6 +62,7 @@ string_format_provider = (
     ("password", StringFormat.PASSWORD),
     ("uuid", StringFormat.UUID),
     ("email", StringFormat.EMAIL),
+    ("uri", StringFormat.URI),
 )
 
 
@@ -136,7 +137,7 @@ media_type_provider = (
     ("application/json", ContentType.JSON),
     ("application/xml", ContentType.XML),
     ("application/x-www-form-urlencoded", ContentType.FORM),
-    ("multipart_form/form-data", ContentType.MULTIPART_FORM),
+    ("multipart/form-data", ContentType.MULTIPART_FORM),
     ("text/plain", ContentType.PLAIN_TEXT),
     ("text/html", ContentType.HTML),
     ("application/pdf", ContentType.PDF),
