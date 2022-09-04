@@ -78,15 +78,15 @@ class Parser:
         return Specification(**attrs)
 
 
-def _create_parser() -> Parser:
+def _create_parser(strict_enum: bool = True) -> Parser:
     logger.info("Initializing parser")
 
     info_builder = InfoBuilder()
     server_builder = ServerBuilder()
     external_doc_builder = ExternalDocBuilder()
     tag_builder = TagBuilder(external_doc_builder)
-    schema_factory = SchemaFactory()
-    content_builder = ContentBuilder(schema_factory)
+    schema_factory = SchemaFactory(strict_enum=strict_enum)
+    content_builder = ContentBuilder(schema_factory, strict_enum=strict_enum)
     header_builder = HeaderBuilder(schema_factory)
     parameter_builder = ParameterBuilder(schema_factory)
     schemas_builder = SchemasBuilder(schema_factory)
@@ -109,15 +109,18 @@ def _create_parser() -> Parser:
                   schemas_builder)
 
 
-def parse(uri: str) -> Specification:
+def parse(uri: str, strict_enum: bool = True) -> Specification:
     """Parse specification document by URL or filepath
 
     Args:
         uri (str): Path or URL to OpenAPI file
+        strict_enum (bool): Validate content types and string formats against the
+          enums defined in openapi-parser. Note that the OpenAPI specification allows
+          for custom values in these properties.
     """
     resolver = OpenAPIResolver(uri)
     specification = resolver.resolve()
 
-    parser = _create_parser()
+    parser = _create_parser(strict_enum=strict_enum)
 
     return parser.load_specification(specification)
