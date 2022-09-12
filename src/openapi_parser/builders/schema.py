@@ -5,6 +5,11 @@ from .common import extract_extension_attributes, extract_typed_props, merge_sch
 from ..enumeration import DataType, IntegerFormat, NumberFormat, StringFormat
 from ..errors import ParserError
 from ..specification import Array, Boolean, Discriminator, Integer, Number, Object, OneOf, Property, Schema, String
+from ..loose_types import (
+    LooseIntegerFormat,
+    LooseNumberFormat,
+    LooseStringFormat,
+)
 
 SchemaBuilderMethod = Callable[[dict], Schema]
 
@@ -79,8 +84,10 @@ def merge_all_of_schemas(original_data: dict) -> dict:
 
 class SchemaFactory:
     _builders: Dict[DataType, SchemaBuilderMethod]
+    strict_enum: bool
 
-    def __init__(self) -> None:
+    def __init__(self, strict_enum: bool = True) -> None:
+        self.strict_enum = strict_enum
         self._builders = {
             DataType.INTEGER: self._integer,
             DataType.NUMBER: self._number,
@@ -116,39 +123,39 @@ class SchemaFactory:
 
         return builder_func(data)
 
-    @staticmethod
-    def _integer(data: dict) -> Integer:
+    def _integer(self, data: dict) -> Integer:
+        format_cast = IntegerFormat if self.strict_enum else LooseIntegerFormat
         attrs_map = {
             "multiple_of": PropertyMeta(name="multipleOf", cast=int),
             "maximum": PropertyMeta(name="maximum", cast=int),
             "exclusive_maximum": PropertyMeta(name="exclusiveMaximum", cast=int),
             "minimum": PropertyMeta(name="minimum", cast=int),
             "exclusive_minimum": PropertyMeta(name="exclusiveMinimum", cast=int),
-            "format": PropertyMeta(name="format", cast=IntegerFormat),
+            "format": PropertyMeta(name="format", cast=format_cast),
         }
 
         return Integer(**extract_attrs(data, attrs_map))
 
-    @staticmethod
-    def _number(data: dict) -> Number:
+    def _number(self, data: dict) -> Number:
+        format_cast = NumberFormat if self.strict_enum else LooseNumberFormat
         attrs_map = {
             "multiple_of": PropertyMeta(name="multipleOf", cast=float),
             "maximum": PropertyMeta(name="maximum", cast=float),
             "exclusive_maximum": PropertyMeta(name="exclusiveMaximum", cast=float),
             "minimum": PropertyMeta(name="minimum", cast=float),
             "exclusive_minimum": PropertyMeta(name="exclusiveMinimum", cast=float),
-            "format": PropertyMeta(name="format", cast=NumberFormat),
+            "format": PropertyMeta(name="format", cast=format_cast),
         }
 
         return Number(**extract_attrs(data, attrs_map))
 
-    @staticmethod
-    def _string(data: dict) -> String:
+    def _string(self, data: dict) -> String:
+        format_cast = StringFormat if self.strict_enum else LooseStringFormat
         attrs_map = {
             "max_length": PropertyMeta(name="maxLength", cast=int),
             "min_length": PropertyMeta(name="minLength", cast=int),
             "pattern": PropertyMeta(name="pattern", cast=None),
-            "format": PropertyMeta(name="format", cast=StringFormat),
+            "format": PropertyMeta(name="format", cast=format_cast),
         }
 
         return String(**extract_attrs(data, attrs_map))
