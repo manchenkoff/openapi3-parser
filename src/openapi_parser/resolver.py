@@ -1,6 +1,7 @@
 import logging
 
 import prance
+import prance.util.formats
 
 from .errors import ParserError
 
