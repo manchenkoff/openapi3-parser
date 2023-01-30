@@ -224,4 +224,4 @@ class SchemaFactory:
             "schemas": PropertyMeta(name="anyOf", cast=create_inner_schemas)
         }
 
-        return AnyOf(**extract_attrs(data, attrs_map))
+        return AnyOf(**extract_attrs(attrs_map))
