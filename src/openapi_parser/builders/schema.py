@@ -216,7 +216,7 @@ class SchemaFactory:
 
         return OneOf(**extract_attrs(data, attrs_map))
 
-    def _any_of(self) -> AnyOf:
+    def _any_of(self, data: dict) -> AnyOf:
         def create_inner_schemas(schemas:list) -> list[Schema]:
             return [self.create(x) for x in schemas]
 
@@ -224,4 +224,4 @@ class SchemaFactory:
             "schemas": PropertyMeta(name="anyOf", cast=create_inner_schemas)
         }
 
-        return AnyOf(**extract_attrs(attrs_map))
+        return AnyOf(**extract_attrs(data, attrs_map))
