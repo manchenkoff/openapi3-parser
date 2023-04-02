@@ -44,33 +44,20 @@ class ExternalDoc:
 class Schema:
     type: DataType
     title: Optional[str] = None
-    enum: Optional[list[Any]] = None
+    enum: Optional[list[Any]] = field(default_factory=list)
     example: Optional[Any] = None
     description: Optional[str] = None
     default: Optional[Any] = None
-    nullable: Optional[bool] = None
-    read_only: Optional[bool] = None
-    write_only: Optional[bool] = None
-    deprecated: Optional[bool] = None
+    nullable: Optional[bool] = field(default=False)
+    read_only: Optional[bool] = field(default=False)
+    write_only: Optional[bool] = field(default=False)
+    deprecated: Optional[bool] = field(default=False)
     extensions: Optional[dict] = field(default_factory=dict)
 
     # all_of: Any  # TODO
     # one_of: Any  # TODO
     # any_of: Any  # TODO
     # not: Any  # TODO
-
-    def __post_init__(self) -> None:
-        # normalize default values if None passed in __init__
-        if self.enum is None:
-            self.enum = []
-        if self.nullable is None:
-            self.nullable = False
-        if self.read_only is None:
-            self.read_only = False
-        if self.write_only is None:
-            self.write_only = False
-        if self.deprecated is None:
-            self.deprecated = False
 
 
 @dataclass
@@ -150,10 +137,10 @@ class Parameter:
     description: Optional[str] = None
     # example: Optional[Any]  # TODO
     # examples: list[Any] = field(default_factory=list)  # TODO
-    deprecated: Optional[bool] = field(default=False)
-    # style: str  # TODO
-    # explode: bool  # TODO
     # allow_reserved: bool  # TODO
+    deprecated: Optional[bool] = field(default=False)
+    style: Optional[str] = None
+    explode: Optional[bool] = field(default=False)
 
 
 @dataclass

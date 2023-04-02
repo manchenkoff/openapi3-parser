@@ -274,6 +274,8 @@ def create_specification() -> Specification:
                             location=ParameterLocation.QUERY,
                             description="Result items limit",
                             required=True,
+                            explode=True,
+                            style=QueryParameterStyle.FORM,
                             schema=Integer(type=DataType.INTEGER)
                         ),
                         Parameter(
@@ -281,6 +283,8 @@ def create_specification() -> Specification:
                             location=ParameterLocation.QUERY,
                             description="Result items start offset",
                             required=True,
+                            explode=True,
+                            style=QueryParameterStyle.FORM,
                             schema=Integer(type=DataType.INTEGER)
                         ),
                     ],
@@ -340,6 +344,8 @@ def create_specification() -> Specification:
                     location=ParameterLocation.PATH,
                     description="User unique id",
                     required=True,
+                    explode=False,
+                    style=PathParameterStyle.SIMPLE,
                     schema=String(
                         type=DataType.STRING,
                         format=StringFormat.UUID,
