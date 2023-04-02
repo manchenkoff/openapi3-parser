@@ -2,7 +2,7 @@ from openapi_parser.specification import *
 
 schema_user = Object(
     type=DataType.OBJECT,
-    required=["uuid", "login", "email"],
+    required=["uuid", "login", "email", "avatar"],
     properties=[
         Property(
             name="uuid",
@@ -28,6 +28,15 @@ schema_user = Object(
                 description="User E-mail address",
                 example="user@mail.com",
                 format=StringFormat.EMAIL,
+            )
+        ),
+        Property(
+            name="avatar",
+            schema=String(
+                type=DataType.STRING,
+                description="User Avatar URL",
+                example="https://github.com/manchenkoff/openapi3-parser",
+                format=StringFormat.URI,
             )
         ),
     ],
@@ -222,7 +231,7 @@ def create_specification() -> Specification:
         ),
         "User": Object(
             type=DataType.OBJECT,
-            required=["uuid", "login", "email"],
+            required=["uuid", "login", "email", "avatar"],
             properties=[
                 Property(
                     name="uuid",
@@ -248,6 +257,15 @@ def create_specification() -> Specification:
                         format=StringFormat.EMAIL,
                         example="user@mail.com",
                         description="User E-mail address",
+                    )
+                ),
+                Property(
+                    name="avatar",
+                    schema=String(
+                        type=DataType.STRING,
+                        description="User Avatar URL",
+                        example="https://github.com/manchenkoff/openapi3-parser",
+                        format=StringFormat.URI,
                     )
                 ),
             ],

@@ -1,0 +1,35 @@
+---
+
+# minimalistic schema with non-standard but valid spec items:
+# - custom content-types
+# - 'custom' string type formats
+#
+# See issue #40 for more context.
+openapi: 3.0.3
+
+info:
+  title: 'Non-strict enum schema'
+  version: 1.0.0
+
+paths:
+  /sample-endpoint-1:
+    get:
+      responses:
+        200:
+          description: 'OK'
+          content:
+            application/hal+json:
+              schema:
+                type: object
+                properties:
+                  expectedDeliveryDuration:
+                    type: string
+                    format: duration
+
+        400:
+          description: 'Bad Request'
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties: {}

@@ -248,6 +248,7 @@ components:
         - required:
             - login
             - email
+            - avatar
         - properties:
             login:
               type: string
@@ -258,3 +259,8 @@ components:
               format: email
               example: 'user@mail.com'
               description: 'User E-mail address'
+            avatar:
+              type: string
+              format : uri
+              example: 'https://github.com/manchenkoff/openapi3-parser'
+              description: 'User Avatar URL'

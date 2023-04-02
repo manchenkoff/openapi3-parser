@@ -10,6 +10,7 @@ class DataType(Enum):
     ARRAY = 'array'
     OBJECT = 'object'
     ONE_OF = 'oneOf'
+    ANY_OF = 'anyOf'
 
 
 @unique
@@ -33,6 +34,7 @@ class StringFormat(Enum):
     PASSWORD = 'password'
     UUID = 'uuid'
     EMAIL = 'email'
+    URI = 'uri'
 
 
 @unique
@@ -92,7 +94,7 @@ class ContentType(Enum):
     JSON = 'application/json'
     XML = 'application/xml'
     FORM = 'application/x-www-form-urlencoded'
-    MULTIPART_FORM = 'multipart_form/form-data'
+    MULTIPART_FORM = 'multipart/form-data'
     PLAIN_TEXT = 'text/plain'
     HTML = 'text/html'
     PDF = 'application/pdf'

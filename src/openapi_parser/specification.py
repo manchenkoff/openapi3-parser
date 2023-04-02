@@ -1,7 +1,13 @@
 from dataclasses import dataclass, field
-from typing import Any, Optional
+from typing import Any, Optional, Union
 
 from .enumeration import *
+from .loose_types import (
+    LooseContentType,
+    LooseIntegerFormat,
+    LooseNumberFormat,
+    LooseStringFormat,
+)
 
 
 @dataclass
@@ -67,7 +73,7 @@ class Integer(Schema):
     exclusive_maximum: Optional[int] = None
     minimum: Optional[int] = None
     exclusive_minimum: Optional[int] = None
-    format: Optional[IntegerFormat] = None
+    format: Optional[Union[IntegerFormat, LooseIntegerFormat]] = None
 
 
 @dataclass
@@ -77,7 +83,7 @@ class Number(Schema):
     exclusive_maximum: Optional[float] = None
     minimum: Optional[float] = None
     exclusive_minimum: Optional[float] = None
-    format: Optional[NumberFormat] = None
+    format: Optional[Union[NumberFormat, LooseNumberFormat]] = None
 
 
 @dataclass
@@ -85,7 +91,7 @@ class String(Schema):
     max_length: Optional[int] = None
     min_length: Optional[int] = None
     pattern: Optional[str] = None
-    format: Optional[StringFormat] = None
+    format: Optional[Union[StringFormat, LooseStringFormat]] = None
 
 
 @dataclass
@@ -111,6 +117,11 @@ class Discriminator:
 class OneOf(Schema):
     schemas: list[Schema] = field(default_factory=list)
     discriminator: Optional[Discriminator] = None
+
+
+@dataclass
+class AnyOf(Schema):
+    schemas: list[Schema] = field(default_factory=list)
 
 
 @dataclass
@@ -145,7 +156,7 @@ class Parameter:
 
 @dataclass
 class Content:
-    type: ContentType
+    type: Union[ContentType, LooseContentType]
     schema: Schema
     # example: Optional[Any]  # TODO
     # examples: list[Any] = field(default_factory=list)  # TODO
