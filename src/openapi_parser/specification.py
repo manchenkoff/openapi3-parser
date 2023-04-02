@@ -133,6 +133,11 @@ class OneOf(Schema):
 
 
 @dataclass
+class AnyOf(Schema):
+    schemas: list[Schema] = field(default_factory=list)
+
+
+@dataclass
 class Property:
     name: str
     schema: Schema

@@ -4,7 +4,7 @@ from typing import Any, Callable, Dict
 from .common import extract_extension_attributes, extract_typed_props, merge_schema, PropertyMeta
 from ..enumeration import DataType, IntegerFormat, NumberFormat, StringFormat
 from ..errors import ParserError
-from ..specification import Array, Boolean, Discriminator, Integer, Number, Object, OneOf, Property, Schema, String
+from ..specification import AnyOf, Array, Boolean, Discriminator, Integer, Number, Object, OneOf, Property, Schema, String
 from ..loose_types import (
     LooseIntegerFormat,
     LooseNumberFormat,
@@ -96,6 +96,7 @@ class SchemaFactory:
             DataType.ARRAY: self._array,
             DataType.OBJECT: self._object,
             DataType.ONE_OF: self._one_of,
+            DataType.ANY_OF: self._any_of,
         }
 
     def create(self, data: dict) -> Schema:
@@ -103,6 +104,9 @@ class SchemaFactory:
 
         if 'oneOf' in data.keys():
             data['type'] = DataType.ONE_OF
+
+        if 'anyOf' in data.keys():
+            data['type'] = DataType.ANY_OF
 
         try:
             schema_type = data['type']
@@ -211,3 +215,13 @@ class SchemaFactory:
         }
 
         return OneOf(**extract_attrs(data, attrs_map))
+
+    def _any_of(self, data: dict) -> AnyOf:
+        def create_inner_schemas(schemas:list) -> list[Schema]:
+            return [self.create(x) for x in schemas]
+
+        attrs_map = {
+            "schemas": PropertyMeta(name="anyOf", cast=create_inner_schemas)
+        }
+
+        return AnyOf(**extract_attrs(data, attrs_map))

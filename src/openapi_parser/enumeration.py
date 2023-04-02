@@ -10,6 +10,7 @@ class DataType(Enum):
     ARRAY = 'array'
     OBJECT = 'object'
     ONE_OF = 'oneOf'
+    ANY_OF = 'anyOf'
 
 
 @unique
