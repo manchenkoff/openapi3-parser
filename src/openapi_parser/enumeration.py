@@ -65,6 +65,31 @@ class ParameterLocation(Enum):
 
 
 @unique
+class PathParameterStyle(Enum):
+    SIMPLE = 'simple'
+    LABEL = 'label'
+    MATRIX = 'matrix'
+
+
+@unique
+class QueryParameterStyle(Enum):
+    FORM = 'form'
+    SPACE_DELIMITED = 'spaceDelimited'
+    PIPE_DELIMITED = 'pipeDelimited'
+    DEEP_OBJECT = 'deepObject'
+
+
+@unique
+class HeaderParameterStyle(Enum):
+    SIMPLE = 'simple'
+
+
+@unique
+class CookieParameterStyle(Enum):
+    FORM = 'form'
+
+
+@unique
 class ContentType(Enum):
     JSON = 'application/json'
     XML = 'application/xml'

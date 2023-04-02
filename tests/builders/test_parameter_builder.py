@@ -3,7 +3,7 @@ from unittest.mock import MagicMock
 import pytest
 
 from openapi_parser.builders import ParameterBuilder, SchemaFactory
-from openapi_parser.enumeration import DataType, ParameterLocation
+from openapi_parser.enumeration import DataType, ParameterLocation, HeaderParameterStyle, QueryParameterStyle
 from openapi_parser.specification import Parameter, Schema, String
 
 
@@ -22,6 +22,7 @@ schema_data_provider = (
             "name": "token",
             "in": "header",
             "required": True,
+            "style": "simple",
             "schema": {
                 "type": "string",
             },
@@ -30,7 +31,9 @@ schema_data_provider = (
             name="token",
             location=ParameterLocation.HEADER,
             required=True,
-            schema=string_schema
+            style=HeaderParameterStyle.SIMPLE,
+            schema=string_schema,
+            explode=False,
         ),
         _get_schema_factory_mock(string_schema)
     ),
@@ -51,7 +54,29 @@ schema_data_provider = (
             required=True,
             description="token to be passed as a header",
             deprecated=True,
-            schema=string_schema
+            schema=string_schema,
+            style=HeaderParameterStyle.SIMPLE,
+            explode=False,
+        ),
+        _get_schema_factory_mock(string_schema)
+    ),
+    (
+        {
+            "name": "tokensImplodedString",
+            "in": "query",
+            "required": True,
+            "style": "form",
+            "schema": {
+                "type": "string",
+            },
+        },
+        Parameter(
+            name="tokensImplodedString",
+            location=ParameterLocation.QUERY,
+            required=True,
+            style=QueryParameterStyle.FORM,
+            explode=True,
+            schema=string_schema,
         ),
         _get_schema_factory_mock(string_schema)
     ),
@@ -84,7 +109,9 @@ collection_data_provider = (
                 name="token",
                 location=ParameterLocation.HEADER,
                 required=True,
-                schema=string_schema
+                schema=string_schema,
+                style=HeaderParameterStyle.SIMPLE,
+                explode=False,
             ),
             Parameter(
                 name="token",
@@ -92,7 +119,9 @@ collection_data_provider = (
                 required=True,
                 description="token to be passed as a header",
                 deprecated=True,
-                schema=string_schema
+                schema=string_schema,
+                style=HeaderParameterStyle.SIMPLE,
+                explode=False,
             ),
         ],
         _get_schema_factory_mock(string_schema)
