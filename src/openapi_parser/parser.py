@@ -110,9 +110,9 @@ def _create_parser(strict_enum: bool = True) -> Parser:
 
 
 def parse(
-    uri: Optional[str] = None,
-    spec_string: Optional[str] = None,
-    strict_enum: bool = True
+        uri: Optional[str] = None,
+        spec_string: Optional[str] = None,
+        strict_enum: bool = True
 ) -> Specification:
     """Parse specification document by URL/filepath or as a string.
 
