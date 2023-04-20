@@ -1,4 +1,5 @@
 import logging
+from typing import Optional
 
 from .builders import *
 from .builders.common import extract_typed_props, PropertyMeta
