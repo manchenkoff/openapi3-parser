@@ -10,6 +10,7 @@ class DataType(Enum):
     ARRAY = 'array'
     OBJECT = 'object'
     ONE_OF = 'oneOf'
+    ANY_OF = 'anyOf'
 
 
 @unique
@@ -61,6 +62,31 @@ class ParameterLocation(Enum):
     QUERY = 'query'
     COOKIE = 'cookie'
     PATH = 'path'
+
+
+@unique
+class PathParameterStyle(Enum):
+    SIMPLE = 'simple'
+    LABEL = 'label'
+    MATRIX = 'matrix'
+
+
+@unique
+class QueryParameterStyle(Enum):
+    FORM = 'form'
+    SPACE_DELIMITED = 'spaceDelimited'
+    PIPE_DELIMITED = 'pipeDelimited'
+    DEEP_OBJECT = 'deepObject'
+
+
+@unique
+class HeaderParameterStyle(Enum):
+    SIMPLE = 'simple'
+
+
+@unique
+class CookieParameterStyle(Enum):
+    FORM = 'form'
 
 
 @unique
