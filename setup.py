@@ -34,6 +34,6 @@ setup(
     ],
     install_requires=[
         "prance>=0.20.2",
-        "openapi-spec-validator>=0.2.9,<0.5.0",
+        "openapi-spec-validator",
     ],
 )
