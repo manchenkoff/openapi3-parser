@@ -1,4 +1,5 @@
 import logging
+from typing import Optional
 
 from .builders import *
 from .builders.common import extract_typed_props, PropertyMeta
@@ -109,16 +110,21 @@ def _create_parser(strict_enum: bool = True) -> Parser:
                   schemas_builder)
 
 
-def parse(uri: str, strict_enum: bool = True) -> Specification:
-    """Parse specification document by URL or filepath
+def parse(
+        uri: Optional[str] = None,
+        spec_string: Optional[str] = None,
+        strict_enum: bool = True
+) -> Specification:
+    """Parse specification document by URL/filepath or as a string.
 
     Args:
         uri (str): Path or URL to OpenAPI file
+        spec_string (str): OpenAPI specification as a string to parse
         strict_enum (bool): Validate content types and string formats against the
           enums defined in openapi-parser. Note that the OpenAPI specification allows
           for custom values in these properties.
     """
-    resolver = OpenAPIResolver(uri)
+    resolver = OpenAPIResolver(uri, spec_string)
     specification = resolver.resolve()
 
     parser = _create_parser(strict_enum=strict_enum)
