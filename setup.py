@@ -19,6 +19,7 @@ setup(
     version=openapi_parser.__version__,
     packages=find_packages(where='src'),
     package_dir={'': 'src'},
+    package_data={"openapi_parser": ["py.typed"]},
     license="MIT",
     description=openapi_parser.__description__,
     long_description=open(description_file).read(),
