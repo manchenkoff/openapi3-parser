@@ -63,6 +63,10 @@ string_format_provider = (
     ("uuid", StringFormat.UUID),
     ("email", StringFormat.EMAIL),
     ("uri", StringFormat.URI),
+    ("hostname", StringFormat.HOSTNAME),
+    ("ipv4", StringFormat.IPV4),
+    ("ipv6", StringFormat.IPV6),
+    ("url", StringFormat.URL),
 )
 
 
