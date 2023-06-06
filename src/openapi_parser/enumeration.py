@@ -35,6 +35,10 @@ class StringFormat(Enum):
     UUID = 'uuid'
     EMAIL = 'email'
     URI = 'uri'
+    HOSTNAME = 'hostname'
+    IPV4 = 'ipv4'
+    IPV6 = 'ipv6'
+    URL = 'url'
 
 
 @unique
