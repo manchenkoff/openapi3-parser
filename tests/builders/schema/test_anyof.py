@@ -2,7 +2,7 @@ import pytest
 
 from openapi_parser.builders.schema import SchemaFactory
 from openapi_parser.enumeration import IntegerFormat
-from openapi_parser.specification import DataType, Discriminator, Integer, AnyOf, String, StringFormat
+from openapi_parser.specification import DataType, Integer, AnyOf, String, StringFormat, Number, Boolean, Array, Object
 
 data_provider = (
     (
@@ -38,6 +38,16 @@ data_provider = (
             ]
         )
     ),
+    (
+        {
+            "description": "Can be any value - string, number, boolean, array or object."
+        },
+        AnyOf(
+            type=DataType.ANY_OF,
+            description="Can be any value - string, number, boolean, array or object.",
+            schemas=[]
+        )
+    )
 )
 
 
