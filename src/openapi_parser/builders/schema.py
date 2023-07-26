@@ -47,7 +47,7 @@ def extract_attrs(data: dict, attrs_map: Dict[str, PropertyMeta]) -> Dict[str, A
         if data.get(name) is not None
     }
 
-    attrs['type'] = DataType(attrs['type'])
+    attrs['type'] = DataType(attrs.get('type', DataType.ANY_OF))
 
     attrs.update(extract_typed_props(data, attrs_map))
 
@@ -111,7 +111,7 @@ class SchemaFactory:
         try:
             schema_type = data['type']
         except KeyError:
-            raise ParserError("Schema does not contain 'type' property")
+            schema_type = DataType.ANY_OF
 
         try:
             data_type = DataType(schema_type)
