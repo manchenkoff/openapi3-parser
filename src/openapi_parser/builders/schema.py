@@ -47,7 +47,7 @@ def extract_attrs(data: dict, attrs_map: Dict[str, PropertyMeta]) -> Dict[str, A
         if data.get(name) is not None
     }
 
-    attrs['type'] = DataType(attrs.get('type', DataType.ANY_OF))
+    attrs['type'] = DataType(attrs['type'])
 
     attrs.update(extract_typed_props(data, attrs_map))
 
@@ -111,6 +111,7 @@ class SchemaFactory:
         try:
             schema_type = data['type']
         except KeyError:
+            logger.warning(msg="Implicit type assignment: schema does not contain 'type' property")
             schema_type = DataType.ANY_OF
 
         try:
@@ -224,4 +225,18 @@ class SchemaFactory:
             "schemas": PropertyMeta(name="anyOf", cast=create_inner_schemas)
         }
 
-        return AnyOf(**extract_attrs(data, attrs_map))
+        if "type" in data:
+            return AnyOf(**extract_attrs(data, attrs_map))
+
+        possible_implicit_types = (
+            DataType.INTEGER, DataType.NUMBER, DataType.STRING, DataType.BOOLEAN, DataType.ARRAY, DataType.OBJECT
+        )
+        schemas = [
+            schema_factory({**data, **{"type": data_type}}) 
+            for data_type, schema_factory in self._builders.items()
+            if data_type in possible_implicit_types
+        ]
+
+        return AnyOf(type=DataType.ANY_OF, schemas=schemas)
+
+
