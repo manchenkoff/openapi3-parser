@@ -1,14 +1,28 @@
 import logging
 from typing import Any, Callable, Dict
 
-from .common import extract_extension_attributes, extract_typed_props, merge_schema, PropertyMeta
 from ..enumeration import DataType, IntegerFormat, NumberFormat, StringFormat
 from ..errors import ParserError
-from ..specification import AnyOf, Array, Boolean, Discriminator, Integer, Number, Object, OneOf, Property, Schema, String
-from ..loose_types import (
-    LooseIntegerFormat,
-    LooseNumberFormat,
-    LooseStringFormat,
+from ..loose_types import LooseIntegerFormat, LooseNumberFormat, LooseStringFormat
+from ..specification import (
+    AnyOf,
+    Array,
+    Boolean,
+    Discriminator,
+    Integer,
+    Null,
+    Number,
+    Object,
+    OneOf,
+    Property,
+    Schema,
+    String,
+)
+from .common import (
+    PropertyMeta,
+    extract_extension_attributes,
+    extract_typed_props,
+    merge_schema,
 )
 
 SchemaBuilderMethod = Callable[[dict], Schema]
@@ -89,6 +103,7 @@ class SchemaFactory:
     def __init__(self, strict_enum: bool = True) -> None:
         self.strict_enum = strict_enum
         self._builders = {
+            DataType.NULL: self._null,
             DataType.INTEGER: self._integer,
             DataType.NUMBER: self._number,
             DataType.STRING: self._string,
@@ -127,6 +142,9 @@ class SchemaFactory:
         logger.debug(f"Building schema [type={data_type}]")
 
         return builder_func(data)
+
+    def _null(self, data: dict) -> Null:
+        return Null(**extract_attrs(data, {}))
 
     def _integer(self, data: dict) -> Integer:
         format_cast = IntegerFormat if self.strict_enum else LooseIntegerFormat
