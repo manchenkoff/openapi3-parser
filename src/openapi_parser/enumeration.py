@@ -3,6 +3,7 @@ from enum import Enum, unique
 
 @unique
 class DataType(Enum):
+    NULL = 'null'
     INTEGER = 'integer'
     NUMBER = 'number'
     STRING = 'string'

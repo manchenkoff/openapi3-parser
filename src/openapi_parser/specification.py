@@ -95,6 +95,11 @@ class String(Schema):
 
 
 @dataclass
+class Null(Schema):
+    pass
+
+
+@dataclass
 class Boolean(Schema):
     pass
 
