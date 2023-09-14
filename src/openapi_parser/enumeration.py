@@ -97,6 +97,8 @@ class CookieParameterStyle(Enum):
 @unique
 class ContentType(Enum):
     JSON = 'application/json'
+    JSON_TEXT = 'text/json'
+    JSON_ANY = 'application/*+json'
     XML = 'application/xml'
     FORM = 'application/x-www-form-urlencoded'
     MULTIPART_FORM = 'multipart/form-data'
