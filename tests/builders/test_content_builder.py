@@ -31,6 +31,19 @@ collection_data_provider = (
         ],
         _get_schema_factory_mock(string_schema)
     ),
+    (
+        {
+            "text/json": {
+                "schema": {
+                    "type": "string"
+                }
+            }
+        },
+        [
+            Content(type=ContentType.JSON_TEXT, schema=string_schema)
+        ],
+        _get_schema_factory_mock(string_schema)
+    ),
 )
 
 
