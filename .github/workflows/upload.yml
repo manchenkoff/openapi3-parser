@@ -19,12 +19,12 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install pipenv
+          pip install pipenv build
           pipenv install --dev
 
       - name: Build package
         run: |
-          pipenv run python setup.py sdist bdist_wheel
+          pipenv run python -m build
 
       - name: Publish package
         if: startsWith(github.ref, 'refs/tags')
