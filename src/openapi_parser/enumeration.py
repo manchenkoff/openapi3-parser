@@ -107,6 +107,13 @@ class ContentType(Enum):
     HTML = 'text/html'
     PDF = 'application/pdf'
     PNG = 'image/png'
+    JPEG = 'image/jpeg'
+    GIF = 'image/gif'
+    SVG = 'image/svg+xml'
+    AVIF = 'image/avif'
+    BMP = 'image/bmp'
+    WEBP = 'image/webp'
+    Image = 'image/*'
     BINARY = 'application/octet-stream'
 
 

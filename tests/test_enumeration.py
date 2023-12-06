@@ -149,6 +149,13 @@ media_type_provider = (
     ("text/html", ContentType.HTML),
     ("application/pdf", ContentType.PDF),
     ("image/png", ContentType.PNG),
+    ("image/jpeg", ContentType.JPEG),
+    ("image/gif", ContentType.GIF),
+    ("image/svg+xml", ContentType.SVG),
+    ("image/avif", ContentType.AVIF),
+    ("image/bmp", ContentType.BMP),
+    ("image/webp", ContentType.WEBP),
+    ("image/*", ContentType.Image),
     ("application/octet-stream", ContentType.BINARY),
 )
 
