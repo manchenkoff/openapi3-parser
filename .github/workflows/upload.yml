@@ -1,6 +1,7 @@
 name: Upload
 
 on:
+  workflow_dispatch: # manual trigger
   release:
     types: [ created ]
 
@@ -20,6 +21,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install pipenv build
+          pipenv install build
           pipenv install --dev
 
       - name: Build package
