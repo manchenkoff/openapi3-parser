@@ -1,12 +1,8 @@
 #!/usr/bin/env python
 
-from os.path import dirname, join
-
 from setuptools import find_packages, setup
 
 from src import openapi_parser
-
-description_file = join(dirname(__file__), "readme.md")
 
 setup(
     name=openapi_parser.__title__,
@@ -22,8 +18,6 @@ setup(
     package_data={"openapi_parser": ["py.typed"]},
     license="MIT",
     description=openapi_parser.__description__,
-    long_description=open(description_file).read(),
-    long_description_content_type="text/markdown",
     keywords="swagger, python, swagger-parser, openapi3-parser, parser, openapi3, swagger-api",
     classifiers=[
         'Development Status :: 4 - Beta',

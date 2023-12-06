@@ -2,7 +2,7 @@
 .PHONY: help build test
 
 build: ## Build an application
-	@pipenv run python setup.py sdist bdist_wheel
+	@pipenv run python -m build --no-isolation
 
 publish-test: ## Upload package to test PyPI
 	@pipenv run twine upload --repository testpypi dist/*
@@ -12,10 +12,10 @@ publish: build ## Upload package to PyPI
 	@make clean
 
 install: build ## Install application to Pip environment
-	@pipenv run python setup.py install
+	@pipenv run python -m pip install
 
 install-dev: ## Install application to Pip development environment
-	@pipenv run python setup.py develop
+	@pipenv run python -m pip install -e
 	@make clean
 
 clean: ## Remove build files
