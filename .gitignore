@@ -128,3 +128,6 @@ dmypy.json
 # Cython debug symbols
 cython_debug/
 
+# VS Code
+.history
+.vscode

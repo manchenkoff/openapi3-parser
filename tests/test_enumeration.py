@@ -140,6 +140,7 @@ def test_parameter_location_error() -> None:
 media_type_provider = (
     ("application/json", ContentType.JSON),
     ("application/*+json", ContentType.JSON_ANY),
+    ("application/problem+json", ContentType.JSON_PROBLEM),
     ("text/json", ContentType.JSON_TEXT),
     ("application/xml", ContentType.XML),
     ("application/x-www-form-urlencoded", ContentType.FORM),
