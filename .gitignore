@@ -131,3 +131,6 @@ cython_debug/
 # VS Code
 .history
 .vscode
+
+#pyenv
+.python-version
