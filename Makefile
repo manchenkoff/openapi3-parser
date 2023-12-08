@@ -30,7 +30,7 @@ clean: ## Remove build files
 	@echo "Temporary files were clear"
 
 test: ## Run code tests
-	@poetry run pytest
+	@poetry run pytest -vv
 
 lint: ## Run code linters
 	@echo "Run code linters..."

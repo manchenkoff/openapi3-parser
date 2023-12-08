@@ -6,6 +6,7 @@ authors = ["Artem Manchenkov <artem@manchenkoff.me>"]
 license = "MIT"
 readme = "README.md"
 packages = [{ include = "openapi_parser", from = "src" }]
+build = "build_mime_types/build_mime_types.py"
 
 [tool.poetry.dependencies]
 python = "^3.9"
@@ -27,7 +28,9 @@ build-backend = "poetry.core.masonry.api"
 [tool.pytest.ini_options]
 testpaths = [
     "tests",
+    "build_mime_types"
 ]
 pythonpath = [
-    "./src"
+    "./src",
+    "./build_mime_types"
 ]
