@@ -1,6 +1,6 @@
 import logging
 
-from .common import extract_typed_props, PropertyMeta
+from .common import extract_typed_props, PropertyMeta, extract_extension_attributes
 from .oauth_flow import OAuthFlowBuilder
 from ..enumeration import AuthenticationScheme, BaseLocation, SecurityType
 from ..specification import Security
@@ -29,6 +29,10 @@ class SecurityBuilder:
         }
 
         attrs = extract_typed_props(data, attrs_map)
+        attrs['extensions'] = extract_extension_attributes(data)
+
+        if attrs['extensions']:
+            logger.debug(f"Extracted custom properties [{attrs['extensions'].keys()}]")
 
         return Security(**attrs)
 

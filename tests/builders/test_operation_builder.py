@@ -96,6 +96,32 @@ data_provider = (
     ),
     (
         {
+            "x-python-method-name": "some_method_name",
+            "responses": {
+                "200": {
+                    "description": "Pet updated.",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                            }
+                        },
+                    }
+                },
+            },
+        },
+        Operation(
+            responses=[response_schema],
+            method=OperationMethod.GET,
+            extensions={"python_method_name": "some_method_name"},
+        ),
+        _get_builder_mock(response_schema),
+        _get_builder_mock(None),
+        _get_builder_mock(None),
+        _get_list_builder_mock(None),
+    ),
+    (
+        {
             "responses": {
                 "200": {
                     "description": "Pet updated.",
@@ -161,7 +187,7 @@ data_provider = (
             operation_id="updatePetWithForm",
             parameters=parameter_list,
             request_body=request_body,
-            external_docs=external_doc
+            external_docs=external_doc,
         ),
         _get_builder_mock(response_schema),
         _get_builder_mock(external_doc),

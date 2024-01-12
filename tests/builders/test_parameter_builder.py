@@ -80,6 +80,28 @@ schema_data_provider = (
         ),
         _get_schema_factory_mock(string_schema)
     ),
+    (
+        {
+            "name": "some_id",
+            "in": "query",
+            "required": True,
+            "style": "form",
+            "schema": {
+                "type": "string",
+            },
+            "x-custom-go-tag": "binding:\"required\""
+        },
+        Parameter(
+            name="some_id",
+            location=ParameterLocation.QUERY,
+            required=True,
+            style=QueryParameterStyle.FORM,
+            explode=True,
+            schema=string_schema,
+            extensions={"custom_go_tag": "binding:\"required\""}
+        ),
+        _get_schema_factory_mock(string_schema)
+    ),
 )
 
 collection_data_provider = (

@@ -13,6 +13,7 @@ data_provider = (
                 "authorizationUrl": "https://example.com/api/oauth/dialog",
                 "refreshUrl": "https://example.com/api/oauth/dialog",
                 "tokenUrl": "https://example.com/api/oauth/dialog",
+                "x-state": "some data to be passed to oath server",
             },
         },
         {
@@ -20,6 +21,7 @@ data_provider = (
                 authorization_url="https://example.com/api/oauth/dialog",
                 refresh_url="https://example.com/api/oauth/dialog",
                 token_url="https://example.com/api/oauth/dialog",
+                extensions={"state": "some data to be passed to oath server"}
             ),
         },
     ),
@@ -39,6 +41,9 @@ data_provider = (
                     "write:pets": "modify pets in your account",
                     "read:pets": "read your pets"
                 }
+            },
+            "x-customFlow": {
+                "custom_attribute": "custom value"
             }
         },
         {
@@ -57,6 +62,9 @@ data_provider = (
                     "read:pets": "read your pets"
                 }
             ),
+            "customFlow": {
+                "custom_attribute": "custom value"
+            }
         },
     ),
 )

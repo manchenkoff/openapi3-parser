@@ -53,6 +53,30 @@ collection_data_provider = (
         ],
         _get_schema_factory_mock(integer_schema)
     ),
+    (
+        {
+            "X-Header": {
+                "description": "The number of allowed requests in the current period",
+                "required": True,
+                "deprecated": True,
+                "schema": {
+                    "type": "integer",
+                },
+                "x-custom-go-tag": "json:\"x-header\""
+            }
+        },
+        [
+            Header(
+                name="X-Header",
+                required=True,
+                description="The number of allowed requests in the current period",
+                deprecated=True,
+                schema=integer_schema,
+                extensions={"custom_go_tag": "json:\"x-header\""}
+            )
+        ],
+        _get_schema_factory_mock(integer_schema)
+    ),
 )
 
 

@@ -14,6 +14,14 @@ data_provider = (
     (
         {
             "title": "Sample Pet Store App",
+            "version": "1.0.1",
+            "x-rnd-team": "super team",
+        },
+        Info(title="Sample Pet Store App", version="1.0.1", extensions={"rnd_team": "super team"}),
+    ),
+    (
+        {
+            "title": "Sample Pet Store App",
             "description": "This is a sample server for a pet store.",
             "termsOfService": "http://example.com/terms/",
             "contact": {

@@ -1,6 +1,6 @@
 import logging
 
-from .common import extract_typed_props, PropertyMeta
+from .common import extract_typed_props, PropertyMeta, extract_extension_attributes
 from ..specification import Contact, Info, License
 
 logger = logging.getLogger(__name__)
@@ -20,6 +20,10 @@ class InfoBuilder:
         }
 
         attrs = extract_typed_props(data, attrs_map)
+        attrs["extensions"] = extract_extension_attributes(data)
+
+        if attrs['extensions']:
+            logger.debug(f"Extracted custom properties [{attrs['extensions'].keys()}]")
 
         return Info(**attrs)
 

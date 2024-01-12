@@ -86,6 +86,42 @@ data_provider = (
     (
         {
             "/pets/{id}": {
+                "x-python-class": "Pet",
+                "get": {
+                    "description": "Returns pets based on ID",
+                    "summary": "Find pets by ID",
+                    "operationId": "getPetsById",
+                    "responses": {
+                        "200": {
+                            "description": "pet response",
+                            "content": {
+                                "application/json": {
+                                    "schema": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string",
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                    }
+                },
+            }
+        },
+        [
+            Path(
+                url="/pets/{id}",
+                operations=[operation_object],
+                extensions={"python_class": "Pet"}
+            )
+        ],
+        _get_builder_mock(operation_object),
+        _get_builder_list_mock(None),
+    ),
+    (
+        {
+            "/pets/{id}": {
                 "summary": "Summary description",
                 "description": "Long description",
                 "get": {

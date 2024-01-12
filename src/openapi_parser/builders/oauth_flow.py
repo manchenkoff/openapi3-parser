@@ -1,7 +1,7 @@
 import logging
 from typing import Dict
 
-from .common import extract_typed_props, PropertyMeta
+from .common import extract_typed_props, PropertyMeta, extract_extension_attributes
 from ..enumeration import OAuthFlowType
 from ..specification import OAuthFlow
 
@@ -22,10 +22,18 @@ class OAuthFlowBuilder:
 
         result_oauth_dict = {
             OAuthFlowType(oauth_type): OAuthFlow(
+                extensions=extract_extension_attributes(oauth_value),
                 **extract_typed_props(oauth_value, attrs_map)
             )
             for oauth_type, oauth_value
             in data.items()
+            if not oauth_type.startswith("x-")
         }
+
+        extensions = extract_extension_attributes(data)
+        if extensions:
+            logger.debug(f"Extracted custom properties [{extensions.keys()}]")
+            for extension in extensions.keys():
+                result_oauth_dict[extension] = extensions[extension]
 
         return result_oauth_dict

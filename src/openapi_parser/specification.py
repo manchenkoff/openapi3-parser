@@ -21,6 +21,7 @@ class Contact:
 class License:
     name: str
     url: Optional[str] = None
+    extensions: Optional[dict] = field(default_factory=dict)
 
 
 @dataclass
@@ -31,6 +32,7 @@ class Info:
     terms_of_service: Optional[str] = None
     contact: Optional[Contact] = None
     license: Optional[License] = None
+    extensions: Optional[dict] = field(default_factory=dict)
 
 
 @dataclass
@@ -38,12 +40,14 @@ class Server:
     url: str
     description: Optional[str] = None
     variables: Optional[dict] = field(default_factory=dict)
+    extensions: Optional[dict] = field(default_factory=dict)
 
 
 @dataclass
 class ExternalDoc:
     url: str
     description: Optional[str] = None
+    extensions: Optional[dict] = field(default_factory=dict)
 
 
 @dataclass
@@ -157,6 +161,7 @@ class Parameter:
     deprecated: Optional[bool] = field(default=False)
     style: Optional[str] = None
     explode: Optional[bool] = field(default=False)
+    extensions: Optional[dict] = field(default_factory=dict)
 
 
 @dataclass
@@ -182,6 +187,7 @@ class Header:
     description: Optional[str] = None
     required: Optional[bool] = field(default=False)
     deprecated: Optional[bool] = field(default=False)
+    extensions: Optional[dict] = field(default_factory=dict)
 
 
 @dataclass
@@ -200,6 +206,7 @@ class OAuthFlow:
     authorization_url: Optional[str] = None
     token_url: Optional[str] = None
     scopes: dict[str, str] = field(default_factory=dict)
+    extensions: Optional[dict] = field(default_factory=dict)
 
 
 @dataclass
@@ -212,6 +219,7 @@ class Security:
     bearer_format: Optional[str] = None
     flows: dict[OAuthFlowType, OAuthFlow] = field(default_factory=dict)
     url: Optional[str] = None
+    extensions: Optional[dict] = field(default_factory=dict)
 
 
 @dataclass
@@ -227,6 +235,7 @@ class Operation:
     parameters: list[Parameter] = field(default_factory=list)
     tags: list[str] = field(default_factory=list)
     security: list[dict[str, Any]] = field(default_factory=list)
+    extensions: Optional[dict] = field(default_factory=dict)
     # callbacks: dict[str, Callback] = field(default_factory=dict)  # TODO
 
 
@@ -237,6 +246,7 @@ class Path:
     description: Optional[str] = None
     operations: list[Operation] = field(default_factory=list)
     parameters: list[Parameter] = field(default_factory=list)
+    extensions: Optional[dict] = field(default_factory=dict)
 
 
 @dataclass
@@ -257,3 +267,4 @@ class Specification:
     schemas: dict[str, Schema] = field(default_factory=dict)
     external_docs: Optional[ExternalDoc] = None
     paths: list[Path] = field(default_factory=list)
+    extensions: Optional[dict] = field(default_factory=dict)
