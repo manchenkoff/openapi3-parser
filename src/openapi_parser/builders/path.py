@@ -42,6 +42,10 @@ class PathBuilder:
             if method.value in data
         ]
 
+        if attrs.get("parameters"):
+            for operation in attrs["operations"]:
+                operation.parameters += attrs["parameters"]
+
         attrs['extensions'] = extract_extension_attributes(data)
 
         if attrs['extensions']:

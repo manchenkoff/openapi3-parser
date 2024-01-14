@@ -13,4 +13,4 @@ def swagger_specification():
 def test_run_parser(swagger_specification: Specification):
     actual_specification = parse('tests/data/swagger.yml')
 
-    assert swagger_specification == actual_specification
+    assert actual_specification == swagger_specification
