@@ -15,9 +15,21 @@ data_provider = (
     (
         {
             "description": "Find more info here",
-            "url": "https://example.com"
+            "url": "https://example.com",
         },
         ExternalDoc(url="https://example.com", description="Find more info here"),
+    ),
+    (
+        {
+            "description": "Find more info here",
+            "url": "https://example.com",
+            "x-logo-url": "https://example.com/logo.png",
+        },
+        ExternalDoc(
+            url="https://example.com",
+            description="Find more info here",
+            extensions={"logo_url": "https://example.com/logo.png"}
+        ),
     ),
 )
 

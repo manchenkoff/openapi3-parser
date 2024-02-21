@@ -1,7 +1,7 @@
 import logging
 
 from . import SchemaFactory
-from .common import extract_typed_props, PropertyMeta
+from .common import extract_typed_props, PropertyMeta, extract_extension_attributes
 from ..specification import Header
 
 logger = logging.getLogger(__name__)
@@ -33,5 +33,9 @@ class HeaderBuilder:
         attrs = extract_typed_props(data, attrs_map)
 
         attrs['name'] = name
+        attrs["extensions"] = extract_extension_attributes(data)
+
+        if attrs['extensions']:
+            logger.debug(f"Extracted custom properties [{attrs['extensions'].keys()}]")
 
         return Header(**attrs)

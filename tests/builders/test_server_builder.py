@@ -52,6 +52,32 @@ data_provider = (
                    description="Production server"),
         ],
     ),
+    (
+        [
+            {
+                "url": "https://development.gigantic-server.com/v1",
+                "x-internal": True,
+                "description": "Development server"
+            },
+            {
+                "url": "https://staging.gigantic-server.com/v1",
+                "description": "Staging server"
+            },
+            {
+                "url": "https://api.gigantic-server.com/v1",
+                "description": "Production server"
+            }
+        ],
+        [
+            Server(url="https://development.gigantic-server.com/v1",
+                   description="Development server",
+                   extensions={"internal": True}),
+            Server(url="https://staging.gigantic-server.com/v1",
+                   description="Staging server"),
+            Server(url="https://api.gigantic-server.com/v1",
+                   description="Production server"),
+        ],
+    ),
 )
 
 

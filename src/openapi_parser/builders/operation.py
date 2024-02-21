@@ -2,7 +2,7 @@ import logging
 from typing import Dict
 
 from . import ExternalDocBuilder, ParameterBuilder, RequestBuilder, ResponseBuilder
-from .common import extract_typed_props, PropertyMeta
+from .common import extract_typed_props, PropertyMeta, extract_extension_attributes
 from ..enumeration import OperationMethod
 from ..specification import Operation, Response
 
@@ -42,6 +42,10 @@ class OperationBuilder:
         }
 
         attrs = extract_typed_props(data, attrs_map)
+        attrs['extensions'] = extract_extension_attributes(data)
+
+        if attrs['extensions']:
+            logger.debug(f"Extracted custom properties [{attrs['extensions'].keys()}]")
 
         attrs['method'] = method
 

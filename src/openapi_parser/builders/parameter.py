@@ -2,7 +2,7 @@ import logging
 from typing import List
 
 from . import SchemaFactory
-from .common import extract_typed_props, PropertyMeta
+from .common import extract_typed_props, PropertyMeta, extract_extension_attributes
 from ..enumeration import ParameterLocation, HeaderParameterStyle, PathParameterStyle, QueryParameterStyle, \
     CookieParameterStyle
 from ..specification import Parameter
@@ -55,5 +55,10 @@ class ParameterBuilder:
 
         if not attrs.get("explode") and attrs["style"].value == "form":
             attrs["explode"] = True
+
+        attrs['extensions'] = extract_extension_attributes(data)
+
+        if attrs['extensions']:
+            logger.debug(f"Extracted custom properties [{attrs['extensions'].keys()}]")
 
         return Parameter(**attrs)

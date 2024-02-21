@@ -276,6 +276,21 @@ def create_specification() -> Specification:
         {"Basic": []}
     ]
 
+    uuid_parameters = [
+        Parameter(
+            name="uuid",
+            location=ParameterLocation.PATH,
+            description="User unique id",
+            required=True,
+            explode=False,
+            style=PathParameterStyle.SIMPLE,
+            schema=String(
+                type=DataType.STRING,
+                format=StringFormat.UUID,
+            ),
+        ),
+    ]
+
     path_list: list[Path] = [
         Path(
             url="/users",
@@ -356,20 +371,7 @@ def create_specification() -> Specification:
         ),
         Path(
             url="/users/{uuid}",
-            parameters=[
-                Parameter(
-                    name="uuid",
-                    location=ParameterLocation.PATH,
-                    description="User unique id",
-                    required=True,
-                    explode=False,
-                    style=PathParameterStyle.SIMPLE,
-                    schema=String(
-                        type=DataType.STRING,
-                        format=StringFormat.UUID,
-                    ),
-                ),
-            ],
+            parameters=uuid_parameters,
             operations=[
                 Operation(
                     method=OperationMethod.GET,
@@ -377,6 +379,7 @@ def create_specification() -> Specification:
                     description="Method to get user details",
                     operation_id="GetUser",
                     tags=["Users"],
+                    parameters=uuid_parameters,
                     responses=[
                         Response(
                             code=200,
@@ -407,6 +410,7 @@ def create_specification() -> Specification:
                     summary="Update existed user model",
                     operation_id="UpdateUser",
                     tags=["Users"],
+                    parameters=uuid_parameters,
                     responses=[
                         Response(code=None, description="Empty successful response", is_default=True),
                         Response(code=200, description="Empty successful response", is_default=False),

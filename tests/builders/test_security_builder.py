@@ -97,6 +97,37 @@ data_provider = (
     ),
     (
         {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header",
+            "x-amazon-apigateway-authtype": "oauth2",
+            "x-amazon-apigateway-authorizer": {
+                "type": "token",
+                "authorizerUri": "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:account-id:function:function-name/invocations",
+                "authorizerCredentials": "arn:aws:iam::account-id:role",
+                "identityValidationExpression": "^x-[a-z]+",
+                "authorizerResultTtlInSeconds": 60
+            }
+        },
+        Security(
+            type=SecurityType.API_KEY,
+            location=BaseLocation.HEADER,
+            name="Authorization",
+            extensions={
+                "amazon_apigateway_authtype": "oauth2",
+                "amazon_apigateway_authorizer": {
+                    "type": "token",
+                    "authorizerUri": "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:account-id:function:function-name/invocations",
+                    "authorizerCredentials": "arn:aws:iam::account-id:role",
+                    "identityValidationExpression": "^x-[a-z]+",
+                    "authorizerResultTtlInSeconds": 60
+                }
+            }
+        ),
+        _get_oauth_flow_builder_mock(None),
+    ),
+    (
+        {
             "type": "oauth2",
             "flows": {
                 "implicit": {
