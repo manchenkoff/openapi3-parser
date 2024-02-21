@@ -1,3 +1,4 @@
+import copy
 from unittest.mock import MagicMock
 
 import pytest
@@ -48,10 +49,19 @@ operation_object = Operation(
     ],
 )
 
+expected_operation_object = copy.deepcopy(operation_object)
+
+
+def add_parameters_to_operation(operation, parameters):
+    operation_copy = copy.deepcopy(operation)
+    operation_copy.parameters = parameters
+    return operation_copy
+
+
 data_provider = (
     (
         {
-            "/pets/{id}": {
+            "/pets": {
                 "get": {
                     "description": "Returns pets based on ID",
                     "summary": "Find pets by ID",
@@ -76,8 +86,8 @@ data_provider = (
         },
         [
             Path(
-                url="/pets/{id}",
-                operations=[operation_object]
+                url="/pets",
+                operations=[expected_operation_object]
             )
         ],
         _get_builder_mock(operation_object),
@@ -85,7 +95,7 @@ data_provider = (
     ),
     (
         {
-            "/pets/{id}": {
+            "/pets": {
                 "x-python-class": "Pet",
                 "get": {
                     "description": "Returns pets based on ID",
@@ -111,8 +121,8 @@ data_provider = (
         },
         [
             Path(
-                url="/pets/{id}",
-                operations=[operation_object],
+                url="/pets",
+                operations=[expected_operation_object],
                 extensions={"python_class": "Pet"}
             )
         ],
@@ -166,7 +176,7 @@ data_provider = (
                 summary="Summary description",
                 description="Long description",
                 parameters=parameters_list,
-                operations=[operation_object],
+                operations=[add_parameters_to_operation(expected_operation_object, parameters_list)]
             )
         ],
         _get_builder_mock(operation_object),
