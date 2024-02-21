@@ -5,7 +5,8 @@ import pytest
 
 from openapi_parser.builders import ContentBuilder, HeaderBuilder, ResponseBuilder
 from openapi_parser.enumeration import DataType
-from openapi_parser.specification import Content, ContentType, Header, \
+from openapi_parser.mime_types import ContentType
+from openapi_parser.specification import Content, Header, \
     Integer, Object, Property, Response, String
 
 

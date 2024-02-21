@@ -4,7 +4,8 @@ import pytest
 
 from openapi_parser.builders import ExternalDocBuilder, OperationBuilder, ParameterBuilder, RequestBuilder, \
     ResponseBuilder
-from openapi_parser.enumeration import DataType, ContentType, OperationMethod, ParameterLocation
+from openapi_parser.enumeration import DataType, OperationMethod, ParameterLocation
+from openapi_parser.mime_types import ContentType
 from openapi_parser.specification import Content, ExternalDoc, Object, Operation, Parameter, Property, RequestBody, \
     Response, String
 

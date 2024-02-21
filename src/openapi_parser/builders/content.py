@@ -1,8 +1,9 @@
 import logging
+import mimetypes
 from typing import Type, Union
 
 from . import SchemaFactory
-from ..enumeration import ContentType
+from ..mime_types import ContentType
 from ..specification import Content
 from ..loose_types import LooseContentType
 

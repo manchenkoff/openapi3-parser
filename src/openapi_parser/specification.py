@@ -2,6 +2,7 @@ from dataclasses import dataclass, field
 from typing import Any, Optional, Union
 
 from .enumeration import *
+from .mime_types import ContentType
 from .loose_types import (
     LooseContentType,
     LooseIntegerFormat,

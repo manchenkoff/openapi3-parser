@@ -3,7 +3,9 @@ from unittest.mock import MagicMock
 import pytest
 
 from openapi_parser.builders import ContentBuilder, SchemaFactory
-from openapi_parser.enumeration import ContentType, DataType
+from openapi_parser.enumeration import DataType
+from openapi_parser.loose_types import LooseContentType
+from openapi_parser.mime_types import ContentType
 from openapi_parser.specification import Content, Integer, Schema, String
 
 
@@ -41,6 +43,19 @@ collection_data_provider = (
         },
         [
             Content(type=ContentType.JSON_TEXT, schema=string_schema)
+        ],
+        _get_schema_factory_mock(string_schema)
+    ),
+    (
+        {
+            "application/gzip": {
+                "schema": {
+                    "type": "string"
+                }
+            }
+        },
+        [
+            Content(type=ContentType.APPLICATION_GZIP, schema=string_schema)
         ],
         _get_schema_factory_mock(string_schema)
     ),

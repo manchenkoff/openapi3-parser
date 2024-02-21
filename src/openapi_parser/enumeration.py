@@ -41,7 +41,6 @@ class StringFormat(Enum):
     IPV6 = 'ipv6'
     URL = 'url'
 
-
 @unique
 class OperationMethod(Enum):
     GET = 'get'
@@ -92,29 +91,6 @@ class HeaderParameterStyle(Enum):
 @unique
 class CookieParameterStyle(Enum):
     FORM = 'form'
-
-
-@unique
-class ContentType(Enum):
-    JSON = 'application/json'
-    JSON_TEXT = 'text/json'
-    JSON_ANY = 'application/*+json'
-    JSON_PROBLEM = 'application/problem+json'
-    XML = 'application/xml'
-    FORM = 'application/x-www-form-urlencoded'
-    MULTIPART_FORM = 'multipart/form-data'
-    PLAIN_TEXT = 'text/plain'
-    HTML = 'text/html'
-    PDF = 'application/pdf'
-    PNG = 'image/png'
-    JPEG = 'image/jpeg'
-    GIF = 'image/gif'
-    SVG = 'image/svg+xml'
-    AVIF = 'image/avif'
-    BMP = 'image/bmp'
-    WEBP = 'image/webp'
-    Image = 'image/*'
-    BINARY = 'application/octet-stream'
 
 
 @unique
