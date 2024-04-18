@@ -4,7 +4,8 @@ from unittest.mock import MagicMock
 import pytest
 
 from openapi_parser.builders import OperationBuilder, ParameterBuilder, PathBuilder
-from openapi_parser.enumeration import ContentType, DataType, OperationMethod, ParameterLocation
+from openapi_parser.enumeration import DataType, OperationMethod, ParameterLocation
+from openapi_parser.mime_types import ContentType
 from openapi_parser.specification import Array, Content, Operation, Parameter, Path, Response, String
 
 
