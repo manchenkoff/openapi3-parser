@@ -1,0 +1,33 @@
+[tool.poetry]
+name = "openapi3-parser"
+version = "1.1.16"
+description = "OpenAPI 3 parser to use a specification inside of the code in your projects"
+authors = ["Artem Manchenkov <artem@manchenkoff.me>"]
+license = "MIT"
+readme = "README.md"
+packages = [{ include = "openapi_parser", from = "src" }]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+prance = ">=0.20.2"
+openapi-spec-validator = "==0.6.0"
+
+
+[tool.poetry.group.dev.dependencies]
+wheel = ">=0.35.1"
+mypy = ">=0.800"
+pytest = ">=6.2.2"
+build = "*"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+
+[tool.pytest.ini_options]
+testpaths = [
+    "tests",
+]
+pythonpath = [
+    "./src"
+]
