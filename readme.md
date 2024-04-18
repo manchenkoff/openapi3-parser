@@ -8,6 +8,14 @@
 
 A simple package to parse your OpenAPI 3 documents into Python object to work with.
 
+Supported versions:
+
+| Version | Status         |
+| ------- | -------------- |
+| 2.0     | Deprecated     |
+| 3.0     | **Supported**  |
+| 3.1     | In development |
+
 ## How to install
 
 To install package run the following command
