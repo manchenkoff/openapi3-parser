@@ -1,5 +1,5 @@
 import logging
-from typing import Type, Union
+from typing import Type, Union, Any
 
 from . import SchemaFactory
 from ..enumeration import ContentType
@@ -28,7 +28,7 @@ class ContentBuilder:
             in data.items()
         ]
 
-    def _create_content(self, content_type: str, schema: dict, example: str, examples: list) -> Content:
+    def _create_content(self, content_type: str, schema: dict, example: Any, examples: list) -> Content:
         logger.debug(f"Content building [type={content_type}]")
         ContentTypeCls: ContentTypeType = ContentType if self.strict_enum else LooseContentType
         return Content(
