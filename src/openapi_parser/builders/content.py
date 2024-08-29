@@ -21,15 +21,19 @@ class ContentBuilder:
 
     def build_list(self, data: dict) -> list[Content]:
         return [
-            self._create_content(content_type, content_value['schema'])
+            self._create_content(content_type, content_value.get('schema', {}),
+                                 content_value.get('example', None),
+                                 content_value.get('examples', []))
             for content_type, content_value
             in data.items()
         ]
 
-    def _create_content(self, content_type: str, content_value: dict) -> Content:
+    def _create_content(self, content_type: str, schema: dict, example: str, examples: list) -> Content:
         logger.debug(f"Content building [type={content_type}]")
         ContentTypeCls: ContentTypeType = ContentType if self.strict_enum else LooseContentType
         return Content(
             type=ContentTypeCls(content_type),
-            schema=self.schema_factory.create(content_value)
+            schema=self.schema_factory.create(schema),
+            example=example,
+            examples=examples
         )
