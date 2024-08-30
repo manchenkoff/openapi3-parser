@@ -1,4 +1,5 @@
 import copy
+from random import sample
 from unittest.mock import MagicMock
 
 import pytest
@@ -43,7 +44,7 @@ operation_object = Operation(
         Response(
             code=200,
             description="pet response",
-            content=[Content(type=ContentType.JSON, schema=array_schema)],
+            content=[Content(type=ContentType.JSON, schema=array_schema, example="an example", examples=[])],
             is_default=False,
         )
     ],

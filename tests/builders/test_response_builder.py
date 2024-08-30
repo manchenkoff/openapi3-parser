@@ -1,3 +1,4 @@
+from tkinter.scrolledtext import example
 from typing import Any, Union
 from unittest.mock import MagicMock
 
@@ -24,7 +25,9 @@ content_schema = [
             properties=[
                 Property(name="login", schema=String(type=DataType.STRING))
             ]
-        )
+        ),
+        example="an example",
+        examples=[]
     )
 ]
 
@@ -44,7 +47,9 @@ data_provider = (
                 "application/json": {
                     "schema": {
                         "type": "string",
-                    }
+                    },
+                    "example": "an example",
+                    "examples": ["example1", "example2"]
                 }
             },
             "headers": {
