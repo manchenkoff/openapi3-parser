@@ -345,7 +345,7 @@ def create_specification() -> Specification:
                     request_body=RequestBody(
                         description="New user model request",
                         content=[
-                            Content(type=ContentType.JSON, schema=schema_user),
+                            Content(type=ContentType.JSON, schema=schema_user, example=None, examples=[])
                         ]
                     ),
                     responses=[
@@ -366,6 +366,8 @@ def create_specification() -> Specification:
                                             ),
                                         ],
                                     ),
+                                    example=None,
+                                    examples=[]
                                 ),
                             ]
                         ),
@@ -404,6 +406,8 @@ def create_specification() -> Specification:
                                             ),
                                         ],
                                     ),
+                                    example=None,
+                                    examples=[]
                                 ),
                             ]
                         ),

@@ -168,7 +168,7 @@ class Parameter:
 class Content:
     type: Union[ContentType, LooseContentType]
     schema: Schema
-    example: Optional[Any] = None
+    example: Optional[Any]
     examples: list[Any] = field(default_factory=list)
     # encoding: dict[str, Encoding]  # TODO
 
