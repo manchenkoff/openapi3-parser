@@ -69,7 +69,9 @@ get_user_list_response = Response(
     content=[
         Content(
             type=ContentType.JSON,
-            schema=user_list_schema
+            schema=user_list_schema,
+            example="An example",
+            examples=[]
         ),
     ],
     is_default=False,
@@ -103,7 +105,9 @@ bad_request_response = Response(
                         )
                     ),
                 ],
-            )
+            ),
+            example="an example",
+            examples=[]
         ),
     ],
 )
@@ -136,7 +140,9 @@ internal_error_response = Response(
                         )
                     ),
                 ],
-            )
+            ),
+            example="an example",
+            examples=[]
         ),
     ],
 )
