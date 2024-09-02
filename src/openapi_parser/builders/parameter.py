@@ -42,6 +42,8 @@ class ParameterBuilder:
             "required": PropertyMeta(name="required", cast=None),
             "schema": PropertyMeta(name="schema", cast=self.schema_factory.create),
             "description": PropertyMeta(name="description", cast=str),
+            "example": PropertyMeta(name="example", cast=None),
+            "examples": PropertyMeta(name="examples", cast=None),
             "deprecated": PropertyMeta(name="deprecated", cast=None),
             "explode": PropertyMeta(name="explode", cast=None),
         }

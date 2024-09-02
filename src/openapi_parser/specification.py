@@ -155,8 +155,8 @@ class Parameter:
     schema: Schema
     required: Optional[bool] = field(default=False)
     description: Optional[str] = None
-    # example: Optional[Any]  # TODO
-    # examples: list[Any] = field(default_factory=list)  # TODO
+    example: Optional[Any] = None
+    examples: list[Any] = field(default_factory=list)
     # allow_reserved: bool  # TODO
     deprecated: Optional[bool] = field(default=False)
     style: Optional[str] = None
