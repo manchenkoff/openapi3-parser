@@ -1,4 +1,3 @@
-from tkinter.scrolledtext import example
 from typing import Any, Union
 from unittest.mock import MagicMock
 
@@ -48,8 +47,7 @@ data_provider = (
                     "schema": {
                         "type": "string",
                     },
-                    "example": "an example",
-                    "examples": ["example1", "example2"]
+                    "example": "an example"
                 }
             },
             "headers": {

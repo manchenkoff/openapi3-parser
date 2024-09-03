@@ -1,5 +1,4 @@
 import copy
-from random import sample
 from unittest.mock import MagicMock
 
 import pytest
