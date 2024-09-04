@@ -69,9 +69,7 @@ get_user_list_response = Response(
     content=[
         Content(
             type=ContentType.JSON,
-            schema=user_list_schema,
-            example=None,
-            examples=[]
+            schema=user_list_schema
         ),
     ],
     is_default=False,
@@ -106,8 +104,6 @@ bad_request_response = Response(
                     ),
                 ],
             ),
-            example=None,
-            examples=[]
         ),
     ],
 )
@@ -141,8 +137,6 @@ internal_error_response = Response(
                     ),
                 ],
             ),
-            example=None,
-            examples=[]
         ),
     ],
 )
@@ -345,7 +339,7 @@ def create_specification() -> Specification:
                     request_body=RequestBody(
                         description="New user model request",
                         content=[
-                            Content(type=ContentType.JSON, schema=schema_user, example=None, examples=[])
+                            Content(type=ContentType.JSON, schema=schema_user)
                         ]
                     ),
                     responses=[
@@ -366,8 +360,6 @@ def create_specification() -> Specification:
                                             ),
                                         ],
                                     ),
-                                    example=None,
-                                    examples=[]
                                 ),
                             ]
                         ),
@@ -406,8 +398,6 @@ def create_specification() -> Specification:
                                             ),
                                         ],
                                     ),
-                                    example=None,
-                                    examples=[]
                                 ),
                             ]
                         ),

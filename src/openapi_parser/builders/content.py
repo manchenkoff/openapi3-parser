@@ -23,7 +23,7 @@ class ContentBuilder:
         return [
             self._create_content(content_type, content_value.get('schema', {}),
                                  content_value.get('example', None),
-                                 content_value.get('examples', []))
+                                 content_value.get('examples', {}))
             for content_type, content_value
             in data.items()
         ]

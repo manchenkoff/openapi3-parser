@@ -43,7 +43,7 @@ operation_object = Operation(
         Response(
             code=200,
             description="pet response",
-            content=[Content(type=ContentType.JSON, schema=array_schema, example="an example", examples=[])],
+            content=[Content(type=ContentType.JSON, schema=array_schema)],
             is_default=False,
         )
     ],

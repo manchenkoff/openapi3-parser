@@ -24,9 +24,7 @@ content_schema = [
             properties=[
                 Property(name="login", schema=String(type=DataType.STRING))
             ]
-        ),
-        example="an example",
-        examples=[]
+        )
     )
 ]
 

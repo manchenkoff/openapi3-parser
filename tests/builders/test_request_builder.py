@@ -23,9 +23,7 @@ content_schema = [
             properties=[
                 Property(name="login", schema=String(type=DataType.STRING))
             ]
-        ),
-        example="an example",
-        examples=[]
+        )
     )
 ]
 
@@ -37,9 +35,7 @@ extended_content_schema = [
             properties=[
                 Property(name="login", schema=String(type=DataType.STRING))
             ]
-        ),
-        example="an example",
-        examples=[]
+        )
     ),
     Content(
         type=ContentType.FORM,
@@ -48,9 +44,7 @@ extended_content_schema = [
             properties=[
                 Property(name="login", schema=String(type=DataType.STRING))
             ]
-        ),
-        example="an example",
-        examples=[]
+        )
     ),
 ]
 

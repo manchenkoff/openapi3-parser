@@ -27,7 +27,7 @@ collection_data_provider = (
             }
         },
         [
-            Content(type=ContentType.JSON, schema=string_schema, example=None, examples=[])
+            Content(type=ContentType.JSON, schema=string_schema)
         ],
         _get_schema_factory_mock(string_schema)
     ),
@@ -40,7 +40,7 @@ collection_data_provider = (
             }
         },
         [
-            Content(type=ContentType.JSON_TEXT, schema=string_schema, example=None, examples=[])
+            Content(type=ContentType.JSON_TEXT, schema=string_schema)
         ],
         _get_schema_factory_mock(string_schema)
     ),
