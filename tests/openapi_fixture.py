@@ -103,7 +103,7 @@ bad_request_response = Response(
                         )
                     ),
                 ],
-            ),
+            )
         ),
     ],
 )
@@ -136,7 +136,7 @@ internal_error_response = Response(
                         )
                     ),
                 ],
-            ),
+            )
         ),
     ],
 )

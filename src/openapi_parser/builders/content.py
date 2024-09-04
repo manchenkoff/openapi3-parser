@@ -28,7 +28,7 @@ class ContentBuilder:
             in data.items()
         ]
 
-    def _create_content(self, content_type: str, schema: dict, example: Any, examples: list) -> Content:
+    def _create_content(self, content_type: str, schema: dict, example: Any, examples: dict) -> Content:
         logger.debug(f"Content building [type={content_type}]")
         ContentTypeCls: ContentTypeType = ContentType if self.strict_enum else LooseContentType
         return Content(
