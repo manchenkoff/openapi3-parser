@@ -339,7 +339,7 @@ def create_specification() -> Specification:
                     request_body=RequestBody(
                         description="New user model request",
                         content=[
-                            Content(type=ContentType.JSON, schema=schema_user),
+                            Content(type=ContentType.JSON, schema=schema_user)
                         ]
                     ),
                     responses=[

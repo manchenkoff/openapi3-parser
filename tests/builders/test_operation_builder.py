@@ -63,7 +63,7 @@ request_body = RequestBody(
                             description="Updated status of the pet")
                     ),
                 ],
-            )
+            ),
         ),
     ]
 )

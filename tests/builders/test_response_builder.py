@@ -44,7 +44,8 @@ data_provider = (
                 "application/json": {
                     "schema": {
                         "type": "string",
-                    }
+                    },
+                    "example": "an example"
                 }
             },
             "headers": {
