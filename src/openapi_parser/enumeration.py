@@ -34,6 +34,7 @@ class StringFormat(Enum):
     DATETIME = 'date-time'
     PASSWORD = 'password'
     UUID = 'uuid'
+    UUID4 =  'uuid4'
     EMAIL = 'email'
     URI = 'uri'
     HOSTNAME = 'hostname'
