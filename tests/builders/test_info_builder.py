@@ -1,6 +1,6 @@
 import pytest
 
-from openapi_parser.builders import InfoBuilder
+from openapi_parser.builders.info import InfoBuilder
 from openapi_parser.specification import Contact, Info, License
 
 data_provider = (

@@ -38,6 +38,7 @@ paths:
       parameters:
         - $ref: '#/components/parameters/Limit'
         - $ref: '#/components/parameters/Offset'
+        - $ref: '#/components/parameters/JsonParameter'
       responses:
         200:
           $ref: '#/components/responses/GetUserListResponse'
@@ -131,6 +132,21 @@ components:
       schema:
         type: string
         format: uuid
+
+    JsonParameter:
+      name: json
+      in: query
+      description: 'Custom JSON parameter'
+      required: false
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              key:
+                type: string
+                example: 'test'
+                description: 'Test parameter'
 
   requestBodies:
     AddUserRequest:
@@ -261,6 +277,6 @@ components:
               description: 'User E-mail address'
             avatar:
               type: string
-              format : uri
+              format: uri
               example: 'https://github.com/manchenkoff/openapi3-parser'
               description: 'User Avatar URL'

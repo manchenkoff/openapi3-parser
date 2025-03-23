@@ -1,7 +1,7 @@
 import logging
 
-from . import ContentBuilder
 from .common import extract_typed_props, PropertyMeta
+from .content import ContentBuilder
 from ..specification import RequestBody
 
 logger = logging.getLogger(__name__)

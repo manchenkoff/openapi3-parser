@@ -1,10 +1,10 @@
 import logging
 from typing import Type, Union, Any
 
-from . import SchemaFactory
+from .schema import SchemaFactory
 from ..enumeration import ContentType
-from ..specification import Content
 from ..loose_types import LooseContentType
+from ..specification import Content
 
 logger = logging.getLogger(__name__)
 

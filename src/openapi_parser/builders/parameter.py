@@ -1,8 +1,9 @@
 import logging
 from typing import List
 
-from . import SchemaFactory
 from .common import extract_typed_props, PropertyMeta, extract_extension_attributes
+from .content import ContentBuilder
+from .schema import SchemaFactory
 from ..enumeration import ParameterLocation, HeaderParameterStyle, PathParameterStyle, QueryParameterStyle, \
     CookieParameterStyle
 from ..specification import Parameter
@@ -26,9 +27,11 @@ default_styles_by_location = {
 
 class ParameterBuilder:
     schema_factory: SchemaFactory
+    content_builder: ContentBuilder
 
-    def __init__(self, schema_factory: SchemaFactory) -> None:
+    def __init__(self, schema_factory: SchemaFactory, content_builder: ContentBuilder) -> None:
         self.schema_factory = schema_factory
+        self.content_builder = content_builder
 
     def build_list(self, parameters: List[dict]) -> list[Parameter]:
         return [self.build(parameter) for parameter in parameters]
@@ -41,6 +44,7 @@ class ParameterBuilder:
             "location": PropertyMeta(name="in", cast=ParameterLocation),
             "required": PropertyMeta(name="required", cast=None),
             "schema": PropertyMeta(name="schema", cast=self.schema_factory.create),
+            "content": PropertyMeta(name="content", cast=self.content_builder.build_list),
             "description": PropertyMeta(name="description", cast=str),
             "deprecated": PropertyMeta(name="deprecated", cast=None),
             "explode": PropertyMeta(name="explode", cast=None),

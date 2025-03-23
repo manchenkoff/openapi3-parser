@@ -1,7 +1,7 @@
 import logging
 
-from . import SchemaFactory
 from .common import extract_typed_props, PropertyMeta, extract_extension_attributes
+from .schema import SchemaFactory
 from ..specification import Header
 
 logger = logging.getLogger(__name__)

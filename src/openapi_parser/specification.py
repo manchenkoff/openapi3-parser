@@ -152,7 +152,8 @@ class Object(Schema):
 class Parameter:
     name: str
     location: ParameterLocation
-    schema: Schema
+    schema: Optional[Schema] = None
+    content: Optional[list['Content']] = None
     required: Optional[bool] = field(default=False)
     description: Optional[str] = None
     # example: Optional[Any]  # TODO

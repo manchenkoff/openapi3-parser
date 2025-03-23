@@ -1,8 +1,22 @@
 import logging
-from typing import Optional
+from typing import Optional  # noqa: F401
 
-from .builders import *
 from .builders.common import extract_typed_props, PropertyMeta
+from .builders.content import ContentBuilder
+from .builders.external_doc import ExternalDocBuilder
+from .builders.header import HeaderBuilder
+from .builders.info import InfoBuilder
+from .builders.oauth_flow import OAuthFlowBuilder
+from .builders.operation import OperationBuilder
+from .builders.parameter import ParameterBuilder
+from .builders.path import PathBuilder
+from .builders.request import RequestBuilder
+from .builders.response import ResponseBuilder
+from .builders.schema import SchemaFactory
+from .builders.schemas import SchemasBuilder
+from .builders.security import SecurityBuilder
+from .builders.server import ServerBuilder
+from .builders.tag import TagBuilder
 from .errors import ParserError
 from .resolver import OpenAPIResolver
 from .specification import *
@@ -89,7 +103,7 @@ def _create_parser(strict_enum: bool = True) -> Parser:
     schema_factory = SchemaFactory(strict_enum=strict_enum)
     content_builder = ContentBuilder(schema_factory, strict_enum=strict_enum)
     header_builder = HeaderBuilder(schema_factory)
-    parameter_builder = ParameterBuilder(schema_factory)
+    parameter_builder = ParameterBuilder(schema_factory, content_builder)
     schemas_builder = SchemasBuilder(schema_factory)
     response_builder = ResponseBuilder(content_builder, header_builder)
     request_builder = RequestBuilder(content_builder)

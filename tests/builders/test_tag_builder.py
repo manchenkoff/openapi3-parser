@@ -3,8 +3,9 @@ from unittest import mock
 
 import pytest
 
+from openapi_parser.builders.external_doc import ExternalDocBuilder
+from openapi_parser.builders.tag import TagBuilder
 from openapi_parser.specification import ExternalDoc, Tag
-from openapi_parser.builders import ExternalDocBuilder, TagBuilder
 
 data_provider = (
     (

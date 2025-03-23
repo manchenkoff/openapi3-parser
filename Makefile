@@ -23,7 +23,7 @@ clean: ## Remove build files
 	@echo "Temporary files were clear"
 
 test: ## Run code tests
-	@pipenv run python -m pytest -q
+	@pipenv run python -m pytest -qv
 
 sync: ## Sync with Pipfile packages list
 	@pipenv sync

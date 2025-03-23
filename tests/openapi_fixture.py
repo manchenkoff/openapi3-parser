@@ -320,6 +320,32 @@ def create_specification() -> Specification:
                             style=QueryParameterStyle.FORM,
                             schema=Integer(type=DataType.INTEGER)
                         ),
+                        Parameter(
+                            name="json",
+                            location=ParameterLocation.QUERY,
+                            description="Custom JSON parameter",
+                            required=False,
+                            explode=True,
+                            style=QueryParameterStyle.FORM,
+                            content=[
+                                Content(
+                                    type=ContentType.JSON,
+                                    schema=Object(
+                                        type=DataType.OBJECT,
+                                        properties=[
+                                            Property(
+                                                name="key",
+                                                schema=String(
+                                                    type=DataType.STRING,
+                                                    description="Test parameter",
+                                                    example="test"
+                                                )
+                                            ),
+                                        ]
+                                    )
+                                )
+                            ]
+                        ),
                     ],
                     responses=[
                         get_user_list_response,

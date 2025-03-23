@@ -2,7 +2,7 @@ from typing import List
 
 import pytest
 
-from openapi_parser.builders import ExternalDocBuilder
+from openapi_parser.builders.external_doc import ExternalDocBuilder
 from openapi_parser.specification import ExternalDoc
 
 data_provider = (

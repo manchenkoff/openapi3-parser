@@ -2,7 +2,7 @@ from typing import Dict
 
 import pytest
 
-from openapi_parser.builders import OAuthFlowBuilder
+from openapi_parser.builders.oauth_flow import OAuthFlowBuilder
 from openapi_parser.enumeration import OAuthFlowType
 from openapi_parser.specification import OAuthFlow
 
