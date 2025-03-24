@@ -1,8 +1,11 @@
 import logging
 from typing import Dict
 
-from . import ExternalDocBuilder, ParameterBuilder, RequestBuilder, ResponseBuilder
 from .common import extract_typed_props, PropertyMeta, extract_extension_attributes
+from .external_doc import ExternalDocBuilder
+from .parameter import ParameterBuilder
+from .request import RequestBuilder
+from .response import ResponseBuilder
 from ..enumeration import OperationMethod
 from ..specification import Operation, Response
 

@@ -1,8 +1,9 @@
 import logging
 from typing import Dict
 
-from . import OperationBuilder, ParameterBuilder
 from .common import extract_typed_props, PropertyMeta, extract_extension_attributes
+from .operation import OperationBuilder
+from .parameter import ParameterBuilder
 from ..enumeration import OperationMethod
 from ..specification import Path
 

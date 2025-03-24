@@ -2,8 +2,11 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from openapi_parser.builders import ExternalDocBuilder, OperationBuilder, ParameterBuilder, RequestBuilder, \
-    ResponseBuilder
+from openapi_parser.builders.external_doc import ExternalDocBuilder
+from openapi_parser.builders.operation import OperationBuilder
+from openapi_parser.builders.parameter import ParameterBuilder
+from openapi_parser.builders.request import RequestBuilder
+from openapi_parser.builders.response import ResponseBuilder
 from openapi_parser.enumeration import DataType, ContentType, OperationMethod, ParameterLocation
 from openapi_parser.specification import Content, ExternalDoc, Object, Operation, Parameter, Property, RequestBody, \
     Response, String
@@ -67,7 +70,6 @@ request_body = RequestBody(
         ),
     ]
 )
-
 
 data_provider = (
     (

@@ -1,8 +1,9 @@
 import logging
 from typing import Union
 
-from . import ContentBuilder, HeaderBuilder
 from .common import extract_typed_props, PropertyMeta
+from .content import ContentBuilder
+from .header import HeaderBuilder
 from ..specification import Response
 
 logger = logging.getLogger(__name__)

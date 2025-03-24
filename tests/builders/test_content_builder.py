@@ -2,7 +2,8 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from openapi_parser.builders import ContentBuilder, SchemaFactory
+from openapi_parser.builders.content import ContentBuilder
+from openapi_parser.builders.schema import SchemaFactory
 from openapi_parser.enumeration import ContentType, DataType
 from openapi_parser.specification import Content, Integer, Schema, String
 

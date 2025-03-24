@@ -2,7 +2,7 @@ from typing import List
 
 import pytest
 
-from openapi_parser.builders import ServerBuilder
+from openapi_parser.builders.server import ServerBuilder
 from openapi_parser.specification import Server
 
 data_provider = (

@@ -1,10 +1,10 @@
 import logging
 
+from .schema import SchemaFactory
 from ..specification import Schema
-from . import SchemaFactory
-
 
 logger = logging.getLogger(__name__)
+
 
 class SchemasBuilder:
     schema_factory: SchemaFactory
@@ -16,6 +16,6 @@ class SchemasBuilder:
         logger.debug(f"Schemas parsing: {schemas.keys()}")
 
         return {
-            key : self.schema_factory.create(value)
+            key: self.schema_factory.create(value)
             for key, value in schemas.items()
         }

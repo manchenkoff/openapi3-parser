@@ -2,7 +2,7 @@ from unittest import mock
 
 import pytest
 
-from openapi_parser.builders import OAuthFlowBuilder
+from openapi_parser.builders.oauth_flow import OAuthFlowBuilder
 from openapi_parser.builders.security import SecurityBuilder
 from openapi_parser.enumeration import AuthenticationScheme, BaseLocation, OAuthFlowType, SecurityType
 from openapi_parser.specification import OAuthFlow, Security

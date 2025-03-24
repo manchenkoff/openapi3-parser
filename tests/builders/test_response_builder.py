@@ -3,7 +3,9 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from openapi_parser.builders import ContentBuilder, HeaderBuilder, ResponseBuilder
+from openapi_parser.builders.content import ContentBuilder
+from openapi_parser.builders.header import HeaderBuilder
+from openapi_parser.builders.response import ResponseBuilder
 from openapi_parser.enumeration import DataType
 from openapi_parser.specification import Content, ContentType, Header, \
     Integer, Object, Property, Response, String
