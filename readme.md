@@ -1,10 +1,10 @@
 # OpenAPI Parser
 
-![PyPI - Version](https://img.shields.io/pypi/v/openapi3-parser)
-![PyPI - Downloads](https://img.shields.io/pypi/dm/openapi3-parser)
-![PyPI - Python Version](https://img.shields.io/pypi/pyversions/openapi3-parser)
-![PyPI - Format](https://img.shields.io/pypi/format/openapi3-parser)
-![PyPI - License](https://img.shields.io/pypi/l/openapi3-parser)
+[![PyPI - Version](https://img.shields.io/pypi/v/openapi3-parser)](https://pypi.org/project/openapi3-parser/)
+[![PyPI - Downloads](https://img.shields.io/pypi/dm/openapi3-parser)](https://clickpy.clickhouse.com/dashboard/openapi3-parser)
+[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/openapi3-parser)](https://pypi.org/project/openapi3-parser/)
+[![PyPI - Format](https://img.shields.io/pypi/format/openapi3-parser)](https://pypi.org/project/openapi3-parser/)
+[![PyPI - License](https://img.shields.io/pypi/l/openapi3-parser)](license.txt)
 
 A simple package to parse your OpenAPI 3 documents into Python object to work with.
 
