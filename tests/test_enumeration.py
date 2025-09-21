@@ -12,7 +12,7 @@ data_type_provider = (
 )
 
 
-@pytest.mark.parametrize(['string_value', 'expected'], data_type_provider)
+@pytest.mark.parametrize(["string_value", "expected"], data_type_provider)
 def test_data_type(string_value: str, expected: DataType) -> None:
     assert DataType(string_value) == expected
 
@@ -28,7 +28,7 @@ integer_format_provider = (
 )
 
 
-@pytest.mark.parametrize(['string_value', 'expected'], integer_format_provider)
+@pytest.mark.parametrize(["string_value", "expected"], integer_format_provider)
 def test_integer_format(string_value: str, expected: IntegerFormat) -> None:
     assert IntegerFormat(string_value) == expected
 
@@ -44,7 +44,7 @@ number_format_provider = (
 )
 
 
-@pytest.mark.parametrize(['string_value', 'expected'], number_format_provider)
+@pytest.mark.parametrize(["string_value", "expected"], number_format_provider)
 def test_number_format(string_value: str, expected: NumberFormat) -> None:
     assert NumberFormat(string_value) == expected
 
@@ -67,10 +67,11 @@ string_format_provider = (
     ("ipv4", StringFormat.IPV4),
     ("ipv6", StringFormat.IPV6),
     ("url", StringFormat.URL),
+    ("time", StringFormat.TIME),
 )
 
 
-@pytest.mark.parametrize(['string_value', 'expected'], string_format_provider)
+@pytest.mark.parametrize(["string_value", "expected"], string_format_provider)
 def test_string_format(string_value: str, expected: StringFormat) -> None:
     assert StringFormat(string_value) == expected
 
@@ -92,7 +93,7 @@ operation_method_provider = (
 )
 
 
-@pytest.mark.parametrize(['string_value', 'expected'], operation_method_provider)
+@pytest.mark.parametrize(["string_value", "expected"], operation_method_provider)
 def test_operation_method(string_value: str, expected: OperationMethod) -> None:
     assert OperationMethod(string_value) == expected
 
@@ -109,7 +110,7 @@ base_location_provider = (
 )
 
 
-@pytest.mark.parametrize(['string_value', 'expected'], base_location_provider)
+@pytest.mark.parametrize(["string_value", "expected"], base_location_provider)
 def test_base_location(string_value: str, expected: BaseLocation) -> None:
     assert BaseLocation(string_value) == expected
 
@@ -127,7 +128,7 @@ parameter_location_provider = (
 )
 
 
-@pytest.mark.parametrize(['string_value', 'expected'], parameter_location_provider)
+@pytest.mark.parametrize(["string_value", "expected"], parameter_location_provider)
 def test_parameter_location(string_value: str, expected: ParameterLocation) -> None:
     assert ParameterLocation(string_value) == expected
 
@@ -160,7 +161,7 @@ media_type_provider = (
 )
 
 
-@pytest.mark.parametrize(['string_value', 'expected'], media_type_provider)
+@pytest.mark.parametrize(["string_value", "expected"], media_type_provider)
 def test_media_type(string_value: str, expected: ContentType) -> None:
     assert ContentType(string_value) == expected
 
@@ -178,7 +179,7 @@ security_type_provider = (
 )
 
 
-@pytest.mark.parametrize(['string_value', 'expected'], security_type_provider)
+@pytest.mark.parametrize(["string_value", "expected"], security_type_provider)
 def test_security_type(string_value: str, expected: SecurityType) -> None:
     assert SecurityType(string_value) == expected
 
@@ -202,7 +203,7 @@ auth_schema_provider = (
 )
 
 
-@pytest.mark.parametrize(['string_value', 'expected'], auth_schema_provider)
+@pytest.mark.parametrize(["string_value", "expected"], auth_schema_provider)
 def test_auth_schema(string_value: str, expected: AuthenticationScheme) -> None:
     assert AuthenticationScheme(string_value) == expected
 
@@ -220,7 +221,7 @@ auth_flow_provider = (
 )
 
 
-@pytest.mark.parametrize(['string_value', 'expected'], auth_flow_provider)
+@pytest.mark.parametrize(["string_value", "expected"], auth_flow_provider)
 def test_auth_flow(string_value: str, expected: OAuthFlowType) -> None:
     assert OAuthFlowType(string_value) == expected
 
