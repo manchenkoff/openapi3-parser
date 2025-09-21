@@ -1,0 +1,71 @@
+[project]
+name = "openapi3-parser"
+version = "1.1.22"
+description = "OpenAPI v3 parser"
+readme = "readme.md"
+license = { file = "license.txt" }
+authors = [{ name = "Artem Manchenkov", email = "artem@manchenkoff.me" }]
+keywords = [
+  "swagger",
+  "python",
+  "swagger-parser",
+  "openapi3-parser",
+  "parser",
+  "openapi3",
+  "swagger-api",
+]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+  "Intended Audience :: Developers",
+  "Programming Language :: Python :: 3.9",
+  "Topic :: Software Development :: Libraries",
+]
+requires-python = ">=3.9"
+dependencies = ["openapi-spec-validator>=0.7.2", "prance>=23.6.21.0"]
+
+[project.urls]
+homepage = "https://github.com/manchenkoff/openapi3-parser"
+source = "https://github.com/manchenkoff/openapi3-parser"
+
+[dependency-groups]
+dev = ["mypy>=1.18.2", "pytest>=8.4.2"]
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[[tool.uv.index]]
+name = "testpypi"
+url = "https://test.pypi.org/simple/"
+publish-url = "https://test.pypi.org/legacy/"
+explicit = true
+
+[tool.mypy]
+python_version = 3.9
+
+check_untyped_defs = true
+follow_imports = "silent"
+no_implicit_reexport = true
+no_implicit_optional = true
+
+strict_optional = true
+strict_equality = true
+
+ignore_missing_imports = true
+ignore_errors = false
+
+disallow_any_generics = false
+disallow_untyped_defs = true
+disallow_untyped_calls = true
+disallow_untyped_decorators = true
+
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_unused_configs = true
+warn_unreachable = true
+warn_no_return = true

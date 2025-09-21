@@ -1,34 +1,28 @@
+---
 name: Upload
-
 on:
   workflow_dispatch: # manual trigger
   release:
-    types: [ created ]
-
+    types: [created]
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Git
         uses: actions/checkout@v2
-
-      - name: Install Python 3
-        uses: actions/setup-python@v2
+      - name: Install UV
+        uses: astral-sh/setup-uv@v6
         with:
           python-version: 3.9
-
+          enable-cache: true
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip
-          pip install pipenv
-          pipenv install --dev
-
+          uv sync --locked --dev
       - name: Build package
         run: |
-          pipenv run python -m build --no-isolation
-
+          uv build
       - name: Publish package
         if: startsWith(github.ref, 'refs/tags')
-        uses: pypa/gh-action-pypi-publish@master
-        with:
-          password: ${{ secrets.pypi_password }}
+        env:
+          UV_PUBLISH_TOKEN: ${{ secrets.PYPI_TOKEN }}
+        run: uv publish
