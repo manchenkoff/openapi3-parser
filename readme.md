@@ -28,7 +28,7 @@ pip install openapi3-parser
 
 Example of parser usage
 
-```
+```bash
 >>> from openapi_parser import parse
 >>> content = parse('swagger.yml')
 >>> print(content)

@@ -5,6 +5,7 @@ description = "OpenAPI v3 parser"
 readme = "readme.md"
 license = { file = "license.txt" }
 authors = [{ name = "Artem Manchenkov", email = "artem@manchenkoff.me" }]
+requires-python = ">=3.10"
 keywords = [
   "swagger",
   "python",
@@ -15,29 +16,31 @@ keywords = [
   "swagger-api",
 ]
 classifiers = [
-  "Development Status :: 4 - Beta",
   "License :: OSI Approved :: MIT License",
   "Operating System :: OS Independent",
   "Intended Audience :: Developers",
-  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
   "Topic :: Software Development :: Libraries",
 ]
-requires-python = ">=3.9"
-dependencies = ["openapi-spec-validator>=0.7.2", "prance>=23.6.21.0"]
+dependencies = [
+    "openapi-spec-validator>=0.8.5",
+    "prance>=25.4.8.0",
+    "ty>=0.0.37",
+]
 
 [project.urls]
 homepage = "https://github.com/manchenkoff/openapi3-parser"
 source = "https://github.com/manchenkoff/openapi3-parser"
 
 [dependency-groups]
-dev = ["mypy>=1.18.2", "pytest>=8.4.2"]
+dev = ["mypy>=2.1.0", "pytest>=9.0.3", "pytest-cov>=6.1.0", "ruff>=0.15.13", "ty>=0.0.37"]
 
 [build-system]
-requires = ["setuptools>=61.0"]
-build-backend = "setuptools.build_meta"
+requires = ["uv_build>=0.11.12,<0.12"]
+build-backend = "uv_build"
 
-[tool.setuptools.packages.find]
-where = ["src"]
+[tool.uv.build-backend]
+module-name = "openapi_parser"
 
 [[tool.uv.index]]
 name = "testpypi"
@@ -46,26 +49,30 @@ publish-url = "https://test.pypi.org/legacy/"
 explicit = true
 
 [tool.mypy]
-python_version = 3.9
+python_version = "3.10"
+strict = true
+mypy_path = ["src"]
 
-check_untyped_defs = true
-follow_imports = "silent"
-no_implicit_reexport = true
-no_implicit_optional = true
+[[tool.mypy.overrides]]
+module = "tests.*"
 
-strict_optional = true
-strict_equality = true
+[tool.ruff.lint]
+extend-select = [
+  "D",      # pydocstyle
+  "UP",     # pyupgrade
+  "B",      # flake8-bugbear
+  "SIM",    # flake8-simplify
+  "I",      # isort
+  "ARG",    # unused arguments
+  "RUF100", # unused noqa
+]
 
-ignore_missing_imports = true
-ignore_errors = false
+[tool.ruff.lint.pydocstyle]
+convention = "google"
 
-disallow_any_generics = false
-disallow_untyped_defs = true
-disallow_untyped_calls = true
-disallow_untyped_decorators = true
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["D", "ARG"]
 
-warn_redundant_casts = true
-warn_unused_ignores = true
-warn_unused_configs = true
-warn_unreachable = true
-warn_no_return = true
+[tool.coverage.run]
+source = ["openapi_parser"]
+omit = ["tests/*"]

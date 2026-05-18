@@ -1,6 +1,6 @@
 #!/usr/bin/env just --justfile
 
-set quiet := true
+set quiet
 
 # show help
 help:
@@ -12,7 +12,7 @@ build:
 
 # remove temp build files
 clean:
-    rm -Rf dist/ .pytest_cache/ .mypy_cache/
+    rm -Rf dist/ .pytest_cache/ .mypy_cache/ .ruff_cache/
 
 # upload package to test repository
 publish-test:
@@ -28,8 +28,14 @@ sync:
 
 # run unit tests
 test:
-    uv run pytest -qv
+    uv run pytest -qv --cov=openapi_parser --cov-report=term:skip-covered
+
+# run package formatters
+fmt:
+    uv run ruff format .
 
 # run package linters
 lint:
-    uv run mypy ./src 
+    uv run ruff check --fix .
+    uv run mypy .
+    uv run ty check .
