@@ -2,41 +2,41 @@
 name: CI
 on:
   pull_request:
-    branches: [master]
+    branches: [main]
 jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: checkout
         uses: actions/checkout@v6
-      - name: Install UV
+      - name: install uv
         uses: astral-sh/setup-uv@v6
         with:
           python-version: "3.10"
           enable-cache: true
-      - name: Install dependencies
+      - name: dependencies
         run: uv sync --locked --dev
-      - name: Run ruff
+      - name: ruff
         run: uv run ruff check .
-      - name: Run mypy
+      - name: mypy
         run: uv run mypy .
-      - name: Run ty
+      - name: ty
         run: uv run ty check .
   test:
-    name: Test Python ${{ matrix.python-version }}
+    name: test python ${{ matrix.python-version }}
     strategy:
       matrix:
         python-version: ["3.10", "3.11", "3.12", "3.13"]
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: checkout
         uses: actions/checkout@v6
-      - name: Install UV
+      - name: install uv
         uses: astral-sh/setup-uv@v6
         with:
           python-version: ${{ matrix.python-version }}
           enable-cache: true
-      - name: Install dependencies
+      - name: dependencies
         run: uv sync --locked --dev
-      - name: Run tests
+      - name: tests
         run: uv run pytest
