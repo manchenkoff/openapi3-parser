@@ -1,14 +1,17 @@
+from typing import Any
+
 import pytest
 
 from openapi_parser.builders.schema import SchemaFactory
-from openapi_parser.specification import DataType, String, StringFormat
+from openapi_parser.enumeration import DataType, StringFormat
+from openapi_parser.specification import String
 
 data_provider = (
     (
         {
             "type": "string",
         },
-        String(type=DataType.STRING)
+        String(type=DataType.STRING),
     ),
     (
         {
@@ -24,12 +27,19 @@ data_provider = (
             min_length=0,
             pattern="[0-9]",
             format=StringFormat.UUID,
-        )
+        ),
+    ),
+    (
+        {
+            "type": "string",
+            "x-custom-attr": "value",
+        },
+        String(type=DataType.STRING, extensions={"custom_attr": "value"}),
     ),
 )
 
 
-@pytest.mark.parametrize(['data', 'expected'], data_provider)
-def test_string_builder(data: dict, expected: String):
+@pytest.mark.parametrize(["data", "expected"], data_provider)
+def test_string_builder(data: dict[str, Any], expected: String) -> None:
     factory = SchemaFactory()
     assert expected == factory.create(data)

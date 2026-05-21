@@ -6,9 +6,9 @@
 [![PyPI - Format](https://img.shields.io/pypi/format/openapi3-parser)](https://pypi.org/project/openapi3-parser/)
 [![PyPI - License](https://img.shields.io/pypi/l/openapi3-parser)](license.txt)
 
-A simple package to parse your OpenAPI 3 documents into Python object to work with.
-
-Supported versions:
+Parse OpenAPI 3 documents into fully typed Python dataclass objects.
+Navigate your API specification programmatically — servers, paths,
+operations, parameters, schemas, security schemes, and more.
 
 | Version | Status         |
 | ------- | -------------- |
@@ -16,74 +16,134 @@ Supported versions:
 | 3.0     | **Supported**  |
 | 3.1     | In development |
 
-## How to install
+## Installation
 
-To install package run the following command
-
-```
+```bash
 pip install openapi3-parser
 ```
 
-## How to use
-
-Example of parser usage
-
-```
->>> from openapi_parser import parse
->>> content = parse('swagger.yml')
->>> print(content)
-```
-
-Get application servers
+## Quick Start
 
 ```python
 from openapi_parser import parse
 
-specification = parse('data/swagger.yml')
+specification = parse("swagger.yml")
+print(specification.info.title)  # e.g. "User example service"
+```
 
-print("Application servers")
+## Use Cases
 
+### Parse from different sources
+
+```python
+# From file path
+spec = parse("specs/openapi.yml")
+
+# From URL
+spec = parse("https://example.com/openapi.json")
+
+# From raw string
+spec = parse(spec_string="""
+openapi: "3.0.0"
+info:
+  title: My API
+  version: "1.0.0"
+paths: {}
+""")
+```
+
+### Navigate servers, paths, and operations
+
+```python
+specification = parse("swagger.yml")
+
+# List all servers
 for server in specification.servers:
     print(f"{server.description} - {server.url}")
 
-# Output
-#
-# >> Application servers
-# >> production - https://users.app
-# >> staging - http://stage.users.app
-# >> development - http://users.local
-```
-
-Get list of application URLs
-
-```python
-from openapi_parser import parse
-
-specification = parse('tests/data/swagger.yml')
-
-urls = [x.url for x in specification.paths]
-
-print(urls)
-
-# Output
-#
-# >> ['/users', '/users/{uuid}']
-```
-
-Get operation with supported HTTP methods
-
-```python
-from openapi_parser import parse
-
-specification = parse('tests/data/swagger.yml')
-
+# List all paths and their HTTP methods
 for path in specification.paths:
-    supported_methods = ','.join([x.method.value for x in path.operations])
+    methods = ", ".join(op.method.value for op in path.operations)
+    print(f"{path.url}: [{methods}]")
 
-    print(f"Operation: {path.url}, methods: {supported_methods}")
+# Inspect operation details
+for path in specification.paths:
+    for op in path.operations:
+        print(f"[{op.method.value}] {path.url}: {op.summary}")
+        if op.deprecated:
+            print("  (deprecated)")
+        if op.operation_id:
+            print(f"  operationId: {op.operation_id}")
+```
 
-# Output
-#
-# >> Operation: /users, methods: get,post
-# >> Operation: /users/{uuid}, methods: get,put
+### Enum strictness
+
+By default, content types, string formats, and other enum fields are validated
+against predefined enums. For specs that use custom values, pass
+`strict_enum=False`:
+
+```python
+# Accepts non-standard content types like "application/vnd.api+json"
+spec = parse("swagger.yml", strict_enum=False)
+```
+
+When strict mode is off, unrecognized values are wrapped in a `LooseEnum`
+object instead of raising an error.
+
+### Error Handling
+
+```python
+from openapi_parser.errors import ParserError
+
+try:
+    spec = parse("invalid.yml")
+except ParserError as e:
+    print(f"Parsing failed: {e}")
+```
+
+## Data Model
+
+Parsed documents return a `Specification` object composed of fully typed
+dataclasses:
+
+| Model           | Description |
+| --------------- | ----------- |
+| `Specification` | Root document — version, info, servers, paths, schemas, security |
+| `Info`          | API metadata — title, version, description, contact, license |
+| `Server`        | Server definition — url, description, variables |
+| `Path`          | URL path — operations, parameters |
+| `Operation`     | HTTP method — responses, parameters, request body, security |
+| `Parameter`     | Path/query/header/cookie param — schema, style, required |
+| `Response`      | Status code, description, content, headers |
+| `RequestBody`   | Content, description, required |
+| `Content`       | Media type, schema, example |
+| `Schema`        | Base type — Integer, Number, String, Boolean, Array, Object, Null |
+| `Property`      | Object property — name, schema |
+| `OneOf`/`AnyOf` | Composition schemas with discriminator support |
+| `Security`      | Security scheme — apiKey, http, oauth2, openIdConnect |
+| `OAuthFlow`     | OAuth flow — authorization, token, scopes |
+| `Header`        | Response header — name, schema, description |
+| `Tag`           | Tag with optional external docs |
+| `ExternalDoc`   | External documentation reference |
+| `Discriminator` | Polymorphism discriminator — property name, mapping |
+
+See the [specification module](src/openapi_parser/specification.py) for
+all available fields and types.
+
+## Development
+
+```bash
+# Install with dev dependencies
+uv sync --dev
+
+# Lint
+uv run ruff check .
+uv run mypy .
+uv run ty check .
+
+# Test
+uv run pytest
+
+# Format
+uv run ruff format .
 ```

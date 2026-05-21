@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Any
 from unittest.mock import MagicMock
 
 import pytest
@@ -6,19 +6,27 @@ import pytest
 from openapi_parser.builders.content import ContentBuilder
 from openapi_parser.builders.parameter import ParameterBuilder
 from openapi_parser.builders.schema import SchemaFactory
-from openapi_parser.enumeration import DataType, ParameterLocation, HeaderParameterStyle, QueryParameterStyle, \
-    ContentType
-from openapi_parser.specification import Parameter, Schema, String, Content
+from openapi_parser.enumeration import (
+    ContentType,
+    DataType,
+    HeaderParameterStyle,
+    ParameterLocation,
+    QueryParameterStyle,
+)
+from openapi_parser.errors import ParserError
+from openapi_parser.specification import Content, Parameter, Schema, String
 
 
-def _get_schema_factory_mock(expected_value: Optional[Schema]) -> SchemaFactory:
+def _get_schema_factory_mock(expected_value: Schema | None) -> SchemaFactory:
     mock_object = MagicMock()
     mock_object.create.return_value = expected_value
 
     return mock_object
 
 
-def _get_content_builder_mock(expected_value: Optional[list[Content]]) -> ContentBuilder:
+def _get_content_builder_mock(
+    expected_value: list[Content] | None,
+) -> ContentBuilder:
     mock_object = MagicMock()
     mock_object.build_list.return_value = expected_value
 
@@ -107,7 +115,7 @@ schema_data_provider = (
             "schema": {
                 "type": "string",
             },
-            "x-custom-go-tag": "binding:\"required\""
+            "x-custom-go-tag": 'binding:"required"',
         },
         Parameter(
             name="some_id",
@@ -116,7 +124,7 @@ schema_data_provider = (
             style=QueryParameterStyle.FORM,
             explode=True,
             schema=string_schema,
-            extensions={"custom_go_tag": "binding:\"required\""}
+            extensions={"custom_go_tag": 'binding:"required"'},
         ),
         _get_schema_factory_mock(string_schema),
         _get_content_builder_mock(None),
@@ -224,23 +232,41 @@ collection_data_provider = (
 )
 
 
-@pytest.mark.parametrize(['data', 'expected', 'schema_factory', 'content_builder'], schema_data_provider)
+@pytest.mark.parametrize(
+    ["data", "expected", "schema_factory", "content_builder"],
+    schema_data_provider,
+)
 def test_build(
-        data: dict,
-        expected: Parameter,
-        schema_factory: SchemaFactory,
-        content_builder: ContentBuilder):
+    data: dict[str, Any],
+    expected: Parameter,
+    schema_factory: SchemaFactory,
+    content_builder: ContentBuilder,
+) -> None:
     builder = ParameterBuilder(schema_factory, content_builder)
 
     assert expected == builder.build(data)
 
 
-@pytest.mark.parametrize(['data_list', 'expected', 'schema_factory', 'content_builder'], collection_data_provider)
+def test_build_missing_name() -> None:
+    builder = ParameterBuilder(
+        _get_schema_factory_mock(None),
+        _get_content_builder_mock(None),
+    )
+
+    with pytest.raises(ParserError, match="missing required 'name' property"):
+        builder.build({"in": "header"})
+
+
+@pytest.mark.parametrize(
+    ["data_list", "expected", "schema_factory", "content_builder"],
+    collection_data_provider,
+)
 def test_build_collection(
-        data_list: list,
-        expected: list[Parameter],
-        schema_factory: SchemaFactory,
-        content_builder: ContentBuilder):
+    data_list: list[Any],
+    expected: list[Parameter],
+    schema_factory: SchemaFactory,
+    content_builder: ContentBuilder,
+) -> None:
     builder = ParameterBuilder(schema_factory, content_builder)
 
     assert expected == builder.build_list(data_list)

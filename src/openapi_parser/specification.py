@@ -1,8 +1,28 @@
-from dataclasses import dataclass, field
-from typing import Any, Optional, Union
+"""OpenAPI specification data models."""
 
-from .enumeration import *
-from .loose_types import (
+from __future__ import annotations
+
+from dataclasses import dataclass, field
+from typing import Any
+
+from openapi_parser.enumeration import (
+    AuthenticationScheme,
+    BaseLocation,
+    ContentType,
+    CookieParameterStyle,
+    DataType,
+    HeaderParameterStyle,
+    IntegerFormat,
+    NumberFormat,
+    OAuthFlowType,
+    OperationMethod,
+    ParameterLocation,
+    PathParameterStyle,
+    QueryParameterStyle,
+    SecurityType,
+    StringFormat,
+)
+from openapi_parser.loose_types import (
     LooseContentType,
     LooseIntegerFormat,
     LooseNumberFormat,
@@ -12,57 +32,69 @@ from .loose_types import (
 
 @dataclass
 class Contact:
-    name: Optional[str] = None
-    url: Optional[str] = None
-    email: Optional[str] = None
+    """API contact information."""
+
+    name: str | None = None
+    url: str | None = None
+    email: str | None = None
 
 
 @dataclass
 class License:
+    """API license information."""
+
     name: str
-    url: Optional[str] = None
-    extensions: Optional[dict] = field(default_factory=dict)
+    url: str | None = None
+    extensions: dict[str, Any] | None = field(default_factory=dict)
 
 
 @dataclass
 class Info:
+    """API metadata information."""
+
     title: str
     version: str
-    description: Optional[str] = None
-    terms_of_service: Optional[str] = None
-    contact: Optional[Contact] = None
-    license: Optional[License] = None
-    extensions: Optional[dict] = field(default_factory=dict)
+    description: str | None = None
+    terms_of_service: str | None = None
+    contact: Contact | None = None
+    license: License | None = None
+    extensions: dict[str, Any] | None = field(default_factory=dict)
 
 
 @dataclass
 class Server:
+    """API server definition."""
+
     url: str
-    description: Optional[str] = None
-    variables: Optional[dict] = field(default_factory=dict)
-    extensions: Optional[dict] = field(default_factory=dict)
+    description: str | None = None
+    variables: dict[str, Any] | None = field(default_factory=dict)
+    extensions: dict[str, Any] | None = field(default_factory=dict)
 
 
 @dataclass
 class ExternalDoc:
+    """External documentation reference."""
+
     url: str
-    description: Optional[str] = None
-    extensions: Optional[dict] = field(default_factory=dict)
+    description: str | None = None
+    extensions: dict[str, Any] | None = field(default_factory=dict)
 
 
 @dataclass
 class Schema:
+    """Base schema model."""
+
     type: DataType
-    title: Optional[str] = None
-    enum: Optional[list[Any]] = field(default_factory=list)
-    example: Optional[Any] = None
-    description: Optional[str] = None
-    default: Optional[Any] = None
-    nullable: Optional[bool] = field(default=False)
-    read_only: Optional[bool] = field(default=False)
-    write_only: Optional[bool] = field(default=False)
-    deprecated: Optional[bool] = field(default=False)
-    extensions: Optional[dict] = field(default_factory=dict)
+    title: str | None = None
+    enum: list[Any] | None = field(default_factory=list)
+    example: Any | None = None
+    description: str | None = None
+    default: Any | None = None
+    nullable: bool | None = field(default=False)
+    read_only: bool | None = field(default=False)
+    write_only: bool | None = field(default=False)
+    deprecated: bool | None = field(default=False)
+    extensions: dict[str, Any] | None = field(default_factory=dict)
 
     # all_of: Any  # TODO
     # one_of: Any  # TODO
@@ -72,77 +104,99 @@ class Schema:
 
 @dataclass
 class Integer(Schema):
-    multiple_of: Optional[int] = None
-    maximum: Optional[int] = None
-    exclusive_maximum: Optional[int] = None
-    minimum: Optional[int] = None
-    exclusive_minimum: Optional[int] = None
-    format: Optional[Union[IntegerFormat, LooseIntegerFormat]] = None
+    """Integer type schema."""
+
+    multiple_of: int | None = None
+    maximum: int | None = None
+    exclusive_maximum: int | None = None
+    minimum: int | None = None
+    exclusive_minimum: int | None = None
+    format: IntegerFormat | LooseIntegerFormat | None = None
 
 
 @dataclass
 class Number(Schema):
-    multiple_of: Optional[float] = None
-    maximum: Optional[float] = None
-    exclusive_maximum: Optional[float] = None
-    minimum: Optional[float] = None
-    exclusive_minimum: Optional[float] = None
-    format: Optional[Union[NumberFormat, LooseNumberFormat]] = None
+    """Number type schema."""
+
+    multiple_of: float | None = None
+    maximum: float | None = None
+    exclusive_maximum: float | None = None
+    minimum: float | None = None
+    exclusive_minimum: float | None = None
+    format: NumberFormat | LooseNumberFormat | None = None
 
 
 @dataclass
 class String(Schema):
-    max_length: Optional[int] = None
-    min_length: Optional[int] = None
-    pattern: Optional[str] = None
-    format: Optional[Union[StringFormat, LooseStringFormat]] = None
+    """String type schema."""
+
+    max_length: int | None = None
+    min_length: int | None = None
+    pattern: str | None = None
+    format: StringFormat | LooseStringFormat | None = None
 
 
 @dataclass
 class Null(Schema):
+    """Null type schema."""
+
     pass
 
 
 @dataclass
 class Boolean(Schema):
+    """Boolean type schema."""
+
     pass
 
 
 @dataclass
 class Array(Schema):
-    max_items: Optional[int] = None
-    min_items: Optional[int] = None
-    unique_items: Optional[bool] = None
-    items: Schema = None  # type: ignore
+    """Array type schema."""
+
+    max_items: int | None = None
+    min_items: int | None = None
+    unique_items: bool | None = None
+    items: Schema | None = None
 
 
 @dataclass
 class Discriminator:
+    """Polymorphism discriminator."""
+
     property_name: str
-    mapping: Optional[dict] = field(default_factory=dict)
+    mapping: dict[str, Any] | None = field(default_factory=dict)
 
 
 @dataclass
 class OneOf(Schema):
+    """OneOf composition schema."""
+
     schemas: list[Schema] = field(default_factory=list)
-    discriminator: Optional[Discriminator] = None
+    discriminator: Discriminator | None = None
 
 
 @dataclass
 class AnyOf(Schema):
+    """AnyOf composition schema."""
+
     schemas: list[Schema] = field(default_factory=list)
 
 
 @dataclass
 class Property:
+    """Schema property definition."""
+
     name: str
     schema: Schema
 
 
 @dataclass
 class Object(Schema):
-    max_properties: Optional[int] = None
-    min_properties: Optional[int] = None
+    """Object type schema."""
+
+    max_properties: int | None = None
+    min_properties: int | None = None
     required: list[str] = field(default_factory=list)
     properties: list[Property] = field(default_factory=list)
     # additional_properties: Optional[Union[bool, Schema]] = field(default=True)  # TODO
@@ -150,115 +204,143 @@ class Object(Schema):
 
 @dataclass
 class Parameter:
+    """API parameter definition."""
+
     name: str
     location: ParameterLocation
-    schema: Optional[Schema] = None
-    content: Optional[list['Content']] = None
-    required: Optional[bool] = field(default=False)
-    description: Optional[str] = None
+    schema: Schema | None = None
+    content: list[Content] | None = None
+    required: bool | None = field(default=False)
+    description: str | None = None
     # example: Optional[Any]  # TODO
     # examples: list[Any] = field(default_factory=list)  # TODO
     # allow_reserved: bool  # TODO
-    deprecated: Optional[bool] = field(default=False)
-    style: Optional[str] = None
-    explode: Optional[bool] = field(default=False)
-    extensions: Optional[dict] = field(default_factory=dict)
+    deprecated: bool | None = field(default=False)
+    style: (
+        str
+        | PathParameterStyle
+        | QueryParameterStyle
+        | HeaderParameterStyle
+        | CookieParameterStyle
+        | None
+    ) = None
+    explode: bool | None = field(default=False)
+    extensions: dict[str, Any] | None = field(default_factory=dict)
 
 
 @dataclass
 class Content:
-    type: Union[ContentType, LooseContentType]
+    """Request/response content definition."""
+
+    type: ContentType | LooseContentType
     schema: Schema
-    example: Optional[Any] = None
+    example: Any | None = None
     examples: dict[str, Any] = field(default_factory=dict)
     # encoding: dict[str, Encoding]  # TODO
 
 
 @dataclass
 class RequestBody:
+    """Request body definition."""
+
     content: list[Content]
-    description: Optional[str] = None
-    required: Optional[bool] = field(default=False)
+    description: str | None = None
+    required: bool | None = field(default=False)
 
 
 @dataclass
 class Header:
+    """Response header definition."""
+
     name: str
     schema: Schema
-    description: Optional[str] = None
-    required: Optional[bool] = field(default=False)
-    deprecated: Optional[bool] = field(default=False)
-    extensions: Optional[dict] = field(default_factory=dict)
+    description: str | None = None
+    required: bool | None = field(default=False)
+    deprecated: bool | None = field(default=False)
+    extensions: dict[str, Any] | None = field(default_factory=dict)
 
 
 @dataclass
 class Response:
+    """API response definition."""
+
     is_default: bool
     description: str
-    code: Optional[int] = None
-    content: Optional[list[Content]] = None
+    code: int | None = None
+    content: list[Content] | None = None
     headers: list[Header] = field(default_factory=list)
-    # links: dict[str, Link]  # TODO
 
 
 @dataclass
 class OAuthFlow:
-    refresh_url: Optional[str] = None
-    authorization_url: Optional[str] = None
-    token_url: Optional[str] = None
+    """OAuth flow definition."""
+
+    refresh_url: str | None = None
+    authorization_url: str | None = None
+    token_url: str | None = None
     scopes: dict[str, str] = field(default_factory=dict)
-    extensions: Optional[dict] = field(default_factory=dict)
+    extensions: dict[str, Any] | None = field(default_factory=dict)
 
 
 @dataclass
 class Security:
+    """Security scheme definition."""
+
     type: SecurityType
-    location: Optional[BaseLocation] = None
-    description: Optional[str] = None
-    name: Optional[str] = None
-    scheme: Optional[AuthenticationScheme] = None
-    bearer_format: Optional[str] = None
+    location: BaseLocation | None = None
+    description: str | None = None
+    name: str | None = None
+    scheme: AuthenticationScheme | None = None
+    bearer_format: str | None = None
     flows: dict[OAuthFlowType, OAuthFlow] = field(default_factory=dict)
-    url: Optional[str] = None
-    extensions: Optional[dict] = field(default_factory=dict)
+    url: str | None = None
+    extensions: dict[str, Any] | None = field(default_factory=dict)
 
 
 @dataclass
 class Operation:
+    """API operation definition."""
+
     method: OperationMethod
     responses: list[Response]
-    summary: Optional[str] = None
-    description: Optional[str] = None
-    operation_id: Optional[str] = None
-    external_docs: Optional[ExternalDoc] = None
-    request_body: Optional[RequestBody] = None
-    deprecated: Optional[bool] = field(default=False)
+    summary: str | None = None
+    description: str | None = None
+    operation_id: str | None = None
+    external_docs: ExternalDoc | None = None
+    request_body: RequestBody | None = None
+    deprecated: bool | None = field(default=False)
     parameters: list[Parameter] = field(default_factory=list)
     tags: list[str] = field(default_factory=list)
     security: list[dict[str, Any]] = field(default_factory=list)
-    extensions: Optional[dict] = field(default_factory=dict)
+    extensions: dict[str, Any] | None = field(default_factory=dict)
     # callbacks: dict[str, Callback] = field(default_factory=dict)  # TODO
 
 
 @dataclass
 class Path:
+    """API path definition."""
+
     url: str
-    summary: Optional[str] = None
-    description: Optional[str] = None
+    summary: str | None = None
+    description: str | None = None
     operations: list[Operation] = field(default_factory=list)
     parameters: list[Parameter] = field(default_factory=list)
-    extensions: Optional[dict] = field(default_factory=dict)
+    extensions: dict[str, Any] | None = field(default_factory=dict)
 
 
 @dataclass
 class Tag:
+    """API tag definition."""
+
     name: str
-    description: Optional[str] = None
-    external_docs: Optional[ExternalDoc] = None
+    description: str | None = None
+    external_docs: ExternalDoc | None = None
 
 
 @dataclass
 class Specification:
+    """Root OpenAPI specification object."""
+
     version: str
     info: Info
     servers: list[Server] = field(default_factory=list)
@@ -266,6 +348,6 @@ class Specification:
     security_schemas: dict[str, Security] = field(default_factory=dict)
     security: list[dict[str, Any]] = field(default_factory=list)
     schemas: dict[str, Schema] = field(default_factory=dict)
-    external_docs: Optional[ExternalDoc] = None
+    external_docs: ExternalDoc | None = None
     paths: list[Path] = field(default_factory=list)
-    extensions: Optional[dict] = field(default_factory=dict)
+    extensions: dict[str, Any] | None = field(default_factory=dict)

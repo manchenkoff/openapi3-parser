@@ -1,11 +1,12 @@
-from typing import List
+from typing import Any
 
 import pytest
 
 from openapi_parser.builders.server import ServerBuilder
+from openapi_parser.errors import ParserError
 from openapi_parser.specification import Server
 
-data_provider = (
+data_provider: Any = (
     (
         [],
         [],
@@ -20,7 +21,7 @@ data_provider = (
             },
             {
                 "url": "https://api.gigantic-server.com/v1",
-            }
+            },
         ],
         [
             Server(url="https://development.gigantic-server.com/v1"),
@@ -32,24 +33,30 @@ data_provider = (
         [
             {
                 "url": "https://development.gigantic-server.com/v1",
-                "description": "Development server"
+                "description": "Development server",
             },
             {
                 "url": "https://staging.gigantic-server.com/v1",
-                "description": "Staging server"
+                "description": "Staging server",
             },
             {
                 "url": "https://api.gigantic-server.com/v1",
-                "description": "Production server"
-            }
+                "description": "Production server",
+            },
         ],
         [
-            Server(url="https://development.gigantic-server.com/v1",
-                   description="Development server"),
-            Server(url="https://staging.gigantic-server.com/v1",
-                   description="Staging server"),
-            Server(url="https://api.gigantic-server.com/v1",
-                   description="Production server"),
+            Server(
+                url="https://development.gigantic-server.com/v1",
+                description="Development server",
+            ),
+            Server(
+                url="https://staging.gigantic-server.com/v1",
+                description="Staging server",
+            ),
+            Server(
+                url="https://api.gigantic-server.com/v1",
+                description="Production server",
+            ),
         ],
     ),
     (
@@ -57,32 +64,45 @@ data_provider = (
             {
                 "url": "https://development.gigantic-server.com/v1",
                 "x-internal": True,
-                "description": "Development server"
+                "description": "Development server",
             },
             {
                 "url": "https://staging.gigantic-server.com/v1",
-                "description": "Staging server"
+                "description": "Staging server",
             },
             {
                 "url": "https://api.gigantic-server.com/v1",
-                "description": "Production server"
-            }
+                "description": "Production server",
+            },
         ],
         [
-            Server(url="https://development.gigantic-server.com/v1",
-                   description="Development server",
-                   extensions={"internal": True}),
-            Server(url="https://staging.gigantic-server.com/v1",
-                   description="Staging server"),
-            Server(url="https://api.gigantic-server.com/v1",
-                   description="Production server"),
+            Server(
+                url="https://development.gigantic-server.com/v1",
+                description="Development server",
+                extensions={"internal": True},
+            ),
+            Server(
+                url="https://staging.gigantic-server.com/v1",
+                description="Staging server",
+            ),
+            Server(
+                url="https://api.gigantic-server.com/v1",
+                description="Production server",
+            ),
         ],
     ),
 )
 
 
-@pytest.mark.parametrize(['data', 'expected'], data_provider)
-def test_build_list(data: list, expected: List[Server]):
+@pytest.mark.parametrize(["data", "expected"], data_provider)
+def test_build_list(data: list[Any], expected: list[Server]) -> None:
     builder = ServerBuilder()
 
     assert expected == builder.build_list(data)
+
+
+def test_build_list_missing_url() -> None:
+    builder = ServerBuilder()
+
+    with pytest.raises(ParserError, match="missing required 'url' property"):
+        builder.build_list([{"description": "no url"}])

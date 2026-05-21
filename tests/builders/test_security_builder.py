@@ -1,14 +1,20 @@
+from typing import Any
 from unittest import mock
 
 import pytest
 
 from openapi_parser.builders.oauth_flow import OAuthFlowBuilder
 from openapi_parser.builders.security import SecurityBuilder
-from openapi_parser.enumeration import AuthenticationScheme, BaseLocation, OAuthFlowType, SecurityType
+from openapi_parser.enumeration import (
+    AuthenticationScheme,
+    BaseLocation,
+    OAuthFlowType,
+    SecurityType,
+)
 from openapi_parser.specification import OAuthFlow, Security
 
 
-def _get_oauth_flow_builder_mock(expected) -> OAuthFlowBuilder:
+def _get_oauth_flow_builder_mock(expected: Any) -> OAuthFlowBuilder:
     mock_object = mock.MagicMock()
     mock_object.build_collection.return_value = expected
 
@@ -20,29 +26,23 @@ flows_mock = {
         authorization_url="https://example.com/api/oauth/dialog",
         scopes={
             "write:pets": "modify pets in your account",
-            "read:pets": "read your pets"
-        }
+            "read:pets": "read your pets",
+        },
     ),
     OAuthFlowType.AUTHORIZATION_CODE: OAuthFlow(
         authorization_url="https://example.com/api/oauth/dialog",
         token_url="https://example.com/api/oauth/token",
         scopes={
             "write:pets": "modify pets in your account",
-            "read:pets": "read your pets"
-        }
+            "read:pets": "read your pets",
+        },
     ),
 }
 
 data_provider = (
     (
-        {
-            "type": "http",
-            "scheme": "basic"
-        },
-        Security(
-            type=SecurityType.HTTP,
-            scheme=AuthenticationScheme.BASIC
-        ),
+        {"type": "http", "scheme": "basic"},
+        Security(type=SecurityType.HTTP, scheme=AuthenticationScheme.BASIC),
         _get_oauth_flow_builder_mock(None),
     ),
     (
@@ -54,7 +54,7 @@ data_provider = (
         Security(
             type=SecurityType.HTTP,
             scheme=AuthenticationScheme.BEARER,
-            bearer_format="JWT"
+            bearer_format="JWT",
         ),
         _get_oauth_flow_builder_mock(None),
     ),
@@ -65,7 +65,7 @@ data_provider = (
         },
         Security(
             type=SecurityType.OPEN_ID_CONNECT,
-            url="https://example.com/api/openid"
+            url="https://example.com/api/openid",
         ),
         _get_oauth_flow_builder_mock(None),
     ),
@@ -85,13 +85,13 @@ data_provider = (
             "type": "apiKey",
             "name": "api_key",
             "in": "header",
-            "description": "authorization key to communicate with API"
+            "description": "authorization key to communicate with API",
         },
         Security(
             type=SecurityType.API_KEY,
             location=BaseLocation.HEADER,
             name="api_key",
-            description="authorization key to communicate with API"
+            description="authorization key to communicate with API",
         ),
         _get_oauth_flow_builder_mock(None),
     ),
@@ -106,8 +106,8 @@ data_provider = (
                 "authorizerUri": "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:account-id:function:function-name/invocations",
                 "authorizerCredentials": "arn:aws:iam::account-id:role",
                 "identityValidationExpression": "^x-[a-z]+",
-                "authorizerResultTtlInSeconds": 60
-            }
+                "authorizerResultTtlInSeconds": 60,
+            },
         },
         Security(
             type=SecurityType.API_KEY,
@@ -120,9 +120,9 @@ data_provider = (
                     "authorizerUri": "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:account-id:function:function-name/invocations",
                     "authorizerCredentials": "arn:aws:iam::account-id:role",
                     "identityValidationExpression": "^x-[a-z]+",
-                    "authorizerResultTtlInSeconds": 60
-                }
-            }
+                    "authorizerResultTtlInSeconds": 60,
+                },
+            },
         ),
         _get_oauth_flow_builder_mock(None),
     ),
@@ -134,30 +134,31 @@ data_provider = (
                     "authorizationUrl": "https://example.com/api/oauth/dialog",
                     "scopes": {
                         "write:pets": "modify pets in your account",
-                        "read:pets": "read your pets"
-                    }
+                        "read:pets": "read your pets",
+                    },
                 },
                 "authorizationCode": {
                     "authorizationUrl": "https://example.com/api/oauth/dialog",
                     "tokenUrl": "https://example.com/api/oauth/token",
                     "scopes": {
                         "write:pets": "modify pets in your account",
-                        "read:pets": "read your pets"
-                    }
-                }
-            }
+                        "read:pets": "read your pets",
+                    },
+                },
+            },
         },
-        Security(
-            type=SecurityType.OAUTH2,
-            flows=flows_mock
-        ),
+        Security(type=SecurityType.OAUTH2, flows=flows_mock),
         _get_oauth_flow_builder_mock(flows_mock),
     ),
 )
 
 
-@pytest.mark.parametrize(['data', 'expected', 'oauth_flow_builder'], data_provider)
-def test_build(data: dict, expected: Security, oauth_flow_builder: OAuthFlowBuilder):
+@pytest.mark.parametrize(["data", "expected", "oauth_flow_builder"], data_provider)
+def test_build(
+    data: dict[str, Any],
+    expected: Security,
+    oauth_flow_builder: OAuthFlowBuilder,
+) -> None:
     builder = SecurityBuilder(oauth_flow_builder)
 
     assert builder.build(data) == expected
@@ -166,15 +167,12 @@ def test_build(data: dict, expected: Security, oauth_flow_builder: OAuthFlowBuil
 collection_data_provider = (
     (
         {
-            "Basic": {
-                "type": "http",
-                "scheme": "basic"
-            },
+            "Basic": {"type": "http", "scheme": "basic"},
         },
         {
             "Basic": Security(
                 type=SecurityType.HTTP,
-                scheme=AuthenticationScheme.BASIC
+                scheme=AuthenticationScheme.BASIC,
             ),
         },
         _get_oauth_flow_builder_mock(None),
@@ -182,8 +180,15 @@ collection_data_provider = (
 )
 
 
-@pytest.mark.parametrize(['data', 'expected', 'oauth_flow_builder'], collection_data_provider)
-def test_build_collection(data: dict, expected: dict, oauth_flow_builder: OAuthFlowBuilder):
+@pytest.mark.parametrize(
+    ["data", "expected", "oauth_flow_builder"],
+    collection_data_provider,
+)
+def test_build_collection(
+    data: dict[str, Any],
+    expected: dict[str, Any],
+    oauth_flow_builder: OAuthFlowBuilder,
+) -> None:
     builder = SecurityBuilder(oauth_flow_builder)
 
     assert builder.build_collection(data) == expected

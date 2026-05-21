@@ -1,4 +1,37 @@
-from openapi_parser.specification import *
+from typing import Any
+
+from openapi_parser.enumeration import (
+    AuthenticationScheme,
+    ContentType,
+    DataType,
+    OperationMethod,
+    ParameterLocation,
+    PathParameterStyle,
+    QueryParameterStyle,
+    SecurityType,
+    StringFormat,
+)
+from openapi_parser.specification import (
+    Array,
+    Contact,
+    Content,
+    Info,
+    Integer,
+    License,
+    Object,
+    Operation,
+    Parameter,
+    Path,
+    Property,
+    RequestBody,
+    Response,
+    Schema,
+    Security,
+    Server,
+    Specification,
+    String,
+    Tag,
+)
 
 schema_user = Object(
     type=DataType.OBJECT,
@@ -11,7 +44,7 @@ schema_user = Object(
                 description="Unique object id",
                 example="12345678-1234-5678-1234-567812345678",
                 format=StringFormat.UUID,
-            )
+            ),
         ),
         Property(
             name="login",
@@ -19,7 +52,7 @@ schema_user = Object(
                 type=DataType.STRING,
                 description="User login or nickname",
                 example="super-admin",
-            )
+            ),
         ),
         Property(
             name="email",
@@ -28,7 +61,7 @@ schema_user = Object(
                 description="User E-mail address",
                 example="user@mail.com",
                 format=StringFormat.EMAIL,
-            )
+            ),
         ),
         Property(
             name="avatar",
@@ -37,7 +70,7 @@ schema_user = Object(
                 description="User Avatar URL",
                 example="https://github.com/manchenkoff/openapi3-parser",
                 format=StringFormat.URI,
-            )
+            ),
         ),
     ],
 )
@@ -51,26 +84,23 @@ user_list_schema = Object(
             schema=Integer(
                 type=DataType.INTEGER,
                 description="Total count of users",
-            )
+            ),
         ),
         Property(
             name="users",
             schema=Array(
                 type=DataType.ARRAY,
                 items=schema_user,
-            )
+            ),
         ),
-    ]
+    ],
 )
 
 get_user_list_response = Response(
     code=200,
     description="Successful user list response",
     content=[
-        Content(
-            type=ContentType.JSON,
-            schema=user_list_schema
-        ),
+        Content(type=ContentType.JSON, schema=user_list_schema),
     ],
     is_default=False,
 )
@@ -92,7 +122,7 @@ bad_request_response = Response(
                             type=DataType.INTEGER,
                             example=1044,
                             description="Internal error code",
-                        )
+                        ),
                     ),
                     Property(
                         name="error",
@@ -100,10 +130,10 @@ bad_request_response = Response(
                             type=DataType.STRING,
                             example="Invalid user id value",
                             description="Error details",
-                        )
+                        ),
                     ),
                 ],
-            )
+            ),
         ),
     ],
 )
@@ -125,7 +155,7 @@ internal_error_response = Response(
                             type=DataType.INTEGER,
                             example=1,
                             description="Internal error code",
-                        )
+                        ),
                     ),
                     Property(
                         name="error",
@@ -133,29 +163,28 @@ internal_error_response = Response(
                             type=DataType.STRING,
                             example="Unexpected server error",
                             description="Error details",
-                        )
+                        ),
                     ),
                 ],
-            )
+            ),
         ),
     ],
 )
 
 
 def create_specification() -> Specification:
-    info = Info(title="User example service",
-                version="1.0.0",
-                description="Example service specification to work with user storage",
-                license=License(name="MIT"),
-                contact=Contact(name="manchenkoff", email="artyom@manchenkoff.me"))
+    info = Info(
+        title="User example service",
+        version="1.0.0",
+        description="Example service specification to work with user storage",
+        license=License(name="MIT"),
+        contact=Contact(name="manchenkoff", email="artyom@manchenkoff.me"),
+    )
 
     server_list = [
-        Server(url="https://users.app",
-               description="production"),
-        Server(url="https://stage.users.app",
-               description="staging"),
-        Server(url="https://users.local",
-               description="development"),
+        Server(url="https://users.app", description="production"),
+        Server(url="https://stage.users.app", description="staging"),
+        Server(url="https://users.local", description="development"),
     ]
 
     tag_list = [
@@ -163,13 +192,10 @@ def create_specification() -> Specification:
     ]
 
     security_schemes = {
-        "Basic": Security(
-            type=SecurityType.HTTP,
-            scheme=AuthenticationScheme.BASIC
-        ),
+        "Basic": Security(type=SecurityType.HTTP, scheme=AuthenticationScheme.BASIC),
     }
 
-    schemas = {
+    schemas: dict[str, Schema] = {
         "BadRequestError": Object(
             type=DataType.OBJECT,
             required=["code", "error"],
@@ -180,7 +206,7 @@ def create_specification() -> Specification:
                         type=DataType.INTEGER,
                         example=1044,
                         description="Internal error code",
-                    )
+                    ),
                 ),
                 Property(
                     name="error",
@@ -188,7 +214,7 @@ def create_specification() -> Specification:
                         type=DataType.STRING,
                         example="Invalid user id value",
                         description="Error details",
-                    )
+                    ),
                 ),
             ],
         ),
@@ -202,7 +228,7 @@ def create_specification() -> Specification:
                         type=DataType.INTEGER,
                         example=1,
                         description="Internal error code",
-                    )
+                    ),
                 ),
                 Property(
                     name="error",
@@ -210,7 +236,7 @@ def create_specification() -> Specification:
                         type=DataType.STRING,
                         example="Unexpected server error",
                         description="Error details",
-                    )
+                    ),
                 ),
             ],
         ),
@@ -225,7 +251,7 @@ def create_specification() -> Specification:
                         format=StringFormat.UUID,
                         example="12345678-1234-5678-1234-567812345678",
                         description="Unique object id",
-                    )
+                    ),
                 ),
             ],
         ),
@@ -240,7 +266,7 @@ def create_specification() -> Specification:
                         format=StringFormat.UUID,
                         example="12345678-1234-5678-1234-567812345678",
                         description="Unique object id",
-                    )
+                    ),
                 ),
                 Property(
                     name="login",
@@ -248,7 +274,7 @@ def create_specification() -> Specification:
                         type=DataType.STRING,
                         example="super-admin",
                         description="User login or nickname",
-                    )
+                    ),
                 ),
                 Property(
                     name="email",
@@ -257,7 +283,7 @@ def create_specification() -> Specification:
                         format=StringFormat.EMAIL,
                         example="user@mail.com",
                         description="User E-mail address",
-                    )
+                    ),
                 ),
                 Property(
                     name="avatar",
@@ -266,15 +292,13 @@ def create_specification() -> Specification:
                         description="User Avatar URL",
                         example="https://github.com/manchenkoff/openapi3-parser",
                         format=StringFormat.URI,
-                    )
+                    ),
                 ),
             ],
-        )
+        ),
     }
 
-    security = [
-        {"Basic": []}
-    ]
+    security: list[dict[str, Any]] = [{"Basic": []}]
 
     uuid_parameters = [
         Parameter(
@@ -309,7 +333,7 @@ def create_specification() -> Specification:
                             required=True,
                             explode=True,
                             style=QueryParameterStyle.FORM,
-                            schema=Integer(type=DataType.INTEGER)
+                            schema=Integer(type=DataType.INTEGER),
                         ),
                         Parameter(
                             name="offset",
@@ -318,7 +342,7 @@ def create_specification() -> Specification:
                             required=True,
                             explode=True,
                             style=QueryParameterStyle.FORM,
-                            schema=Integer(type=DataType.INTEGER)
+                            schema=Integer(type=DataType.INTEGER),
                         ),
                         Parameter(
                             name="json",
@@ -338,20 +362,20 @@ def create_specification() -> Specification:
                                                 schema=String(
                                                     type=DataType.STRING,
                                                     description="Test parameter",
-                                                    example="test"
-                                                )
+                                                    example="test",
+                                                ),
                                             ),
-                                        ]
-                                    )
+                                        ],
+                                    ),
                                 )
-                            ]
+                            ],
                         ),
                     ],
                     responses=[
                         get_user_list_response,
                         bad_request_response,
                         internal_error_response,
-                    ]
+                    ],
                 ),
                 Operation(
                     method=OperationMethod.POST,
@@ -359,14 +383,10 @@ def create_specification() -> Specification:
                     description="Method to add new user",
                     operation_id="AddUser",
                     tags=["Users"],
-                    security=[
-                        {'Basic': []}
-                    ],
+                    security=[{"Basic": []}],
                     request_body=RequestBody(
                         description="New user model request",
-                        content=[
-                            Content(type=ContentType.JSON, schema=schema_user)
-                        ]
+                        content=[Content(type=ContentType.JSON, schema=schema_user)],
                     ),
                     responses=[
                         Response(
@@ -387,13 +407,13 @@ def create_specification() -> Specification:
                                         ],
                                     ),
                                 ),
-                            ]
+                            ],
                         ),
                         bad_request_response,
                         internal_error_response,
                     ],
                 ),
-            ]
+            ],
         ),
         Path(
             url="/users/{uuid}",
@@ -425,7 +445,7 @@ def create_specification() -> Specification:
                                         ],
                                     ),
                                 ),
-                            ]
+                            ],
                         ),
                         bad_request_response,
                         internal_error_response,
@@ -438,21 +458,31 @@ def create_specification() -> Specification:
                     tags=["Users"],
                     parameters=uuid_parameters,
                     responses=[
-                        Response(code=None, description="Empty successful response", is_default=True),
-                        Response(code=200, description="Empty successful response", is_default=False),
+                        Response(
+                            code=None,
+                            description="Empty successful response",
+                            is_default=True,
+                        ),
+                        Response(
+                            code=200,
+                            description="Empty successful response",
+                            is_default=False,
+                        ),
                         bad_request_response,
                         internal_error_response,
                     ],
                 ),
-            ]
+            ],
         ),
     ]
 
-    return Specification(version="3.0.0",
-                         info=info,
-                         servers=server_list,
-                         tags=tag_list,
-                         paths=path_list,
-                         security_schemas=security_schemes,
-                         security=security,
-                         schemas=schemas)
+    return Specification(
+        version="3.0.0",
+        info=info,
+        servers=server_list,
+        tags=tag_list,
+        paths=path_list,
+        security_schemas=security_schemes,
+        security=security,
+        schemas=schemas,
+    )

@@ -1,6 +1,18 @@
 import pytest
 
-from openapi_parser.enumeration import *
+from openapi_parser.enumeration import (
+    AuthenticationScheme,
+    BaseLocation,
+    ContentType,
+    DataType,
+    IntegerFormat,
+    NumberFormat,
+    OAuthFlowType,
+    OperationMethod,
+    ParameterLocation,
+    SecurityType,
+    StringFormat,
+)
 
 data_type_provider = (
     ("integer", DataType.INTEGER),

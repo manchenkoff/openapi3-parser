@@ -1,8 +1,15 @@
+from typing import Any
+
 import pytest
 
 from openapi_parser.builders.schema import SchemaFactory
-from openapi_parser.enumeration import IntegerFormat
-from openapi_parser.specification import DataType, Discriminator, Integer, OneOf, String, StringFormat
+from openapi_parser.enumeration import DataType, IntegerFormat, StringFormat
+from openapi_parser.specification import (
+    Discriminator,
+    Integer,
+    OneOf,
+    String,
+)
 
 data_provider = (
     (
@@ -18,7 +25,7 @@ data_provider = (
                 {
                     "type": "integer",
                     "format": "int32",
-                }
+                },
             ],
         },
         OneOf(
@@ -35,8 +42,8 @@ data_provider = (
                     type=DataType.INTEGER,
                     format=IntegerFormat.INT32,
                 ),
-            ]
-        )
+            ],
+        ),
     ),
     (
         {
@@ -51,7 +58,7 @@ data_provider = (
                 {
                     "type": "integer",
                     "format": "int32",
-                }
+                },
             ],
             "discriminator": {
                 "propertyName": "objectType",
@@ -74,8 +81,8 @@ data_provider = (
             ],
             discriminator=Discriminator(
                 property_name="objectType",
-            )
-        )
+            ),
+        ),
     ),
     (
         {
@@ -90,7 +97,7 @@ data_provider = (
                 {
                     "type": "integer",
                     "format": "int32",
-                }
+                },
             ],
             "discriminator": {
                 "propertyName": "objectType",
@@ -139,13 +146,13 @@ data_provider = (
                         format=IntegerFormat.INT32,
                     ),
                 },
-            )
-        )
+            ),
+        ),
     ),
 )
 
 
-@pytest.mark.parametrize(['data', 'expected'], data_provider)
-def test_string_builder(data: dict, expected: String):
+@pytest.mark.parametrize(["data", "expected"], data_provider)
+def test_oneof_builder(data: dict[str, Any], expected: OneOf) -> None:
     factory = SchemaFactory()
     assert expected == factory.create(data)

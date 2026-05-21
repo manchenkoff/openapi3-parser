@@ -1,44 +1,62 @@
-import logging
+"""Security scheme builder."""
 
-from .common import extract_typed_props, PropertyMeta, extract_extension_attributes
-from .oauth_flow import OAuthFlowBuilder
-from ..enumeration import AuthenticationScheme, BaseLocation, SecurityType
-from ..specification import Security
+import logging
+from typing import Any
+
+from openapi_parser.builders.common import (
+    PropertyMeta,
+    extract_extension_attributes,
+    extract_typed_props,
+)
+from openapi_parser.builders.oauth_flow import OAuthFlowBuilder
+from openapi_parser.enumeration import AuthenticationScheme, BaseLocation, SecurityType
+from openapi_parser.specification import Security
 
 logger = logging.getLogger(__name__)
 
 
 class SecurityBuilder:
-    oauth_flow_builder: OAuthFlowBuilder
+    """Builds security scheme objects from raw specification data."""
+
+    _oauth_flow_builder: OAuthFlowBuilder
 
     def __init__(self, oauth_flow_builder: OAuthFlowBuilder) -> None:
-        self.oauth_flow_builder = oauth_flow_builder
+        """Initialize security builder.
 
-    def build(self, data: dict) -> Security:
+        Args:
+            oauth_flow_builder: Builder for OAuth flow objects
+        """
+        self._oauth_flow_builder = oauth_flow_builder
+
+    def build(self, data: dict[str, Any]) -> Security:
+        """Build a Security object from a raw dict."""
         logger.debug(f"Security item parsing [{data}]")
 
         attrs_map = {
             "type": PropertyMeta(name="type", cast=SecurityType),
             "location": PropertyMeta(name="in", cast=BaseLocation),
-            "name": PropertyMeta(name="name", cast=None),
-            "description": PropertyMeta(name="description", cast=None),
+            "name": PropertyMeta(name="name", cast=str),
+            "description": PropertyMeta(name="description", cast=str),
             "scheme": PropertyMeta(name="scheme", cast=AuthenticationScheme),
-            "bearer_format": PropertyMeta(name="bearerFormat", cast=None),
-            "url": PropertyMeta(name="openIdConnectUrl", cast=None),
-            "flows": PropertyMeta(name="flows", cast=self.oauth_flow_builder.build_collection),
+            "bearer_format": PropertyMeta(name="bearerFormat", cast=str),
+            "url": PropertyMeta(name="openIdConnectUrl", cast=str),
+            "flows": PropertyMeta(
+                name="flows",
+                cast=self._oauth_flow_builder.build_collection,
+            ),
         }
 
         attrs = extract_typed_props(data, attrs_map)
-        attrs['extensions'] = extract_extension_attributes(data)
+        attrs["extensions"] = extract_extension_attributes(data)
 
-        if attrs['extensions']:
+        if attrs["extensions"]:
             logger.debug(f"Extracted custom properties [{attrs['extensions'].keys()}]")
 
         return Security(**attrs)
 
-    def build_collection(self, data: dict) -> dict:
+    def build_collection(self, data: dict[str, Any]) -> dict[str, Security]:
+        """Build a dict of named Security objects."""
         return {
-            oauth_title: self.build(oauth_value)
-            for oauth_title, oauth_value
-            in data.items()
+            scheme_name: self.build(scheme_data)
+            for scheme_name, scheme_data in data.items()
         }

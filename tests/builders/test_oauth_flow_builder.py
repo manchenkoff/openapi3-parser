@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Any
 
 import pytest
 
@@ -21,7 +21,7 @@ data_provider = (
                 authorization_url="https://example.com/api/oauth/dialog",
                 refresh_url="https://example.com/api/oauth/dialog",
                 token_url="https://example.com/api/oauth/dialog",
-                extensions={"state": "some data to be passed to oath server"}
+                extensions={"state": "some data to be passed to oath server"},
             ),
         },
     ),
@@ -31,47 +31,46 @@ data_provider = (
                 "authorizationUrl": "https://example.com/api/oauth/dialog",
                 "scopes": {
                     "write:pets": "modify pets in your account",
-                    "read:pets": "read your pets"
-                }
+                    "read:pets": "read your pets",
+                },
             },
             "authorizationCode": {
                 "authorizationUrl": "https://example.com/api/oauth/dialog",
                 "tokenUrl": "https://example.com/api/oauth/token",
                 "scopes": {
                     "write:pets": "modify pets in your account",
-                    "read:pets": "read your pets"
-                }
+                    "read:pets": "read your pets",
+                },
             },
-            "x-customFlow": {
-                "custom_attribute": "custom value"
-            }
+            "x-customFlow": {"custom_attribute": "custom value"},
         },
         {
             OAuthFlowType.IMPLICIT: OAuthFlow(
                 authorization_url="https://example.com/api/oauth/dialog",
                 scopes={
                     "write:pets": "modify pets in your account",
-                    "read:pets": "read your pets"
-                }
+                    "read:pets": "read your pets",
+                },
             ),
             OAuthFlowType.AUTHORIZATION_CODE: OAuthFlow(
                 authorization_url="https://example.com/api/oauth/dialog",
                 token_url="https://example.com/api/oauth/token",
                 scopes={
                     "write:pets": "modify pets in your account",
-                    "read:pets": "read your pets"
-                }
+                    "read:pets": "read your pets",
+                },
             ),
-            "customFlow": {
-                "custom_attribute": "custom value"
-            }
+            "customFlow": {"custom_attribute": "custom value"},
         },
     ),
 )
 
 
-@pytest.mark.parametrize(['data', 'expected'], data_provider)
-def test_oauth_flow_builder(data: dict, expected: Dict[OAuthFlowType, OAuthFlow]):
+@pytest.mark.parametrize(["data", "expected"], data_provider)
+def test_oauth_flow_builder(
+    data: dict[str, Any],
+    expected: dict[OAuthFlowType, OAuthFlow],
+) -> None:
     builder = OAuthFlowBuilder()
 
     assert builder.build_collection(data) == expected
