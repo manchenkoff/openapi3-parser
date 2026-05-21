@@ -6,11 +6,11 @@ from tests.openapi_fixture import create_specification
 
 
 @pytest.fixture()
-def swagger_specification():
+def swagger_specification() -> Specification:
     return create_specification()
 
 
-def test_run_parser(swagger_specification: Specification):
-    actual_specification = parse('tests/data/swagger.yml')
+def test_run_parser(swagger_specification: Specification) -> None:
+    actual_specification = parse("tests/data/swagger.yml")
 
     assert actual_specification == swagger_specification

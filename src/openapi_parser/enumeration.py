@@ -1,8 +1,12 @@
+"""OpenAPI specification enum types."""
+
 from enum import Enum, unique
 
 
 @unique
 class DataType(Enum):
+    """OpenAPI data types."""
+
     NULL = "null"
     INTEGER = "integer"
     NUMBER = "number"
@@ -16,18 +20,24 @@ class DataType(Enum):
 
 @unique
 class IntegerFormat(Enum):
+    """Integer format variants."""
+
     INT32 = "int32"
     INT64 = "int64"
 
 
 @unique
 class NumberFormat(Enum):
+    """Number format variants."""
+
     FLOAT = "float"
     DOUBLE = "double"
 
 
 @unique
 class StringFormat(Enum):
+    """String format variants."""
+
     BYTE = "byte"
     BINARY = "binary"
     DATE = "date"
@@ -46,6 +56,8 @@ class StringFormat(Enum):
 
 @unique
 class OperationMethod(Enum):
+    """HTTP operation methods."""
+
     GET = "get"
     PUT = "put"
     POST = "post"
@@ -58,6 +70,8 @@ class OperationMethod(Enum):
 
 @unique
 class BaseLocation(Enum):
+    """Base security location types."""
+
     HEADER = "header"
     QUERY = "query"
     COOKIE = "cookie"
@@ -65,6 +79,8 @@ class BaseLocation(Enum):
 
 @unique
 class ParameterLocation(Enum):
+    """Parameter location variants."""
+
     HEADER = "header"
     QUERY = "query"
     COOKIE = "cookie"
@@ -73,6 +89,8 @@ class ParameterLocation(Enum):
 
 @unique
 class PathParameterStyle(Enum):
+    """Path parameter serialization styles."""
+
     SIMPLE = "simple"
     LABEL = "label"
     MATRIX = "matrix"
@@ -80,6 +98,8 @@ class PathParameterStyle(Enum):
 
 @unique
 class QueryParameterStyle(Enum):
+    """Query parameter serialization styles."""
+
     FORM = "form"
     SPACE_DELIMITED = "spaceDelimited"
     PIPE_DELIMITED = "pipeDelimited"
@@ -88,16 +108,22 @@ class QueryParameterStyle(Enum):
 
 @unique
 class HeaderParameterStyle(Enum):
+    """Header parameter serialization styles."""
+
     SIMPLE = "simple"
 
 
 @unique
 class CookieParameterStyle(Enum):
+    """Cookie parameter serialization styles."""
+
     FORM = "form"
 
 
 @unique
 class ContentType(Enum):
+    """Media content type variants."""
+
     JSON = "application/json"
     JSON_TEXT = "text/json"
     JSON_ANY = "application/*+json"
@@ -121,6 +147,8 @@ class ContentType(Enum):
 
 @unique
 class SecurityType(Enum):
+    """Security scheme types."""
+
     API_KEY = "apiKey"
     HTTP = "http"
     OAUTH2 = "oauth2"
@@ -129,6 +157,8 @@ class SecurityType(Enum):
 
 @unique
 class AuthenticationScheme(Enum):
+    """Authentication scheme variants."""
+
     BASIC = "basic"
     BEARER = "bearer"
     DIGEST = "digest"
@@ -143,6 +173,8 @@ class AuthenticationScheme(Enum):
 
 @unique
 class OAuthFlowType(Enum):
+    """OAuth flow type variants."""
+
     IMPLICIT = "implicit"
     PASSWORD = "password"
     CLIENT_CREDENTIALS = "clientCredentials"

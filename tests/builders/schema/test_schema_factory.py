@@ -1,58 +1,56 @@
-from typing import Dict
+from typing import Any, cast
 from unittest.mock import MagicMock
 
 import pytest
 
 from openapi_parser.builders.common import extract_extension_attributes
-from openapi_parser.builders.schema import merge_all_of_schemas, SchemaFactory
+from openapi_parser.builders.schema import (
+    SchemaBuilderMethod,
+    SchemaFactory,
+    merge_all_of_schemas,
+)
 from openapi_parser.enumeration import DataType
 from openapi_parser.errors import ParserError
 
 
 @pytest.fixture()
-def container():
+def container() -> dict[DataType, MagicMock]:
     return {
         data_type: MagicMock()
-        for data_type in
-        (DataType.INTEGER, DataType.NUMBER, DataType.STRING, DataType.ARRAY, DataType.OBJECT)
+        for data_type in (
+            DataType.INTEGER,
+            DataType.NUMBER,
+            DataType.STRING,
+            DataType.ARRAY,
+            DataType.OBJECT,
+        )
     }
 
 
 schema_data_provider = (
-    (
-        {"type": "integer"},
-        DataType.INTEGER
-    ),
-    (
-        {"type": "number"},
-        DataType.NUMBER
-    ),
-    (
-        {"type": "string"},
-        DataType.STRING
-    ),
-    (
-        {"type": "array"},
-        DataType.ARRAY
-    ),
-    (
-        {"type": "object"},
-        DataType.OBJECT
-    ),
+    ({"type": "integer"}, DataType.INTEGER),
+    ({"type": "number"}, DataType.NUMBER),
+    ({"type": "string"}, DataType.STRING),
+    ({"type": "array"}, DataType.ARRAY),
+    ({"type": "object"}, DataType.OBJECT),
 )
 
 
-@pytest.mark.parametrize(['data', 'expected_type'], schema_data_provider)
-def test_create(data: dict, expected_type: DataType, container: Dict[DataType, MagicMock]):
+@pytest.mark.parametrize(["data", "expected_type"], schema_data_provider)
+def test_create(
+    data: dict[str, Any],
+    expected_type: DataType,
+    container: dict[DataType, MagicMock],
+) -> None:
     factory = SchemaFactory()
-    factory._builders = container
+    factory._builders = cast(dict[DataType, SchemaBuilderMethod], container)
 
     factory.create(data)
 
     container[expected_type].assert_called_once()
 
 
-def test_create_error():
+def test_create_error() -> None:
     data = {"type": "unsupported"}
     factory = SchemaFactory()
 
@@ -60,7 +58,7 @@ def test_create_error():
         factory.create(data)
 
 
-def test_container_error():
+def test_container_error() -> None:
     data = {"type": "integer"}
     factory = SchemaFactory()
     factory._builders = {}
@@ -90,7 +88,7 @@ merge_schemas_data_provider = (
             "type": "object",
             "title": "UserDTO",
             "description": "Replaced Description",
-        }
+        },
     ),
     (
         {
@@ -128,8 +126,8 @@ merge_schemas_data_provider = (
                 "email": {"type": "string"},
                 "firstname": {"type": "string"},
                 "lastname": {"type": "string"},
-            }
-        }
+            },
+        },
     ),
     (
         {
@@ -153,7 +151,7 @@ merge_schemas_data_provider = (
                                     "properties": {
                                         "holder": {"type": "string", "required": True},
                                         "number": {"type": "integer", "required": True},
-                                    }
+                                    },
                                 },
                             },
                         },
@@ -169,7 +167,7 @@ merge_schemas_data_provider = (
                                     "properties": {
                                         "cvc": {"type": "integer", "required": True},
                                     }
-                                }
+                                },
                             },
                         },
                     },
@@ -194,18 +192,21 @@ merge_schemas_data_provider = (
                                 "holder": {"type": "string", "required": True},
                                 "number": {"type": "integer", "required": True},
                                 "cvc": {"type": "integer", "required": True},
-                            }
+                            },
                         },
                     },
                 },
-            }
-        }
+            },
+        },
     ),
 )
 
 
-@pytest.mark.parametrize(['original_data', 'expected'], merge_schemas_data_provider)
-def test_merge_all_of_schemas(original_data: dict, expected: dict):
+@pytest.mark.parametrize(["original_data", "expected"], merge_schemas_data_provider)
+def test_merge_all_of_schemas(
+    original_data: dict[str, Any],
+    expected: dict[str, Any],
+) -> None:
     assert merge_all_of_schemas(original_data) == expected
 
 
@@ -216,23 +217,20 @@ extension_schema_provider = (
             "title": "Object with extension attributes",
             "x-number-attribute": 123,
             "x-boolean-attribute": False,
-            "x-object-attribute": {
-                "key1": "value",
-                "key2": "another value"
-            },
+            "x-object-attribute": {"key1": "value", "key2": "another value"},
         },
         {
             "number_attribute": 123,
             "boolean_attribute": False,
-            "object_attribute": {
-                "key1": "value",
-                "key2": "another value"
-            },
+            "object_attribute": {"key1": "value", "key2": "another value"},
         },
     ),
 )
 
 
-@pytest.mark.parametrize(['original_data', 'expected'], extension_schema_provider)
-def test_extension_attributes_extracting(original_data: dict, expected: dict):
+@pytest.mark.parametrize(["original_data", "expected"], extension_schema_provider)
+def test_extension_attributes_extracting(
+    original_data: dict[str, Any],
+    expected: dict[str, Any],
+) -> None:
     assert extract_extension_attributes(original_data) == expected

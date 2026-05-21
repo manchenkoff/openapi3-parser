@@ -1,13 +1,14 @@
-from typing import List
+from typing import Any
 from unittest import mock
 
 import pytest
 
 from openapi_parser.builders.external_doc import ExternalDocBuilder
 from openapi_parser.builders.tag import TagBuilder
+from openapi_parser.errors import ParserError
 from openapi_parser.specification import ExternalDoc, Tag
 
-data_provider = (
+data_provider: Any = (
     (
         [],
         [],
@@ -17,43 +18,51 @@ data_provider = (
             {
                 "name": "Users",
             },
-            {
-                "name": "Users",
-                "description": "User operations"
-            },
+            {"name": "Users", "description": "User operations"},
             {
                 "name": "Users",
                 "description": "User operations",
                 "externalDocs": {
                     "description": "Find more info here",
-                    "url": "https://example.com"
-                }
+                    "url": "https://example.com",
+                },
             },
         ],
         [
             Tag(name="Users"),
             Tag(name="Users", description="User operations"),
-            Tag(name="Users",
+            Tag(
+                name="Users",
                 description="User operations",
-                external_docs=ExternalDoc(url="https://example.com", description="Find more info here")),
+                external_docs=ExternalDoc(
+                    url="https://example.com",
+                    description="Find more info here",
+                ),
+            ),
         ],
     ),
 )
 
 
-def _create_external_doc_builder_mock(expected_tags: List[Tag]) -> ExternalDocBuilder:
+def _create_external_doc_builder_mock(expected_tags: list[Tag]) -> ExternalDocBuilder:
     mock_object = mock.MagicMock()
     mock_object.build.side_effect = [
-        item.external_docs for item in expected_tags
-        if item.external_docs is not None
+        item.external_docs for item in expected_tags if item.external_docs is not None
     ]
 
     return mock_object
 
 
-@pytest.mark.parametrize(['data', 'expected'], data_provider)
-def test_build_list(data: list, expected: List[Tag]):
+@pytest.mark.parametrize(["data", "expected"], data_provider)
+def test_build_list(data: list[Any], expected: list[Tag]) -> None:
     external_doc_builder = _create_external_doc_builder_mock(expected)
     builder = TagBuilder(external_doc_builder)
 
     assert expected == builder.build_list(data)
+
+
+def test_build_list_missing_name() -> None:
+    builder = TagBuilder(mock.MagicMock())
+
+    with pytest.raises(ParserError, match="missing required 'name' property"):
+        builder.build_list([{"description": "no name"}])

@@ -1,14 +1,17 @@
+from typing import Any
+
 import pytest
 
 from openapi_parser.builders.schema import SchemaFactory
-from openapi_parser.specification import DataType, Number, NumberFormat
+from openapi_parser.enumeration import DataType, NumberFormat
+from openapi_parser.specification import Number
 
 data_provider = (
     (
         {
             "type": "number",
         },
-        Number(type=DataType.NUMBER)
+        Number(type=DataType.NUMBER),
     ),
     (
         {
@@ -28,12 +31,12 @@ data_provider = (
             minimum=0.0,
             exclusive_minimum=0.0,
             format=NumberFormat.FLOAT,
-        )
+        ),
     ),
 )
 
 
-@pytest.mark.parametrize(['data', 'expected'], data_provider)
-def test_number_builder(data: dict, expected: Number):
+@pytest.mark.parametrize(["data", "expected"], data_provider)
+def test_number_builder(data: dict[str, Any], expected: Number) -> None:
     factory = SchemaFactory()
     assert expected == factory.create(data)

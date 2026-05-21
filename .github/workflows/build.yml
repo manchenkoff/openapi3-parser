@@ -4,10 +4,10 @@ on:
   pull_request:
     branches: [master]
 jobs:
-  build:
+  lint:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Git
+      - name: Checkout
         uses: actions/checkout@v6
       - name: Install UV
         uses: astral-sh/setup-uv@v6
@@ -16,11 +16,27 @@ jobs:
           enable-cache: true
       - name: Install dependencies
         run: uv sync --locked --dev
-      - name: Run linters
-        run: |
-          uv run ruff check .
-          uv run mypy .
-          uv run ty check .
+      - name: Run ruff
+        run: uv run ruff check .
+      - name: Run mypy
+        run: uv run mypy .
+      - name: Run ty
+        run: uv run ty check .
+  test:
+    name: Test Python ${{ matrix.python-version }}
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.11", "3.12", "3.13"]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Install UV
+        uses: astral-sh/setup-uv@v6
+        with:
+          python-version: ${{ matrix.python-version }}
+          enable-cache: true
+      - name: Install dependencies
+        run: uv sync --locked --dev
       - name: Run tests
         run: uv run pytest
-

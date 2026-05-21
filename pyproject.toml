@@ -25,7 +25,6 @@ classifiers = [
 dependencies = [
     "openapi-spec-validator>=0.8.5",
     "prance>=25.4.8.0",
-    "ty>=0.0.37",
 ]
 
 [project.urls]
@@ -56,6 +55,10 @@ mypy_path = ["src"]
 [[tool.mypy.overrides]]
 module = "tests.*"
 
+[[tool.mypy.overrides]]
+module = "prance"
+ignore_missing_imports = true
+
 [tool.ruff.lint]
 extend-select = [
   "D",      # pydocstyle
@@ -65,6 +68,7 @@ extend-select = [
   "I",      # isort
   "ARG",    # unused arguments
   "RUF100", # unused noqa
+  "TID252", # ban relative imports
 ]
 
 [tool.ruff.lint.pydocstyle]

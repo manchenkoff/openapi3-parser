@@ -1,12 +1,24 @@
-import logging
-from typing import List
+"""Parameter builder for path and operation parameters."""
 
-from .common import extract_typed_props, PropertyMeta, extract_extension_attributes
-from .content import ContentBuilder
-from .schema import SchemaFactory
-from ..enumeration import ParameterLocation, HeaderParameterStyle, PathParameterStyle, QueryParameterStyle, \
-    CookieParameterStyle
-from ..specification import Parameter
+import logging
+from typing import Any
+
+from openapi_parser.builders.common import (
+    PropertyMeta,
+    extract_extension_attributes,
+    extract_typed_props,
+)
+from openapi_parser.builders.content import ContentBuilder
+from openapi_parser.builders.schema import SchemaFactory
+from openapi_parser.enumeration import (
+    CookieParameterStyle,
+    HeaderParameterStyle,
+    ParameterLocation,
+    PathParameterStyle,
+    QueryParameterStyle,
+)
+from openapi_parser.errors import ParserError
+from openapi_parser.specification import Parameter
 
 logger = logging.getLogger(__name__)
 
@@ -26,28 +38,50 @@ default_styles_by_location = {
 
 
 class ParameterBuilder:
-    schema_factory: SchemaFactory
-    content_builder: ContentBuilder
+    """Builds parameter objects from raw specification data."""
 
-    def __init__(self, schema_factory: SchemaFactory, content_builder: ContentBuilder) -> None:
-        self.schema_factory = schema_factory
-        self.content_builder = content_builder
+    _schema_factory: SchemaFactory
+    _content_builder: ContentBuilder
 
-    def build_list(self, parameters: List[dict]) -> list[Parameter]:
+    def __init__(
+        self,
+        schema_factory: SchemaFactory,
+        content_builder: ContentBuilder,
+    ) -> None:
+        """Initialize parameter builder.
+
+        Args:
+            schema_factory: Factory for creating schema objects
+            content_builder: Builder for content objects
+        """
+        self._schema_factory = schema_factory
+        self._content_builder = content_builder
+
+    def build_list(self, parameters: list[dict[str, Any]]) -> list[Parameter]:
+        """Build a list of parameters from a list of raw dicts."""
         return [self.build(parameter) for parameter in parameters]
 
-    def build(self, data: dict) -> Parameter:
-        logger.debug(f"Parameter parsing [name={data['name']}]")
+    def build(self, data: dict[str, Any]) -> Parameter:
+        """Build a Parameter from a raw dict."""
+        parameter_name = data.get("name")
+
+        if parameter_name is None:
+            raise ParserError("Parameter is missing required 'name' property")
+
+        logger.debug(f"Parameter parsing [name={parameter_name}]")
 
         attrs_map = {
             "name": PropertyMeta(name="name", cast=str),
             "location": PropertyMeta(name="in", cast=ParameterLocation),
-            "required": PropertyMeta(name="required", cast=None),
-            "schema": PropertyMeta(name="schema", cast=self.schema_factory.create),
-            "content": PropertyMeta(name="content", cast=self.content_builder.build_list),
+            "required": PropertyMeta(name="required", cast=bool),
+            "schema": PropertyMeta(name="schema", cast=self._schema_factory.create),
+            "content": PropertyMeta(
+                name="content",
+                cast=self._content_builder.build_list,
+            ),
             "description": PropertyMeta(name="description", cast=str),
-            "deprecated": PropertyMeta(name="deprecated", cast=None),
-            "explode": PropertyMeta(name="explode", cast=None),
+            "deprecated": PropertyMeta(name="deprecated", cast=bool),
+            "explode": PropertyMeta(name="explode", cast=bool),
         }
 
         attrs = extract_typed_props(data, attrs_map)
@@ -60,9 +94,9 @@ class ParameterBuilder:
         if not attrs.get("explode") and attrs["style"].value == "form":
             attrs["explode"] = True
 
-        attrs['extensions'] = extract_extension_attributes(data)
+        attrs["extensions"] = extract_extension_attributes(data)
 
-        if attrs['extensions']:
+        if attrs["extensions"]:
             logger.debug(f"Extracted custom properties [{attrs['extensions'].keys()}]")
 
         return Parameter(**attrs)

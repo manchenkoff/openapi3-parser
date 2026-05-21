@@ -1,4 +1,5 @@
 import copy
+from typing import Any
 from unittest.mock import MagicMock
 
 import pytest
@@ -6,18 +7,31 @@ import pytest
 from openapi_parser.builders.operation import OperationBuilder
 from openapi_parser.builders.parameter import ParameterBuilder
 from openapi_parser.builders.path import PathBuilder
-from openapi_parser.enumeration import ContentType, DataType, OperationMethod, ParameterLocation
-from openapi_parser.specification import Array, Content, Operation, Parameter, Path, Response, String
+from openapi_parser.enumeration import (
+    ContentType,
+    DataType,
+    OperationMethod,
+    ParameterLocation,
+)
+from openapi_parser.specification import (
+    Array,
+    Content,
+    Operation,
+    Parameter,
+    Path,
+    Response,
+    String,
+)
 
 
-def _get_builder_mock(expected_value):
+def _get_builder_mock(expected_value: Any) -> MagicMock:
     mock_object = MagicMock()
     mock_object.build.return_value = expected_value
 
     return mock_object
 
 
-def _get_builder_list_mock(expected_value):
+def _get_builder_list_mock(expected_value: Any) -> MagicMock:
     mock_object = MagicMock()
     mock_object.build_list.return_value = expected_value
 
@@ -32,7 +46,7 @@ parameters_list = [
         location=ParameterLocation.PATH,
         description="ID of pet to use",
         required=True,
-        schema=array_schema
+        schema=array_schema,
     )
 ]
 
@@ -54,7 +68,10 @@ operation_object = Operation(
 expected_operation_object = copy.deepcopy(operation_object)
 
 
-def add_parameters_to_operation(operation, parameters):
+def add_parameters_to_operation(
+    operation: Operation,
+    parameters: list[Parameter],
+) -> Operation:
     operation_copy = copy.deepcopy(operation)
     operation_copy.parameters = parameters
     return operation_copy
@@ -77,21 +94,16 @@ data_provider = (
                                         "type": "array",
                                         "items": {
                                             "type": "string",
-                                        }
+                                        },
                                     }
                                 }
-                            }
+                            },
                         },
-                    }
+                    },
                 },
             }
         },
-        [
-            Path(
-                url="/pets",
-                operations=[expected_operation_object]
-            )
-        ],
+        [Path(url="/pets", operations=[expected_operation_object])],
         _get_builder_mock(operation_object),
         _get_builder_list_mock(None),
     ),
@@ -112,12 +124,12 @@ data_provider = (
                                         "type": "array",
                                         "items": {
                                             "type": "string",
-                                        }
+                                        },
                                     }
                                 }
-                            }
+                            },
                         },
-                    }
+                    },
                 },
             }
         },
@@ -125,7 +137,7 @@ data_provider = (
             Path(
                 url="/pets",
                 operations=[expected_operation_object],
-                extensions={"python_class": "Pet"}
+                extensions={"python_class": "Pet"},
             )
         ],
         _get_builder_mock(operation_object),
@@ -149,12 +161,12 @@ data_provider = (
                                         "type": "array",
                                         "items": {
                                             "type": "string",
-                                        }
+                                        },
                                     }
                                 }
-                            }
+                            },
                         },
-                    }
+                    },
                 },
                 "parameters": [
                     {
@@ -162,14 +174,9 @@ data_provider = (
                         "in": "path",
                         "description": "ID of pet to use",
                         "required": True,
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "type": "string"
-                            }
-                        },
+                        "schema": {"type": "array", "items": {"type": "string"}},
                     }
-                ]
+                ],
             }
         },
         [
@@ -178,7 +185,12 @@ data_provider = (
                 summary="Summary description",
                 description="Long description",
                 parameters=parameters_list,
-                operations=[add_parameters_to_operation(expected_operation_object, parameters_list)]
+                operations=[
+                    add_parameters_to_operation(
+                        expected_operation_object,
+                        parameters_list,
+                    )
+                ],
             )
         ],
         _get_builder_mock(operation_object),
@@ -187,11 +199,16 @@ data_provider = (
 )
 
 
-@pytest.mark.parametrize(['data', 'expected', 'operation_builder', 'parameter_builder'], data_provider)
-def test_build(data: dict,
-               expected: list[Path],
-               operation_builder: OperationBuilder,
-               parameter_builder: ParameterBuilder):
+@pytest.mark.parametrize(
+    ["data", "expected", "operation_builder", "parameter_builder"],
+    data_provider,
+)
+def test_build(
+    data: dict[str, Any],
+    expected: list[Path],
+    operation_builder: OperationBuilder,
+    parameter_builder: ParameterBuilder,
+) -> None:
     builder = PathBuilder(operation_builder, parameter_builder)
 
     assert expected == builder.build_list(data)

@@ -1,3 +1,4 @@
+from typing import Any
 from unittest.mock import MagicMock
 
 import pytest
@@ -7,19 +8,33 @@ from openapi_parser.builders.operation import OperationBuilder
 from openapi_parser.builders.parameter import ParameterBuilder
 from openapi_parser.builders.request import RequestBuilder
 from openapi_parser.builders.response import ResponseBuilder
-from openapi_parser.enumeration import DataType, ContentType, OperationMethod, ParameterLocation
-from openapi_parser.specification import Content, ExternalDoc, Object, Operation, Parameter, Property, RequestBody, \
-    Response, String
+from openapi_parser.enumeration import (
+    ContentType,
+    DataType,
+    OperationMethod,
+    ParameterLocation,
+)
+from openapi_parser.specification import (
+    Content,
+    ExternalDoc,
+    Object,
+    Operation,
+    Parameter,
+    Property,
+    RequestBody,
+    Response,
+    String,
+)
 
 
-def _get_builder_mock(expected):
+def _get_builder_mock(expected: Any) -> MagicMock:
     mock_object = MagicMock()
     mock_object.build.return_value = expected
 
     return mock_object
 
 
-def _get_list_builder_mock(expected):
+def _get_list_builder_mock(expected: Any) -> MagicMock:
     mock_object = MagicMock()
     mock_object.build_list.return_value = expected
 
@@ -50,20 +65,22 @@ request_body = RequestBody(
         Content(
             type=ContentType.FORM,
             schema=Object(
-                type=DataType.OBJECT, required=["status"],
+                type=DataType.OBJECT,
+                required=["status"],
                 properties=[
                     Property(
                         name="name",
                         schema=String(
                             type=DataType.STRING,
-                            description="Updated name of the pet"
-                        )
+                            description="Updated name of the pet",
+                        ),
                     ),
                     Property(
                         name="status",
                         schema=String(
                             type=DataType.STRING,
-                            description="Updated status of the pet")
+                            description="Updated status of the pet",
+                        ),
                     ),
                 ],
             ),
@@ -83,7 +100,7 @@ data_provider = (
                                 "type": "object",
                             }
                         },
-                    }
+                    },
                 },
             },
         },
@@ -108,7 +125,7 @@ data_provider = (
                                 "type": "object",
                             }
                         },
-                    }
+                    },
                 },
             },
         },
@@ -133,15 +150,13 @@ data_provider = (
                                 "type": "object",
                             }
                         },
-                    }
+                    },
                 },
             },
             "tags": [
                 "pet",
             ],
-            "security": [
-                {"Basic": []}
-            ],
+            "security": [{"Basic": []}],
             "summary": "Updates a pet in the store with form data",
             "operationId": "updatePetWithForm",
             "parameters": [
@@ -150,9 +165,7 @@ data_provider = (
                     "in": "path",
                     "description": "ID of pet that needs to be updated",
                     "required": True,
-                    "schema": {
-                        "type": "string"
-                    }
+                    "schema": {"type": "string"},
                 }
             ],
             "requestBody": {
@@ -163,22 +176,22 @@ data_provider = (
                             "properties": {
                                 "name": {
                                     "description": "Updated name of the pet",
-                                    "type": "string"
+                                    "type": "string",
                                 },
                                 "status": {
                                     "description": "Updated status of the pet",
-                                    "type": "string"
-                                }
+                                    "type": "string",
+                                },
                             },
-                            "required": ["status"]
+                            "required": ["status"],
                         }
                     }
                 }
             },
             "externalDocs": {
                 "description": "Find more info here",
-                "url": "https://example.com"
-            }
+                "url": "https://example.com",
+            },
         },
         Operation(
             method=OperationMethod.GET,
@@ -201,22 +214,28 @@ data_provider = (
 
 @pytest.mark.parametrize(
     [
-        'data', 'expected_operation', 'response_builder',
-        'external_doc_builder', 'request_builder', 'parameter_builder'
+        "data",
+        "expected_operation",
+        "response_builder",
+        "external_doc_builder",
+        "request_builder",
+        "parameter_builder",
     ],
-    data_provider
+    data_provider,
 )
-def test_build(data: dict,
-               expected_operation: Operation,
-               response_builder: ResponseBuilder,
-               external_doc_builder: ExternalDocBuilder,
-               request_builder: RequestBuilder,
-               parameter_builder: ParameterBuilder):
+def test_build(
+    data: dict[str, Any],
+    expected_operation: Operation,
+    response_builder: ResponseBuilder,
+    external_doc_builder: ExternalDocBuilder,
+    request_builder: RequestBuilder,
+    parameter_builder: ParameterBuilder,
+) -> None:
     builder = OperationBuilder(
         response_builder,
         external_doc_builder,
         request_builder,
-        parameter_builder
+        parameter_builder,
     )
 
     assert expected_operation == builder.build(OperationMethod.GET, data)
