@@ -199,7 +199,7 @@ class Object(Schema):
     min_properties: int | None = None
     required: list[str] = field(default_factory=list)
     properties: list[Property] = field(default_factory=list)
-    # additional_properties: Optional[Union[bool, Schema]] = field(default=True)  # TODO
+    additional_properties: bool | Schema | None = None
 
 
 @dataclass
@@ -214,7 +214,7 @@ class Parameter:
     description: str | None = None
     example: Any | None = None
     examples: dict[str, Any] = field(default_factory=dict)
-    # allow_reserved: bool  # TODO
+    allow_reserved: bool | None = None
     deprecated: bool | None = field(default=False)
     style: (
         str
@@ -229,6 +229,18 @@ class Parameter:
 
 
 @dataclass
+class Encoding:
+    """Encoding definition for request body properties."""
+
+    content_type: str | None = None
+    headers: list[Header] = field(default_factory=list)
+    style: str | None = None
+    explode: bool | None = None
+    allow_reserved: bool | None = None
+    extensions: dict[str, Any] | None = field(default_factory=dict)
+
+
+@dataclass
 class Content:
     """Request/response content definition."""
 
@@ -236,7 +248,7 @@ class Content:
     schema: Schema
     example: Any | None = None
     examples: dict[str, Any] = field(default_factory=dict)
-    # encoding: dict[str, Encoding]  # TODO
+    encoding: dict[str, Encoding] | None = None
 
 
 @dataclass
@@ -261,6 +273,19 @@ class Header:
 
 
 @dataclass
+class Link:
+    """Link definition for response links."""
+
+    operation_ref: str | None = None
+    operation_id: str | None = None
+    parameters: dict[str, Any] = field(default_factory=dict)
+    request_body: Any | None = None
+    description: str | None = None
+    server: Server | None = None
+    extensions: dict[str, Any] | None = field(default_factory=dict)
+
+
+@dataclass
 class Response:
     """API response definition."""
 
@@ -269,6 +294,7 @@ class Response:
     code: int | None = None
     content: list[Content] | None = None
     headers: list[Header] = field(default_factory=list)
+    links: dict[str, Link] | None = None
 
 
 @dataclass
@@ -313,7 +339,7 @@ class Operation:
     tags: list[str] = field(default_factory=list)
     security: list[dict[str, Any]] = field(default_factory=list)
     extensions: dict[str, Any] | None = field(default_factory=dict)
-    # callbacks: dict[str, Callback] = field(default_factory=dict)  # TODO
+    callbacks: dict[str, Any] = field(default_factory=dict)
 
 
 @dataclass

@@ -56,6 +56,14 @@ paths:
         - Users
       requestBody:
         $ref: '#/components/requestBodies/AddUserRequest'
+      callbacks:
+        onAdd:
+          '{$request.body#/email}':
+            post:
+              summary: 'Callback after user creation'
+              responses:
+                '200':
+                  description: 'Callback processed successfully'
       responses:
         201:
           $ref: '#/components/responses/AddUserResponse'
@@ -109,6 +117,7 @@ components:
       allowEmptyValue: false
       example: 10
       required: true
+      allowReserved: true
       schema:
         type: integer
 
@@ -155,6 +164,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/User'
+          encoding:
+            login:
+              contentType: text/plain
+              style: form
+            email:
+              contentType: text/plain
 
   responses:
     BadRequest:
@@ -215,6 +230,12 @@ components:
             properties:
               user:
                 $ref: '#/components/schemas/User'
+      links:
+        UpdateUser:
+          operationId: UpdateUser
+          parameters:
+            uuid: '$response.body#/user/uuid'
+          description: Updates the user
 
   schemas:
     BadRequestError:
@@ -249,6 +270,7 @@ components:
 
     UUIDObject:
       type: object
+      additionalProperties: false
       required:
         - uuid
       properties:

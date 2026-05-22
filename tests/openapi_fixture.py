@@ -15,9 +15,11 @@ from openapi_parser.specification import (
     Array,
     Contact,
     Content,
+    Encoding,
     Info,
     Integer,
     License,
+    Link,
     Object,
     Operation,
     Parameter,
@@ -35,6 +37,7 @@ from openapi_parser.specification import (
 
 schema_user = Object(
     type=DataType.OBJECT,
+    additional_properties=False,
     required=["uuid", "login", "email", "avatar"],
     properties=[
         Property(
@@ -242,6 +245,7 @@ def create_specification() -> Specification:
         ),
         "UUIDObject": Object(
             type=DataType.OBJECT,
+            additional_properties=False,
             required=["uuid"],
             properties=[
                 Property(
@@ -257,6 +261,7 @@ def create_specification() -> Specification:
         ),
         "User": Object(
             type=DataType.OBJECT,
+            additional_properties=False,
             required=["uuid", "login", "email", "avatar"],
             properties=[
                 Property(
@@ -334,6 +339,7 @@ def create_specification() -> Specification:
                             required=True,
                             explode=True,
                             style=QueryParameterStyle.FORM,
+                            allow_reserved=True,
                             example=10,
                             schema=Integer(type=DataType.INTEGER),
                         ),
@@ -389,8 +395,38 @@ def create_specification() -> Specification:
                     security=[{"Basic": []}],
                     request_body=RequestBody(
                         description="New user model request",
-                        content=[Content(type=ContentType.JSON, schema=schema_user)],
+                        content=[
+                            Content(
+                                type=ContentType.JSON,
+                                schema=schema_user,
+                                encoding={
+                                    "login": Encoding(
+                                        content_type="text/plain",
+                                        style="form",
+                                    ),
+                                    "email": Encoding(
+                                        content_type="text/plain",
+                                    ),
+                                },
+                            )
+                        ],
                     ),
+                    callbacks={
+                        "onAdd": {
+                            "{$request.body#/email}": {
+                                "post": {
+                                    "summary": "Callback after user creation",
+                                    "responses": {
+                                        "200": {
+                                            "description": (
+                                                "Callback processed successfully"
+                                            ),
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    },
                     responses=[
                         Response(
                             code=201,
@@ -449,6 +485,15 @@ def create_specification() -> Specification:
                                     ),
                                 ),
                             ],
+                            links={
+                                "UpdateUser": Link(
+                                    operation_id="UpdateUser",
+                                    parameters={
+                                        "uuid": ("$response.body#/user/uuid"),
+                                    },
+                                    description="Updates the user",
+                                ),
+                            },
                         ),
                         bad_request_response,
                         internal_error_response,

@@ -4,14 +4,22 @@ from unittest.mock import MagicMock
 import pytest
 
 from openapi_parser.builders.content import ContentBuilder
+from openapi_parser.builders.encoding import EncodingBuilder
 from openapi_parser.builders.schema import SchemaFactory
 from openapi_parser.enumeration import ContentType, DataType
-from openapi_parser.specification import Content, Schema, String
+from openapi_parser.specification import Content, Encoding, Schema, String
 
 
 def _get_schema_factory_mock(expected_value: Schema) -> SchemaFactory:
     mock_object = MagicMock()
     mock_object.create.return_value = expected_value
+
+    return mock_object
+
+
+def _get_encoding_builder_mock() -> EncodingBuilder:
+    mock_object = MagicMock()
+    mock_object.build_dict.return_value = None
 
     return mock_object
 
@@ -41,20 +49,23 @@ def test_build(
     expected: list[Content],
     schema_factory: SchemaFactory,
 ) -> None:
-    builder = ContentBuilder(schema_factory)
+    builder = ContentBuilder(schema_factory, _get_encoding_builder_mock())
 
     assert expected == builder.build_list(data)
 
 
 def test_build_empty_dict() -> None:
-    builder = ContentBuilder(_get_schema_factory_mock(string_schema))
+    builder = ContentBuilder(
+        _get_schema_factory_mock(string_schema),
+        _get_encoding_builder_mock(),
+    )
 
     assert builder.build_list({}) == []
 
 
 def test_build_with_example() -> None:
     schema_factory = _get_schema_factory_mock(string_schema)
-    builder = ContentBuilder(schema_factory)
+    builder = ContentBuilder(schema_factory, _get_encoding_builder_mock())
 
     result = builder.build_list(
         {
@@ -71,7 +82,7 @@ def test_build_with_example() -> None:
 
 def test_build_with_examples() -> None:
     schema_factory = _get_schema_factory_mock(string_schema)
-    builder = ContentBuilder(schema_factory)
+    builder = ContentBuilder(schema_factory, _get_encoding_builder_mock())
     examples = {"test": {"value": "hello"}}
 
     result = builder.build_list(
@@ -89,7 +100,7 @@ def test_build_with_examples() -> None:
 
 def test_build_missing_schema() -> None:
     schema_factory_mock = MagicMock()
-    builder = ContentBuilder(schema_factory_mock)
+    builder = ContentBuilder(schema_factory_mock, _get_encoding_builder_mock())
 
     builder.build_list({"application/json": {}})
 
@@ -99,7 +110,7 @@ def test_build_missing_schema() -> None:
 def test_build_multiple_content_types() -> None:
     schema_factory = MagicMock()
     schema_factory.create.side_effect = [string_schema, string_schema]
-    builder = ContentBuilder(schema_factory)
+    builder = ContentBuilder(schema_factory, _get_encoding_builder_mock())
 
     result = builder.build_list(
         {
@@ -115,7 +126,11 @@ def test_build_multiple_content_types() -> None:
 
 def test_build_non_strict_enum() -> None:
     schema_factory = _get_schema_factory_mock(string_schema)
-    builder = ContentBuilder(schema_factory, strict_enum=False)
+    builder = ContentBuilder(
+        schema_factory,
+        _get_encoding_builder_mock(),
+        strict_enum=False,
+    )
 
     result = builder.build_list(
         {
@@ -125,3 +140,47 @@ def test_build_non_strict_enum() -> None:
 
     assert len(result) == 1
     assert result[0].type.value == "application/vnd.api+json"
+
+
+def test_build_with_encoding() -> None:
+    schema_factory = _get_schema_factory_mock(string_schema)
+    encoding_builder = MagicMock()
+    encoding_builder.build_dict.return_value = {
+        "name": Encoding(content_type="text/plain"),
+    }
+    builder = ContentBuilder(schema_factory, encoding_builder)
+
+    result = builder.build_list(
+        {
+            "application/json": {
+                "schema": {"type": "string"},
+                "encoding": {
+                    "name": {
+                        "contentType": "text/plain",
+                    }
+                },
+            }
+        }
+    )
+
+    assert len(result) == 1
+    assert result[0].encoding == {
+        "name": Encoding(content_type="text/plain"),
+    }
+    encoding_builder.build_dict.assert_called_once_with(
+        {"name": {"contentType": "text/plain"}}
+    )
+
+
+def test_build_without_encoding() -> None:
+    schema_factory = _get_schema_factory_mock(string_schema)
+    builder = ContentBuilder(schema_factory, _get_encoding_builder_mock())
+
+    result = builder.build_list(
+        {
+            "application/json": {"schema": {"type": "string"}},
+        }
+    )
+
+    assert len(result) == 1
+    assert result[0].encoding is None

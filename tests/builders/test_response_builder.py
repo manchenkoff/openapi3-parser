@@ -5,6 +5,7 @@ import pytest
 
 from openapi_parser.builders.content import ContentBuilder
 from openapi_parser.builders.header import HeaderBuilder
+from openapi_parser.builders.link import LinkBuilder
 from openapi_parser.builders.response import ResponseBuilder
 from openapi_parser.enumeration import ContentType, DataType
 from openapi_parser.specification import (
@@ -28,6 +29,13 @@ def _get_content_builder_mock(expected_value: Any) -> ContentBuilder:
 def _get_header_builder_mock(expected_value: Any) -> HeaderBuilder:
     mock_object = MagicMock()
     mock_object.build_list.return_value = expected_value
+
+    return mock_object
+
+
+def _get_link_builder_mock() -> LinkBuilder:
+    mock_object = MagicMock()
+    mock_object.build_dict.return_value = None
 
     return mock_object
 
@@ -92,7 +100,11 @@ def test_build(
     content_builder: ContentBuilder,
     header_builder: HeaderBuilder,
 ) -> None:
-    builder = ResponseBuilder(content_builder, header_builder)
+    builder = ResponseBuilder(
+        content_builder,
+        header_builder,
+        _get_link_builder_mock(),
+    )
 
     assert expected.code is not None
     assert expected == builder.build(expected.code, data)
@@ -102,6 +114,7 @@ def test_build_default_response() -> None:
     builder = ResponseBuilder(
         _get_content_builder_mock(None),
         _get_header_builder_mock(None),
+        _get_link_builder_mock(),
     )
 
     response_data = {"description": "A string response"}
@@ -115,6 +128,7 @@ def test_build_no_content_or_headers() -> None:
     builder = ResponseBuilder(
         _get_content_builder_mock(None),
         _get_header_builder_mock(None),
+        _get_link_builder_mock(),
     )
 
     actual = builder.build(200, {"description": "No content response"})
@@ -130,6 +144,7 @@ def test_build_with_code_as_string() -> None:
     builder = ResponseBuilder(
         _get_content_builder_mock([]),
         _get_header_builder_mock([]),
+        _get_link_builder_mock(),
     )
 
     actual = builder.build("404", {"description": "Not found"})
@@ -143,6 +158,7 @@ def test_build_with_various_codes(code: int) -> None:
     builder = ResponseBuilder(
         _get_content_builder_mock(None),
         _get_header_builder_mock(None),
+        _get_link_builder_mock(),
     )
 
     actual = builder.build(code, {"description": f"Response {code}"})

@@ -153,6 +153,28 @@ schema_data_provider = (
     ),
     (
         {
+            "name": "q",
+            "in": "query",
+            "required": True,
+            "allowReserved": True,
+            "schema": {
+                "type": "string",
+            },
+        },
+        Parameter(
+            name="q",
+            location=ParameterLocation.QUERY,
+            required=True,
+            allow_reserved=True,
+            schema=string_schema,
+            style=QueryParameterStyle.FORM,
+            explode=True,
+        ),
+        _get_schema_factory_mock(string_schema),
+        _get_content_builder_mock(None),
+    ),
+    (
+        {
             "name": "filter",
             "in": "query",
             "required": False,
