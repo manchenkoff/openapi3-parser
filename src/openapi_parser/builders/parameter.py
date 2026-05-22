@@ -80,6 +80,8 @@ class ParameterBuilder:
                 cast=self._content_builder.build_list,
             ),
             "description": PropertyMeta(name="description", cast=str),
+            "example": PropertyMeta(name="example", cast=None),
+            "examples": PropertyMeta(name="examples", cast=dict),
             "deprecated": PropertyMeta(name="deprecated", cast=bool),
             "explode": PropertyMeta(name="explode", cast=bool),
         }
