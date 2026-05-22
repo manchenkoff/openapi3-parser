@@ -308,6 +308,7 @@ def create_specification() -> Specification:
             required=True,
             explode=False,
             style=PathParameterStyle.SIMPLE,
+            example="12345678-1234-5678-1234-567812345678",
             schema=String(
                 type=DataType.STRING,
                 format=StringFormat.UUID,
@@ -333,6 +334,7 @@ def create_specification() -> Specification:
                             required=True,
                             explode=True,
                             style=QueryParameterStyle.FORM,
+                            example=10,
                             schema=Integer(type=DataType.INTEGER),
                         ),
                         Parameter(
@@ -342,6 +344,7 @@ def create_specification() -> Specification:
                             required=True,
                             explode=True,
                             style=QueryParameterStyle.FORM,
+                            example=0,
                             schema=Integer(type=DataType.INTEGER),
                         ),
                         Parameter(

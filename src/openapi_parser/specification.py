@@ -212,8 +212,8 @@ class Parameter:
     content: list[Content] | None = None
     required: bool | None = field(default=False)
     description: str | None = None
-    # example: Optional[Any]  # TODO
-    # examples: list[Any] = field(default_factory=list)  # TODO
+    example: Any | None = None
+    examples: dict[str, Any] = field(default_factory=dict)
     # allow_reserved: bool  # TODO
     deprecated: bool | None = field(default=False)
     style: (

@@ -129,6 +129,68 @@ schema_data_provider = (
         _get_schema_factory_mock(string_schema),
         _get_content_builder_mock(None),
     ),
+    (
+        {
+            "name": "limit",
+            "in": "query",
+            "required": True,
+            "schema": {
+                "type": "integer",
+            },
+            "example": 10,
+        },
+        Parameter(
+            name="limit",
+            location=ParameterLocation.QUERY,
+            required=True,
+            schema=string_schema,
+            style=QueryParameterStyle.FORM,
+            explode=True,
+            example=10,
+        ),
+        _get_schema_factory_mock(string_schema),
+        _get_content_builder_mock(None),
+    ),
+    (
+        {
+            "name": "filter",
+            "in": "query",
+            "required": False,
+            "schema": {
+                "type": "string",
+            },
+            "examples": {
+                "foo": {
+                    "summary": "A foo example",
+                    "value": {"foo": "bar"},
+                },
+                "bar": {
+                    "summary": "A bar example",
+                    "value": {"bar": "baz"},
+                },
+            },
+        },
+        Parameter(
+            name="filter",
+            location=ParameterLocation.QUERY,
+            required=False,
+            schema=string_schema,
+            style=QueryParameterStyle.FORM,
+            explode=True,
+            examples={
+                "foo": {
+                    "summary": "A foo example",
+                    "value": {"foo": "bar"},
+                },
+                "bar": {
+                    "summary": "A bar example",
+                    "value": {"bar": "baz"},
+                },
+            },
+        ),
+        _get_schema_factory_mock(string_schema),
+        _get_content_builder_mock(None),
+    ),
 )
 
 collection_data_provider = (
