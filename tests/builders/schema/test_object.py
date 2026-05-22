@@ -31,6 +31,36 @@ data_provider = (
             properties=[Property("name", string_schema)],
         ),
     ),
+    (
+        {
+            "type": "object",
+            "additionalProperties": True,
+        },
+        Object(
+            type=DataType.OBJECT,
+            additional_properties=True,
+        ),
+    ),
+    (
+        {
+            "type": "object",
+            "additionalProperties": False,
+        },
+        Object(
+            type=DataType.OBJECT,
+            additional_properties=False,
+        ),
+    ),
+    (
+        {
+            "type": "object",
+            "additionalProperties": {"type": "string"},
+        },
+        Object(
+            type=DataType.OBJECT,
+            additional_properties=string_schema,
+        ),
+    ),
 )
 
 

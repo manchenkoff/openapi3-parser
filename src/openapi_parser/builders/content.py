@@ -3,6 +3,7 @@
 import logging
 from typing import Any
 
+from openapi_parser.builders.encoding import EncodingBuilder
 from openapi_parser.builders.schema import SchemaFactory
 from openapi_parser.enumeration import ContentType
 from openapi_parser.loose_types import LooseContentType
@@ -17,16 +18,24 @@ class ContentBuilder:
     """Builds content objects for request/response bodies."""
 
     _schema_factory: SchemaFactory
+    _encoding_builder: EncodingBuilder
     _strict_enum: bool
 
-    def __init__(self, schema_factory: SchemaFactory, strict_enum: bool = True) -> None:
+    def __init__(
+        self,
+        schema_factory: SchemaFactory,
+        encoding_builder: EncodingBuilder,
+        strict_enum: bool = True,
+    ) -> None:
         """Initialize content builder.
 
         Args:
             schema_factory: Factory for creating schema objects
+            encoding_builder: Builder for encoding objects
             strict_enum: Whether to validate enums strictly
         """
         self._schema_factory = schema_factory
+        self._encoding_builder = encoding_builder
         self._strict_enum = strict_enum
 
     def build_list(self, data: dict[str, Any]) -> list[Content]:
@@ -34,9 +43,7 @@ class ContentBuilder:
         return [
             self._create_content(
                 content_type,
-                content_value.get("schema", {}),
-                content_value.get("example", None),
-                content_value.get("examples", {}),
+                content_value,
             )
             for content_type, content_value in data.items()
         ]
@@ -44,9 +51,7 @@ class ContentBuilder:
     def _create_content(
         self,
         content_type: str,
-        schema: dict[str, Any],
-        example: Any,
-        examples: dict[str, Any],
+        content_value: dict[str, Any],
     ) -> Content:
         logger.debug(f"Content building [type={content_type}]")
 
@@ -54,9 +59,16 @@ class ContentBuilder:
             ContentType if self._strict_enum else LooseContentType
         )
 
+        encoding = (
+            self._encoding_builder.build_dict(content_value["encoding"])
+            if content_value.get("encoding")
+            else None
+        )
+
         return Content(
             type=ContentTypeCls(content_type),
-            schema=self._schema_factory.create(schema),
-            example=example,
-            examples=examples,
+            schema=self._schema_factory.create(content_value.get("schema", {})),
+            example=content_value.get("example"),
+            examples=content_value.get("examples", {}),
+            encoding=encoding,
         )

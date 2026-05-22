@@ -5,9 +5,11 @@ from typing import Any
 
 from openapi_parser.builders.common import PropertyMeta, extract_typed_props
 from openapi_parser.builders.content import ContentBuilder
+from openapi_parser.builders.encoding import EncodingBuilder
 from openapi_parser.builders.external_doc import ExternalDocBuilder
 from openapi_parser.builders.header import HeaderBuilder
 from openapi_parser.builders.info import InfoBuilder
+from openapi_parser.builders.link import LinkBuilder
 from openapi_parser.builders.oauth_flow import OAuthFlowBuilder
 from openapi_parser.builders.operation import OperationBuilder
 from openapi_parser.builders.parameter import ParameterBuilder
@@ -143,11 +145,17 @@ def _create_parser(strict_enum: bool = True) -> Parser:
     external_doc_builder = ExternalDocBuilder()
     tag_builder = TagBuilder(external_doc_builder)
     schema_factory = SchemaFactory(strict_enum=strict_enum)
-    content_builder = ContentBuilder(schema_factory, strict_enum=strict_enum)
     header_builder = HeaderBuilder(schema_factory)
+    encoding_builder = EncodingBuilder(header_builder)
+    content_builder = ContentBuilder(
+        schema_factory,
+        encoding_builder,
+        strict_enum=strict_enum,
+    )
     parameter_builder = ParameterBuilder(schema_factory, content_builder)
     schemas_builder = SchemasBuilder(schema_factory)
-    response_builder = ResponseBuilder(content_builder, header_builder)
+    link_builder = LinkBuilder()
+    response_builder = ResponseBuilder(content_builder, header_builder, link_builder)
     request_builder = RequestBuilder(content_builder)
     operation_builder = OperationBuilder(
         response_builder,

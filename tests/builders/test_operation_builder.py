@@ -209,6 +209,56 @@ data_provider = (
         _get_builder_mock(request_body),
         _get_list_builder_mock(parameter_list),
     ),
+    (
+        {
+            "responses": {
+                "200": {
+                    "description": "Pet updated.",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                            }
+                        },
+                    },
+                },
+            },
+            "callbacks": {
+                "myCallback": {
+                    "{$request.body#/callbackUrl}": {
+                        "get": {
+                            "responses": {
+                                "200": {
+                                    "description": "Callback response",
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+        },
+        Operation(
+            responses=[response_schema],
+            method=OperationMethod.GET,
+            callbacks={
+                "myCallback": {
+                    "{$request.body#/callbackUrl}": {
+                        "get": {
+                            "responses": {
+                                "200": {
+                                    "description": "Callback response",
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+        ),
+        _get_builder_mock(response_schema),
+        _get_builder_mock(None),
+        _get_builder_mock(None),
+        _get_list_builder_mock(None),
+    ),
 )
 
 

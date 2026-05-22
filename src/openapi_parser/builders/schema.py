@@ -232,11 +232,22 @@ class SchemaFactory:
                 for name, schema in object_attrs.items()
             ]
 
+        def build_additional_properties(
+            value: bool | dict[str, Any],
+        ) -> bool | Schema:
+            if isinstance(value, bool):
+                return value
+            return self.create(value)
+
         attrs_map = {
             "max_properties": PropertyMeta(name="maxProperties", cast=int),
             "min_properties": PropertyMeta(name="minProperties", cast=int),
             "required": PropertyMeta(name="required", cast=list),
             "properties": PropertyMeta(name="properties", cast=build_properties),
+            "additional_properties": PropertyMeta(
+                name="additionalProperties",
+                cast=build_additional_properties,
+            ),
         }
 
         return Object(**extract_attrs(data, attrs_map))

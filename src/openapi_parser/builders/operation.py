@@ -72,6 +72,7 @@ class OperationBuilder:
             ),
             "tags": PropertyMeta(name="tags", cast=list),
             "security": PropertyMeta(name="security", cast=None),
+            "callbacks": PropertyMeta(name="callbacks", cast=None),
         }
 
         attrs = extract_typed_props(data, attrs_map)
