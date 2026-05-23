@@ -139,6 +139,7 @@ class SchemaFactory:
     def create(self, data: dict[str, Any]) -> Schema:
         """Create a schema object from a raw dict."""
         data = merge_all_of_schemas(data)
+        not_data = data.pop("not", None)
 
         if "oneOf" in data:
             data["type"] = DataType.ONE_OF
@@ -166,7 +167,12 @@ class SchemaFactory:
 
         logger.debug(f"Building schema [type={data_type}]")
 
-        return builder_func(data)
+        schema = builder_func(data)
+
+        if not_data is not None:
+            schema.not_schema = self.create(not_data)
+
+        return schema
 
     def _null(self, data: dict[str, Any]) -> Null:
         return Null(**extract_attrs(data, {}))

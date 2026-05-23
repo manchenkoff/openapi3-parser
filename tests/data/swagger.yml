@@ -120,6 +120,8 @@ components:
       allowReserved: true
       schema:
         type: integer
+        not:
+          type: string
 
     Offset:
       name: offset
