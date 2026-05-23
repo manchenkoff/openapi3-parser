@@ -15,12 +15,14 @@ from openapi_parser.specification import (
     Array,
     Contact,
     Content,
+    Discriminator,
     Encoding,
     Info,
     Integer,
     License,
     Link,
     Object,
+    OneOf,
     Operation,
     Parameter,
     Path,
@@ -300,6 +302,17 @@ def create_specification() -> Specification:
                     ),
                 ),
             ],
+        ),
+        "Payload": OneOf(
+            type=DataType.ONE_OF,
+            schemas=[
+                String(type=DataType.STRING),
+                Integer(type=DataType.INTEGER),
+            ],
+            discriminator=Discriminator(
+                property_name="payloadType",
+                mapping={"str": "SomeTarget", "int": "OtherTarget"},
+            ),
         ),
     }
 
