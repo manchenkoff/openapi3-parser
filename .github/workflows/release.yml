@@ -1,0 +1,26 @@
+---
+name: Release
+on:
+  workflow_dispatch:
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+    steps:
+      - name: checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: install uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          python-version: "3.10"
+          enable-cache: true
+      - name: dependencies
+        run: uv sync --locked --dev
+      - name: release
+        run: uv run semantic-release publish
+        env:
+          GH_TOKEN: ${{ github.token }}

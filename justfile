@@ -6,6 +6,14 @@ set quiet
 help:
     just --list
 
+# bump version and release (dry-run on test PyPI)
+bump-test:
+    uv run semantic-release publish --upload-to-index testpypi --no-commit --no-push
+
+# bump version and release (prod)
+bump:
+    uv run semantic-release publish
+
 # build package
 build:
     uv build

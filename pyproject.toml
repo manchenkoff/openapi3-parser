@@ -32,7 +32,14 @@ homepage = "https://github.com/manchenkoff/openapi3-parser"
 source = "https://github.com/manchenkoff/openapi3-parser"
 
 [dependency-groups]
-dev = ["mypy>=2.1.0", "pytest>=9.0.3", "pytest-cov>=6.1.0", "ruff>=0.15.13", "ty>=0.0.37"]
+dev = [
+    "mypy>=2.1.0",
+    "pytest>=9.0.3",
+    "pytest-cov>=6.1.0",
+    "python-semantic-release>=10.5.3",
+    "ruff>=0.15.13",
+    "ty>=0.0.37",
+]
 
 [build-system]
 requires = ["uv_build>=0.11.12,<0.12"]
@@ -40,6 +47,18 @@ build-backend = "uv_build"
 
 [tool.uv.build-backend]
 module-name = "openapi_parser"
+
+[tool.semantic_release]
+version_toml = ["pyproject.toml:project.version"]
+branch = "main"
+build_command = """
+    uv lock --upgrade-package "$PACKAGE_NAME"
+    git add uv.lock
+    uv build
+"""
+upload_to_pypi = true
+upload_to_release = true
+remove_dist = true
 
 [[tool.uv.index]]
 name = "testpypi"
