@@ -182,6 +182,7 @@ def parse(
     uri: str | None = None,
     spec_string: str | None = None,
     strict_enum: bool = True,
+    recursion_limit: int = 1,
 ) -> Specification:
     """Parse specification document by URL/filepath or as a string.
 
@@ -191,8 +192,9 @@ def parse(
         strict_enum (bool): Validate content types and string formats against the
           enums defined in openapi-parser. Note that the OpenAPI specification allows
           for custom values in these properties.
+        recursion_limit (int): Maximum recursion depth for resolving references
     """
-    resolver = OpenAPIResolver(uri, spec_string)
+    resolver = OpenAPIResolver(uri, spec_string, recursion_limit=recursion_limit)
     specification = resolver.resolve()
 
     parser = _create_parser(strict_enum=strict_enum)
