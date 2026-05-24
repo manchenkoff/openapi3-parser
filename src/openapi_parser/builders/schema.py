@@ -185,7 +185,7 @@ class SchemaFactory:
         schema = builder_func(data)
 
         if not_data is not None:
-            schema.not_schema = self.create(not_data)
+            object.__setattr__(schema, "not_schema", self.create(not_data))
 
         return schema
 

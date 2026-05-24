@@ -7,7 +7,7 @@ from typing import Any
 from openapi_parser.errors import ParserError
 
 
-@dataclass
+@dataclass(frozen=True, slots=True)
 class PropertyMeta:
     """Property metadata for type-casting extraction."""
 
