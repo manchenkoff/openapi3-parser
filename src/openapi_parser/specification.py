@@ -94,12 +94,8 @@ class Schema:
     read_only: bool | None = field(default=False)
     write_only: bool | None = field(default=False)
     deprecated: bool | None = field(default=False)
+    not_schema: Schema | None = None
     extensions: dict[str, Any] | None = field(default_factory=dict)
-
-    # all_of: Any  # TODO
-    # one_of: Any  # TODO
-    # any_of: Any  # TODO
-    # not: Any  # TODO
 
 
 @dataclass
