@@ -1,0 +1,40 @@
+openapi: 3.0.0
+
+info:
+  title: Recursive schema test
+  version: 1.0.0
+
+paths:
+  /test:
+    get:
+      summary: Test endpoint
+      operationId: Test
+      responses:
+        200:
+          description: OK
+
+components:
+  schemas:
+    Equipment:
+      title: Equipment
+      type: object
+      properties:
+        Features:
+          type: array
+          items:
+            $ref: '#/components/schemas/Feature'
+        Id:
+          type: integer
+          format: int64
+
+    Feature:
+      title: Feature
+      type: object
+      properties:
+        Equipments:
+          type: array
+          items:
+            $ref: '#/components/schemas/Equipment'
+        Id:
+          type: integer
+          format: int64
