@@ -1,7 +1,5 @@
 """OpenAPI specification data models."""
 
-from __future__ import annotations
-
 from dataclasses import dataclass, field
 from typing import Any
 
@@ -30,7 +28,7 @@ from openapi_parser.loose_types import (
 )
 
 
-@dataclass
+@dataclass(frozen=True, slots=True)
 class Contact:
     """API contact information."""
 
@@ -39,7 +37,7 @@ class Contact:
     email: str | None = None
 
 
-@dataclass
+@dataclass(frozen=True, slots=True)
 class License:
     """API license information."""
 
@@ -48,7 +46,7 @@ class License:
     extensions: dict[str, Any] | None = field(default_factory=dict)
 
 
-@dataclass
+@dataclass(frozen=True, slots=True)
 class Info:
     """API metadata information."""
 
@@ -61,7 +59,7 @@ class Info:
     extensions: dict[str, Any] | None = field(default_factory=dict)
 
 
-@dataclass
+@dataclass(frozen=True, slots=True)
 class Server:
     """API server definition."""
 
@@ -71,7 +69,7 @@ class Server:
     extensions: dict[str, Any] | None = field(default_factory=dict)
 
 
-@dataclass
+@dataclass(frozen=True, slots=True)
 class ExternalDoc:
     """External documentation reference."""
 
@@ -80,7 +78,7 @@ class ExternalDoc:
     extensions: dict[str, Any] | None = field(default_factory=dict)
 
 
-@dataclass
+@dataclass(frozen=True, slots=True)
 class Schema:
     """Base schema model."""
 
@@ -94,11 +92,11 @@ class Schema:
     read_only: bool | None = field(default=False)
     write_only: bool | None = field(default=False)
     deprecated: bool | None = field(default=False)
-    not_schema: Schema | None = None
+    not_schema: "Schema | None" = None
     extensions: dict[str, Any] | None = field(default_factory=dict)
 
 
-@dataclass
+@dataclass(frozen=True, slots=True)
 class Integer(Schema):
     """Integer type schema."""
 
@@ -110,7 +108,7 @@ class Integer(Schema):
     format: IntegerFormat | LooseIntegerFormat | None = None
 
 
-@dataclass
+@dataclass(frozen=True, slots=True)
 class Number(Schema):
     """Number type schema."""
 
@@ -122,7 +120,7 @@ class Number(Schema):
     format: NumberFormat | LooseNumberFormat | None = None
 
 
-@dataclass
+@dataclass(frozen=True, slots=True)
 class String(Schema):
     """String type schema."""
 
@@ -132,21 +130,21 @@ class String(Schema):
     format: StringFormat | LooseStringFormat | None = None
 
 
-@dataclass
+@dataclass(frozen=True, slots=True)
 class Null(Schema):
     """Null type schema."""
 
     pass
 
 
-@dataclass
+@dataclass(frozen=True, slots=True)
 class Boolean(Schema):
     """Boolean type schema."""
 
     pass
 
 
-@dataclass
+@dataclass(frozen=True, slots=True)
 class Array(Schema):
     """Array type schema."""
 
@@ -156,7 +154,7 @@ class Array(Schema):
     items: Schema | None = None
 
 
-@dataclass
+@dataclass(frozen=True, slots=True)
 class Discriminator:
     """Polymorphism discriminator."""
 
@@ -164,7 +162,7 @@ class Discriminator:
     mapping: dict[str, str] | None = field(default_factory=dict)
 
 
-@dataclass
+@dataclass(frozen=True, slots=True)
 class OneOf(Schema):
     """OneOf composition schema."""
 
@@ -172,7 +170,7 @@ class OneOf(Schema):
     discriminator: Discriminator | None = None
 
 
-@dataclass
+@dataclass(frozen=True, slots=True)
 class AnyOf(Schema):
     """AnyOf composition schema."""
 
@@ -180,7 +178,7 @@ class AnyOf(Schema):
     discriminator: Discriminator | None = None
 
 
-@dataclass
+@dataclass(frozen=True, slots=True)
 class Property:
     """Schema property definition."""
 
@@ -188,7 +186,7 @@ class Property:
     schema: Schema
 
 
-@dataclass
+@dataclass(frozen=True, slots=True)
 class Object(Schema):
     """Object type schema."""
 
@@ -199,14 +197,14 @@ class Object(Schema):
     additional_properties: bool | Schema | None = None
 
 
-@dataclass
+@dataclass(frozen=True, slots=True)
 class Parameter:
     """API parameter definition."""
 
     name: str
     location: ParameterLocation
     schema: Schema | None = None
-    content: list[Content] | None = None
+    content: "list[Content] | None" = None
     required: bool | None = field(default=False)
     description: str | None = None
     example: Any | None = None
@@ -225,19 +223,19 @@ class Parameter:
     extensions: dict[str, Any] | None = field(default_factory=dict)
 
 
-@dataclass
+@dataclass(frozen=True, slots=True)
 class Encoding:
     """Encoding definition for request body properties."""
 
     content_type: str | None = None
-    headers: list[Header] = field(default_factory=list)
+    headers: "list[Header]" = field(default_factory=list)
     style: str | None = None
     explode: bool | None = None
     allow_reserved: bool | None = None
     extensions: dict[str, Any] | None = field(default_factory=dict)
 
 
-@dataclass
+@dataclass(frozen=True, slots=True)
 class Content:
     """Request/response content definition."""
 
@@ -248,7 +246,7 @@ class Content:
     encoding: dict[str, Encoding] | None = None
 
 
-@dataclass
+@dataclass(frozen=True, slots=True)
 class RequestBody:
     """Request body definition."""
 
@@ -257,7 +255,7 @@ class RequestBody:
     required: bool | None = field(default=False)
 
 
-@dataclass
+@dataclass(frozen=True, slots=True)
 class Header:
     """Response header definition."""
 
@@ -269,7 +267,7 @@ class Header:
     extensions: dict[str, Any] | None = field(default_factory=dict)
 
 
-@dataclass
+@dataclass(frozen=True, slots=True)
 class Link:
     """Link definition for response links."""
 
@@ -282,7 +280,7 @@ class Link:
     extensions: dict[str, Any] | None = field(default_factory=dict)
 
 
-@dataclass
+@dataclass(frozen=True, slots=True)
 class Response:
     """API response definition."""
 
@@ -294,7 +292,7 @@ class Response:
     links: dict[str, Link] | None = None
 
 
-@dataclass
+@dataclass(frozen=True, slots=True)
 class OAuthFlow:
     """OAuth flow definition."""
 
@@ -305,7 +303,7 @@ class OAuthFlow:
     extensions: dict[str, Any] | None = field(default_factory=dict)
 
 
-@dataclass
+@dataclass(frozen=True, slots=True)
 class Security:
     """Security scheme definition."""
 
@@ -320,7 +318,7 @@ class Security:
     extensions: dict[str, Any] | None = field(default_factory=dict)
 
 
-@dataclass
+@dataclass(frozen=True, slots=True)
 class Operation:
     """API operation definition."""
 
@@ -339,7 +337,7 @@ class Operation:
     callbacks: dict[str, Any] = field(default_factory=dict)
 
 
-@dataclass
+@dataclass(frozen=True, slots=True)
 class Path:
     """API path definition."""
 
@@ -351,7 +349,7 @@ class Path:
     extensions: dict[str, Any] | None = field(default_factory=dict)
 
 
-@dataclass
+@dataclass(frozen=True, slots=True)
 class Tag:
     """API tag definition."""
 
@@ -360,7 +358,7 @@ class Tag:
     external_docs: ExternalDoc | None = None
 
 
-@dataclass
+@dataclass(frozen=True, slots=True)
 class Specification:
     """Root OpenAPI specification object."""
 

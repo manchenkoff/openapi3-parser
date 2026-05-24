@@ -73,7 +73,7 @@ def add_parameters_to_operation(
     parameters: list[Parameter],
 ) -> Operation:
     operation_copy = copy.deepcopy(operation)
-    operation_copy.parameters = parameters
+    object.__setattr__(operation_copy, "parameters", parameters)
     return operation_copy
 
 
