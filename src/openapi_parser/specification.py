@@ -161,7 +161,7 @@ class Discriminator:
     """Polymorphism discriminator."""
 
     property_name: str
-    mapping: dict[str, Any] | None = field(default_factory=dict)
+    mapping: dict[str, str] | None = field(default_factory=dict)
 
 
 @dataclass
@@ -177,6 +177,7 @@ class AnyOf(Schema):
     """AnyOf composition schema."""
 
     schemas: list[Schema] = field(default_factory=list)
+    discriminator: Discriminator | None = None
 
 
 @dataclass

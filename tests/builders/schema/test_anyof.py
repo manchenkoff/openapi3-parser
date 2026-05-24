@@ -8,6 +8,7 @@ from openapi_parser.specification import (
     AnyOf,
     Array,
     Boolean,
+    Discriminator,
     Integer,
     Number,
     Object,
@@ -140,6 +141,32 @@ data_provider = (
                     description="Object with implicit type.",
                 ),
             ],
+        ),
+    ),
+    (
+        {
+            "anyOf": [
+                {"type": "string"},
+                {"type": "integer"},
+            ],
+            "discriminator": {
+                "propertyName": "objectType",
+                "mapping": {
+                    "str": "SomeTarget",
+                    "int": "OtherTarget",
+                },
+            },
+        },
+        AnyOf(
+            type=DataType.ANY_OF,
+            schemas=[
+                String(type=DataType.STRING),
+                Integer(type=DataType.INTEGER),
+            ],
+            discriminator=Discriminator(
+                property_name="objectType",
+                mapping={"str": "SomeTarget", "int": "OtherTarget"},
+            ),
         ),
     ),
 )

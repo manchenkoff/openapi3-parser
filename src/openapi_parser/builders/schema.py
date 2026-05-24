@@ -111,6 +111,21 @@ def merge_all_of_schemas(original_data: dict[str, Any]) -> dict[str, Any]:
     return schema_dict
 
 
+def build_discriminator(value: dict[str, Any]) -> Discriminator:
+    """Build a Discriminator object from raw data.
+
+    Args:
+        value: Raw discriminator data
+
+    Returns:
+        Discriminator object
+    """
+    return Discriminator(
+        property_name=value["propertyName"],
+        mapping=value.get("mapping", {}),
+    )
+
+
 class SchemaFactory:
     """Factory for creating schema objects from raw dicts."""
 
@@ -262,19 +277,6 @@ class SchemaFactory:
         def create_inner_schemas(schemas: list[dict[str, Any]]) -> list[Schema]:
             return [self.create(x) for x in schemas]
 
-        def build_discriminator(discriminator_data: dict[str, Any]) -> Discriminator:
-            discriminator = Discriminator(
-                property_name=discriminator_data["propertyName"],
-            )
-
-            if "mapping" in discriminator_data:
-                discriminator.mapping = {
-                    key: self.create(schema)
-                    for key, schema in discriminator_data["mapping"].items()
-                }
-
-            return discriminator
-
         attrs_map = {
             "schemas": PropertyMeta(name="oneOf", cast=create_inner_schemas),
             "discriminator": PropertyMeta(
@@ -289,7 +291,13 @@ class SchemaFactory:
         def create_inner_schemas(schemas: list[dict[str, Any]]) -> list[Schema]:
             return [self.create(x) for x in schemas]
 
-        attrs_map = {"schemas": PropertyMeta(name="anyOf", cast=create_inner_schemas)}
+        attrs_map = {
+            "schemas": PropertyMeta(name="anyOf", cast=create_inner_schemas),
+            "discriminator": PropertyMeta(
+                name="discriminator",
+                cast=build_discriminator,
+            ),
+        }
 
         if "type" in data:
             return AnyOf(**extract_attrs(data, attrs_map))
