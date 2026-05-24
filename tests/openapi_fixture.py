@@ -341,7 +341,10 @@ def create_specification() -> Specification:
                             style=QueryParameterStyle.FORM,
                             allow_reserved=True,
                             example=10,
-                            schema=Integer(type=DataType.INTEGER),
+                            schema=Integer(
+                                type=DataType.INTEGER,
+                                not_schema=String(type=DataType.STRING),
+                            ),
                         ),
                         Parameter(
                             name="offset",
