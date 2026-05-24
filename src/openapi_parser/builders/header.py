@@ -9,6 +9,7 @@ from openapi_parser.builders.common import (
     extract_typed_props,
 )
 from openapi_parser.builders.schema import SchemaFactory
+from openapi_parser.logging import log_ctx
 from openapi_parser.specification import Header
 
 logger = logging.getLogger(__name__)
@@ -27,29 +28,41 @@ class HeaderBuilder:
         """
         self._schema_factory = schema_factory
 
-    def build_list(self, data: dict[str, Any]) -> list[Header]:
+    def build_list(
+        self,
+        data: dict[str, Any],
+    ) -> list[Header]:
         """Build a list of headers from a dict of header definitions."""
         return [
             self._build(header_name, header_value)
             for header_name, header_value in data.items()
         ]
 
-    def _build(self, name: str, data: dict[str, Any]) -> Header:
-        logger.debug(f"Header parsing: {name}")
+    def _build(
+        self,
+        name: str,
+        data: dict[str, Any],
+    ) -> Header:
+        with log_ctx("headers", name):
+            logger.debug(f"Header parsing: {name}")
 
-        attrs_map = {
-            "schema": PropertyMeta(name="schema", cast=self._schema_factory.create),
-            "description": PropertyMeta(name="description", cast=str),
-            "deprecated": PropertyMeta(name="deprecated", cast=bool),
-            "required": PropertyMeta(name="required", cast=bool),
-        }
+            attrs_map = {
+                "description": PropertyMeta(name="description", cast=str),
+                "deprecated": PropertyMeta(name="deprecated", cast=bool),
+                "required": PropertyMeta(name="required", cast=bool),
+            }
 
-        attrs = extract_typed_props(data, attrs_map)
+            attrs = extract_typed_props(data, attrs_map)
 
-        attrs["name"] = name
-        attrs["extensions"] = extract_extension_attributes(data)
+            if data.get("schema") is not None:
+                attrs["schema"] = self._schema_factory.create(data["schema"])
 
-        if attrs["extensions"]:
-            logger.debug(f"Extracted custom properties [{attrs['extensions'].keys()}]")
+            attrs["name"] = name
+            attrs["extensions"] = extract_extension_attributes(data)
 
-        return Header(**attrs)
+            if attrs["extensions"]:
+                logger.debug(
+                    f"Extracted custom properties [{attrs['extensions'].keys()}]"
+                )
+
+            return Header(**attrs)

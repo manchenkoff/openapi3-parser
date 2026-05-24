@@ -168,7 +168,7 @@ def test_build_with_encoding() -> None:
         "name": Encoding(content_type="text/plain"),
     }
     encoding_builder.build_dict.assert_called_once_with(
-        {"name": {"contentType": "text/plain"}}
+        {"name": {"contentType": "text/plain"}},
     )
 
 

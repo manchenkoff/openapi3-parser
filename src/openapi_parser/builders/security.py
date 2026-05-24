@@ -10,6 +10,7 @@ from openapi_parser.builders.common import (
 )
 from openapi_parser.builders.oauth_flow import OAuthFlowBuilder
 from openapi_parser.enumeration import AuthenticationScheme, BaseLocation, SecurityType
+from openapi_parser.logging import log_ctx
 from openapi_parser.specification import Security
 
 logger = logging.getLogger(__name__)
@@ -30,7 +31,7 @@ class SecurityBuilder:
 
     def build(self, data: dict[str, Any]) -> Security:
         """Build a Security object from a raw dict."""
-        logger.debug(f"Security item parsing [{data}]")
+        logger.debug("Security item parsing")
 
         attrs_map = {
             "type": PropertyMeta(name="type", cast=SecurityType),
@@ -50,13 +51,21 @@ class SecurityBuilder:
         attrs["extensions"] = extract_extension_attributes(data)
 
         if attrs["extensions"]:
-            logger.debug(f"Extracted custom properties [{attrs['extensions'].keys()}]")
+            logger.debug(
+                f"Extracted custom properties [{attrs['extensions'].keys()}]",
+            )
 
         return Security(**attrs)
 
-    def build_collection(self, data: dict[str, Any]) -> dict[str, Security]:
+    def build_collection(
+        self,
+        data: dict[str, Any],
+    ) -> dict[str, Security]:
         """Build a dict of named Security objects."""
-        return {
-            scheme_name: self.build(scheme_data)
-            for scheme_name, scheme_data in data.items()
-        }
+        result: dict[str, Security] = {}
+
+        for scheme_name, scheme_data in data.items():
+            with log_ctx("securitySchemes", scheme_name):
+                result[scheme_name] = self.build(scheme_data)
+
+        return result
