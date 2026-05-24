@@ -102,17 +102,8 @@ data_provider = (
             "discriminator": {
                 "propertyName": "objectType",
                 "mapping": {
-                    "objectType1": {
-                        "type": "string",
-                        "maxLength": 1,
-                        "minLength": 0,
-                        "pattern": "[0-9]",
-                        "format": "uuid",
-                    },
-                    "objectType2": {
-                        "type": "integer",
-                        "format": "int32",
-                    },
+                    "objectType1": "objectType1",
+                    "objectType2": "objectType2",
                 },
             },
         },
@@ -134,17 +125,8 @@ data_provider = (
             discriminator=Discriminator(
                 property_name="objectType",
                 mapping={
-                    "objectType1": String(
-                        type=DataType.STRING,
-                        max_length=1,
-                        min_length=0,
-                        pattern="[0-9]",
-                        format=StringFormat.UUID,
-                    ),
-                    "objectType2": Integer(
-                        type=DataType.INTEGER,
-                        format=IntegerFormat.INT32,
-                    ),
+                    "objectType1": "objectType1",
+                    "objectType2": "objectType2",
                 },
             ),
         ),

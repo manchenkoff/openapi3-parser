@@ -120,6 +120,8 @@ components:
       allowReserved: true
       schema:
         type: integer
+        not:
+          type: string
 
     Offset:
       name: offset
@@ -302,3 +304,13 @@ components:
               format: uri
               example: 'https://github.com/manchenkoff/openapi3-parser'
               description: 'User Avatar URL'
+
+    Payload:
+      oneOf:
+        - type: string
+        - type: integer
+      discriminator:
+        propertyName: payloadType
+        mapping:
+          str: 'SomeTarget'
+          int: 'OtherTarget'

@@ -15,12 +15,14 @@ from openapi_parser.specification import (
     Array,
     Contact,
     Content,
+    Discriminator,
     Encoding,
     Info,
     Integer,
     License,
     Link,
     Object,
+    OneOf,
     Operation,
     Parameter,
     Path,
@@ -301,6 +303,17 @@ def create_specification() -> Specification:
                 ),
             ],
         ),
+        "Payload": OneOf(
+            type=DataType.ONE_OF,
+            schemas=[
+                String(type=DataType.STRING),
+                Integer(type=DataType.INTEGER),
+            ],
+            discriminator=Discriminator(
+                property_name="payloadType",
+                mapping={"str": "SomeTarget", "int": "OtherTarget"},
+            ),
+        ),
     }
 
     security: list[dict[str, Any]] = [{"Basic": []}]
@@ -341,7 +354,10 @@ def create_specification() -> Specification:
                             style=QueryParameterStyle.FORM,
                             allow_reserved=True,
                             example=10,
-                            schema=Integer(type=DataType.INTEGER),
+                            schema=Integer(
+                                type=DataType.INTEGER,
+                                not_schema=String(type=DataType.STRING),
+                            ),
                         ),
                         Parameter(
                             name="offset",

@@ -64,7 +64,8 @@ class PathBuilder:
 
         if attrs.get("parameters"):
             for operation in attrs["operations"]:
-                operation.parameters += attrs["parameters"]
+                merged = operation.parameters + attrs["parameters"]
+                object.__setattr__(operation, "parameters", merged)
 
         attrs["extensions"] = extract_extension_attributes(data)
 
