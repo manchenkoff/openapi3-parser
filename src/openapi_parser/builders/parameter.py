@@ -18,6 +18,7 @@ from openapi_parser.enumeration import (
     QueryParameterStyle,
 )
 from openapi_parser.errors import ParserError
+from openapi_parser.logging import log_ctx
 from openapi_parser.specification import Parameter
 
 logger = logging.getLogger(__name__)
@@ -57,49 +58,59 @@ class ParameterBuilder:
         self._schema_factory = schema_factory
         self._content_builder = content_builder
 
-    def build_list(self, parameters: list[dict[str, Any]]) -> list[Parameter]:
+    def build_list(
+        self,
+        parameters: list[dict[str, Any]],
+    ) -> list[Parameter]:
         """Build a list of parameters from a list of raw dicts."""
         return [self.build(parameter) for parameter in parameters]
 
     def build(self, data: dict[str, Any]) -> Parameter:
         """Build a Parameter from a raw dict."""
-        parameter_name = data.get("name")
+        with log_ctx("parameters"):
+            parameter_name = data.get("name")
 
-        if parameter_name is None:
-            raise ParserError("Parameter is missing required 'name' property")
+            if parameter_name is None:
+                raise ParserError(
+                    "Parameter is missing required 'name' property",
+                )
 
-        logger.debug(f"Parameter parsing [name={parameter_name}]")
+            with log_ctx(parameter_name):
+                logger.debug(f"Parameter parsing [name={parameter_name}]")
 
-        attrs_map = {
-            "name": PropertyMeta(name="name", cast=str),
-            "location": PropertyMeta(name="in", cast=ParameterLocation),
-            "required": PropertyMeta(name="required", cast=bool),
-            "schema": PropertyMeta(name="schema", cast=self._schema_factory.create),
-            "content": PropertyMeta(
-                name="content",
-                cast=self._content_builder.build_list,
-            ),
-            "description": PropertyMeta(name="description", cast=str),
-            "example": PropertyMeta(name="example", cast=None),
-            "examples": PropertyMeta(name="examples", cast=dict),
-            "deprecated": PropertyMeta(name="deprecated", cast=bool),
-            "explode": PropertyMeta(name="explode", cast=bool),
-            "allow_reserved": PropertyMeta(name="allowReserved", cast=bool),
-        }
+                attrs_map = {
+                    "name": PropertyMeta(name="name", cast=str),
+                    "location": PropertyMeta(name="in", cast=ParameterLocation),
+                    "required": PropertyMeta(name="required", cast=bool),
+                    "description": PropertyMeta(name="description", cast=str),
+                    "example": PropertyMeta(name="example", cast=None),
+                    "examples": PropertyMeta(name="examples", cast=dict),
+                    "deprecated": PropertyMeta(name="deprecated", cast=bool),
+                    "explode": PropertyMeta(name="explode", cast=bool),
+                    "allow_reserved": PropertyMeta(name="allowReserved", cast=bool),
+                }
 
-        attrs = extract_typed_props(data, attrs_map)
+                attrs = extract_typed_props(data, attrs_map)
 
-        if data.get("style"):
-            attrs["style"] = style_to_enum_map[attrs["location"]](data["style"])
-        else:
-            attrs["style"] = default_styles_by_location[attrs["location"]]
+                if data.get("schema") is not None:
+                    attrs["schema"] = self._schema_factory.create(data["schema"])
 
-        if not attrs.get("explode") and attrs["style"].value == "form":
-            attrs["explode"] = True
+                if data.get("content") is not None:
+                    attrs["content"] = self._content_builder.build_list(data["content"])
 
-        attrs["extensions"] = extract_extension_attributes(data)
+                if data.get("style"):
+                    attrs["style"] = style_to_enum_map[attrs["location"]](data["style"])
+                else:
+                    attrs["style"] = default_styles_by_location[attrs["location"]]
 
-        if attrs["extensions"]:
-            logger.debug(f"Extracted custom properties [{attrs['extensions'].keys()}]")
+                if not attrs.get("explode") and attrs["style"].value == "form":
+                    attrs["explode"] = True
 
-        return Parameter(**attrs)
+                attrs["extensions"] = extract_extension_attributes(data)
+
+                if attrs["extensions"]:
+                    logger.debug(
+                        f"Extracted custom properties [{attrs['extensions'].keys()}]"
+                    )
+
+                return Parameter(**attrs)

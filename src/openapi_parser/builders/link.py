@@ -8,6 +8,7 @@ from openapi_parser.builders.common import (
     extract_extension_attributes,
     extract_typed_props,
 )
+from openapi_parser.logging import log_ctx
 from openapi_parser.specification import Link, Server
 
 logger = logging.getLogger(__name__)
@@ -24,11 +25,18 @@ def build_server(value: dict[str, Any]) -> Server:
 class LinkBuilder:
     """Builds link objects from raw specification data."""
 
-    def build_dict(self, data: dict[str, dict[str, Any]]) -> dict[str, Link]:
+    def build_dict(
+        self,
+        data: dict[str, dict[str, Any]],
+    ) -> dict[str, Link]:
         """Build a dict of links from a dict of raw link definitions."""
-        return {
-            link_name: self._build(link_data) for link_name, link_data in data.items()
-        }
+        result: dict[str, Link] = {}
+
+        for link_name, link_data in data.items():
+            with log_ctx("links", link_name):
+                result[link_name] = self._build(link_data)
+
+        return result
 
     def _build(self, data: dict[str, Any]) -> Link:
         logger.debug("Link building")

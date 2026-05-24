@@ -22,6 +22,7 @@ from openapi_parser.builders.security import SecurityBuilder
 from openapi_parser.builders.server import ServerBuilder
 from openapi_parser.builders.tag import TagBuilder
 from openapi_parser.errors import ParserError
+from openapi_parser.logging import log_ctx
 from openapi_parser.resolver import OpenAPIResolver
 from openapi_parser.specification import Specification
 
@@ -80,61 +81,64 @@ class Parser:
         Raises:
             ParserError: If OpenAPI schema is invalid
         """
-        logger.debug("Building Specification objects")
+        with log_ctx("spec"):
+            logger.debug("Building Specification objects")
 
-        try:
-            version = data["openapi"]
-        except KeyError:
-            raise ParserError(
-                "Invalid OpenAPI version, check 'openapi' property in the document",
-            ) from None
+            try:
+                version = data["openapi"]
+            except KeyError:
+                raise ParserError(
+                    "Invalid OpenAPI version, check 'openapi' property in the document",
+                ) from None
 
-        attrs_map = {
-            "servers": PropertyMeta(
-                name="servers",
-                cast=self.server_builder.build_list,
-            ),
-            "tags": PropertyMeta(
-                name="tags",
-                cast=self.tag_builder.build_list,
-            ),
-            "external_docs": PropertyMeta(
-                name="externalDocs",
-                cast=self.external_doc_builder.build,
-            ),
-            "paths": PropertyMeta(
-                name="paths",
-                cast=self.path_builder.build_list,
-            ),
-            "security": PropertyMeta(name="security", cast=None),
-        }
+            attrs_map = {
+                "servers": PropertyMeta(
+                    name="servers",
+                    cast=self.server_builder.build_list,
+                ),
+                "tags": PropertyMeta(
+                    name="tags",
+                    cast=self.tag_builder.build_list,
+                ),
+                "external_docs": PropertyMeta(
+                    name="externalDocs",
+                    cast=self.external_doc_builder.build,
+                ),
+                "paths": PropertyMeta(
+                    name="paths",
+                    cast=self.path_builder.build_list,
+                ),
+                "security": PropertyMeta(name="security", cast=None),
+            }
 
-        attrs = extract_typed_props(data, attrs_map)
+            attrs = extract_typed_props(data, attrs_map)
 
-        attrs["version"] = version
+            attrs["version"] = version
 
-        info_data = data.get("info")
+            info_data = data.get("info")
 
-        if info_data is None:
-            raise ParserError("OpenAPI document is missing required 'info' property")
+            if info_data is None:
+                raise ParserError(
+                    "OpenAPI document is missing required 'info' property"
+                )
 
-        attrs["info"] = self.info_builder.build(info_data)
+            attrs["info"] = self.info_builder.build(info_data)
 
-        components = data.get("components") or {}
+            components = data.get("components") or {}
 
-        if "securitySchemes" in components:
-            attrs["security_schemas"] = self.security_builder.build_collection(
-                components["securitySchemes"],
-            )
+            if "securitySchemes" in components:
+                attrs["security_schemas"] = self.security_builder.build_collection(
+                    components["securitySchemes"],
+                )
 
-        if "schemas" in components:
-            attrs["schemas"] = self.schemas_builder.build_collection(
-                components["schemas"],
-            )
+            if "schemas" in components:
+                attrs["schemas"] = self.schemas_builder.build_collection(
+                    components["schemas"],
+                )
 
-        logger.debug("Specification parsed successfully")
+            logger.debug("Specification parsed successfully")
 
-        return Specification(**attrs)
+            return Specification(**attrs)
 
 
 def _create_parser(strict_enum: bool = True) -> Parser:

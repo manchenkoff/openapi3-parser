@@ -18,7 +18,9 @@ class OAuthFlowBuilder:
     """Builds OAuth flow collections from raw specification data."""
 
     @staticmethod
-    def build_collection(data: dict[str, Any]) -> dict[OAuthFlowType, OAuthFlow]:
+    def build_collection(
+        data: dict[str, Any],
+    ) -> dict[OAuthFlowType, OAuthFlow]:
         """Build a dict of OAuthFlow objects from a raw dict."""
         logger.debug(f"Parsing OAuth items collection: {data.keys()}")
 
@@ -45,7 +47,8 @@ class OAuthFlowBuilder:
 
             for extension in extensions:
                 result_oauth_dict[cast(OAuthFlowType, extension)] = cast(
-                    OAuthFlow, extensions[extension]
+                    OAuthFlow,
+                    extensions[extension],
                 )
 
         return result_oauth_dict

@@ -6,6 +6,7 @@ from typing import Any
 from openapi_parser.builders.encoding import EncodingBuilder
 from openapi_parser.builders.schema import SchemaFactory
 from openapi_parser.enumeration import ContentType
+from openapi_parser.logging import log_ctx
 from openapi_parser.loose_types import LooseContentType
 from openapi_parser.specification import Content
 
@@ -38,13 +39,13 @@ class ContentBuilder:
         self._encoding_builder = encoding_builder
         self._strict_enum = strict_enum
 
-    def build_list(self, data: dict[str, Any]) -> list[Content]:
+    def build_list(
+        self,
+        data: dict[str, Any],
+    ) -> list[Content]:
         """Build a list of content objects from a dict of media types."""
         return [
-            self._create_content(
-                content_type,
-                content_value,
-            )
+            self._create_content(content_type, content_value)
             for content_type, content_value in data.items()
         ]
 
@@ -53,22 +54,23 @@ class ContentBuilder:
         content_type: str,
         content_value: dict[str, Any],
     ) -> Content:
-        logger.debug(f"Content building [type={content_type}]")
+        with log_ctx("content", content_type):
+            logger.debug(f"Content building [type={content_type}]")
 
-        ContentTypeCls: ContentTypeType = (
-            ContentType if self._strict_enum else LooseContentType
-        )
+            ContentTypeCls: ContentTypeType = (
+                ContentType if self._strict_enum else LooseContentType
+            )
 
-        encoding = (
-            self._encoding_builder.build_dict(content_value["encoding"])
-            if content_value.get("encoding")
-            else None
-        )
+            encoding = (
+                self._encoding_builder.build_dict(content_value["encoding"])
+                if content_value.get("encoding")
+                else None
+            )
 
-        return Content(
-            type=ContentTypeCls(content_type),
-            schema=self._schema_factory.create(content_value.get("schema", {})),
-            example=content_value.get("example"),
-            examples=content_value.get("examples", {}),
-            encoding=encoding,
-        )
+            return Content(
+                type=ContentTypeCls(content_type),
+                schema=self._schema_factory.create(content_value.get("schema", {})),
+                example=content_value.get("example"),
+                examples=content_value.get("examples", {}),
+                encoding=encoding,
+            )

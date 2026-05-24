@@ -9,6 +9,7 @@ from openapi_parser.builders.common import (
     extract_typed_props,
 )
 from openapi_parser.builders.header import HeaderBuilder
+from openapi_parser.logging import log_ctx
 from openapi_parser.specification import Encoding
 
 logger = logging.getLogger(__name__)
@@ -27,12 +28,18 @@ class EncodingBuilder:
         """
         self._header_builder = header_builder
 
-    def build_dict(self, data: dict[str, dict[str, Any]]) -> dict[str, Encoding]:
+    def build_dict(
+        self,
+        data: dict[str, dict[str, Any]],
+    ) -> dict[str, Encoding]:
         """Build a dict of encodings from a dict of raw encoding definitions."""
-        return {
-            property_name: self._build(encoding_data)
-            for property_name, encoding_data in data.items()
-        }
+        result: dict[str, Encoding] = {}
+
+        for property_name, encoding_data in data.items():
+            with log_ctx("encoding", property_name):
+                result[property_name] = self._build(encoding_data)
+
+        return result
 
     def _build(self, data: dict[str, Any]) -> Encoding:
         logger.debug("Encoding building")

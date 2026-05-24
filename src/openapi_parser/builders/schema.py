@@ -37,7 +37,7 @@ from openapi_parser.specification import (
     String,
 )
 
-SchemaBuilderMethod = Callable[[dict[str, Any]], Schema]
+SchemaBuilderMethod = Callable[..., Schema]
 
 ALL_OF_SCHEMAS_KEY = "allOf"
 
@@ -55,7 +55,7 @@ def extract_attrs(
         attrs_map (Dict[str, PropertyMeta]): Type-casting mapping
 
     Returns:
-        Dict[str, Any]: Extracted dictionary with typed values
+        dict: Extracted attributes dictionary
     """
     base_attrs_map = {
         "type": "type",
@@ -88,7 +88,9 @@ def extract_attrs(
     return attrs
 
 
-def merge_all_of_schemas(original_data: dict[str, Any]) -> dict[str, Any]:
+def merge_all_of_schemas(
+    original_data: dict[str, Any],
+) -> dict[str, Any]:
     """Recursive merge schemas with 'allOf' type into single schema dictionary.
 
     Args:
@@ -237,11 +239,14 @@ class SchemaFactory:
         return Boolean(**extract_attrs(data, {}))
 
     def _array(self, data: dict[str, Any]) -> Array:
+        def build_items(items_data: dict[str, Any]) -> Schema:
+            return self.create(items_data)
+
         attrs_map = {
             "max_items": PropertyMeta(name="maxItems", cast=int),
             "min_items": PropertyMeta(name="minItems", cast=int),
             "unique_items": PropertyMeta(name="uniqueItems", cast=bool),
-            "items": PropertyMeta(name="items", cast=self.create),
+            "items": PropertyMeta(name="items", cast=build_items),
         }
 
         return Array(**extract_attrs(data, attrs_map))

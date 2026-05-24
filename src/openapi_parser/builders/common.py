@@ -35,14 +35,21 @@ def extract_typed_props(
         type_cast_func: Callable[..., Any] | None,
     ) -> Any:
         try:
-            return type_cast_func(value) if type_cast_func is not None else value
+            if type_cast_func is not None:
+                return type_cast_func(value)
+
+            return value
         except ValueError:
             raise ParserError(
-                f"Invalid value for '{name}' property, got '{value}'"
+                f"Invalid value for '{name}' property, got '{value}'",
             ) from None
 
     custom_attrs = {
-        attr_name: cast_value(attr_info.name, data[attr_info.name], attr_info.cast)
+        attr_name: cast_value(
+            attr_info.name,
+            data[attr_info.name],
+            attr_info.cast,
+        )
         for attr_name, attr_info in attrs_map.items()
         if data.get(attr_info.name) is not None
     }
