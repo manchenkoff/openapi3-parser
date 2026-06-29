@@ -4,7 +4,6 @@
 [![PyPI - Downloads](https://img.shields.io/pypi/dm/openapi3-parser)](https://clickpy.clickhouse.com/dashboard/openapi3-parser)
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/openapi3-parser)](https://pypi.org/project/openapi3-parser/)
 [![PyPI - Format](https://img.shields.io/pypi/format/openapi3-parser)](https://pypi.org/project/openapi3-parser/)
-[![PyPI - License](https://img.shields.io/pypi/l/openapi3-parser)](license.txt)
 
 Parse OpenAPI 3 documents into fully typed Python dataclass objects.
 Navigate your API specification programmatically — servers, paths,
