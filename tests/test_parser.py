@@ -3,8 +3,9 @@ from unittest import mock
 
 import pytest
 
+from openapi_parser.enumeration import BaseLocation, OperationMethod, SecurityType
 from openapi_parser.errors import ParserError
-from openapi_parser.parser import Parser
+from openapi_parser.parser import Parser, parse
 from openapi_parser.resolver import OpenAPIResolver
 from openapi_parser.specification import Specification
 
@@ -93,3 +94,76 @@ def test_load_specification_missing_info() -> None:
 
     with pytest.raises(ParserError, match="missing required 'info' property"):
         parser.load_specification({"openapi": "3.0.0"})
+
+
+def test_parse_xquik_search_fixture() -> None:
+    spec_string = """
+openapi: 3.1.0
+info:
+  title: Xquik API
+  version: "1.0"
+servers:
+  - url: https://xquik.com
+paths:
+  /api/v1/x/tweets/search:
+    get:
+      operationId: searchTweets
+      summary: Search Tweets
+      security:
+        - apiKey: []
+      parameters:
+        - name: query
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Search results
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      required:
+                        - id
+                        - text
+                      properties:
+                        id:
+                          type: string
+                        text:
+                          type: string
+components:
+  securitySchemes:
+    apiKey:
+      type: apiKey
+      in: header
+      name: x-api-key
+"""
+
+    specification = parse(spec_string=spec_string)
+
+    assert specification.info.title == "Xquik API"
+    assert specification.servers[0].url == "https://xquik.com"
+    assert specification.security_schemas["apiKey"].type == SecurityType.API_KEY
+    assert specification.security_schemas["apiKey"].location == BaseLocation.HEADER
+    assert specification.security_schemas["apiKey"].name == "x-api-key"
+
+    search_path = next(
+        path
+        for path in specification.paths
+        if path.url == "/api/v1/x/tweets/search"
+    )
+    search_operation = search_path.operations[0]
+
+    assert search_operation.method == OperationMethod.GET
+    assert search_operation.operation_id == "searchTweets"
+    assert search_operation.security == [{"apiKey": []}]
+    assert search_operation.parameters[0].name == "query"
+    assert search_operation.responses[0].description == "Search results"
