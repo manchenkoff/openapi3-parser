@@ -4,7 +4,7 @@ from enum import Enum, unique
 
 
 @unique
-class DataType(Enum):
+class DataType(str, Enum):
     """OpenAPI data types."""
 
     NULL = "null"
@@ -14,63 +14,11 @@ class DataType(Enum):
     BOOLEAN = "boolean"
     ARRAY = "array"
     OBJECT = "object"
-    ONE_OF = "oneOf"
-    ANY_OF = "anyOf"
 
 
 @unique
-class IntegerFormat(Enum):
-    """Integer format variants."""
-
-    INT32 = "int32"
-    INT64 = "int64"
-
-
-@unique
-class NumberFormat(Enum):
-    """Number format variants."""
-
-    FLOAT = "float"
-    DOUBLE = "double"
-
-
-@unique
-class StringFormat(Enum):
-    """String format variants."""
-
-    BYTE = "byte"
-    BINARY = "binary"
-    DATE = "date"
-    DATETIME = "date-time"
-    PASSWORD = "password"
-    UUID = "uuid"
-    UUID4 = "uuid4"
-    EMAIL = "email"
-    URI = "uri"
-    HOSTNAME = "hostname"
-    IPV4 = "ipv4"
-    IPV6 = "ipv6"
-    URL = "url"
-    TIME = "time"
-
-
-@unique
-class OperationMethod(Enum):
-    """HTTP operation methods."""
-
-    GET = "get"
-    PUT = "put"
-    POST = "post"
-    DELETE = "delete"
-    OPTIONS = "options"
-    HEAD = "head"
-    PATCH = "patch"
-    TRACE = "trace"
-
-
-@unique
-class BaseLocation(Enum):
-    """Base security location types."""
+class ApiKeyLocation(str, Enum):
+    """API key location in the request."""
 
     HEADER = "header"
     QUERY = "query"
@@ -78,7 +26,7 @@ class BaseLocation(Enum):
 
 
 @unique
-class ParameterLocation(Enum):
+class ParameterLocation(str, Enum):
     """Parameter location variants."""
 
     HEADER = "header"
@@ -88,7 +36,7 @@ class ParameterLocation(Enum):
 
 
 @unique
-class PathParameterStyle(Enum):
+class PathParameterStyle(str, Enum):
     """Path parameter serialization styles."""
 
     SIMPLE = "simple"
@@ -97,7 +45,7 @@ class PathParameterStyle(Enum):
 
 
 @unique
-class QueryParameterStyle(Enum):
+class QueryParameterStyle(str, Enum):
     """Query parameter serialization styles."""
 
     FORM = "form"
@@ -107,46 +55,21 @@ class QueryParameterStyle(Enum):
 
 
 @unique
-class HeaderParameterStyle(Enum):
+class HeaderParameterStyle(str, Enum):
     """Header parameter serialization styles."""
 
     SIMPLE = "simple"
 
 
 @unique
-class CookieParameterStyle(Enum):
+class CookieParameterStyle(str, Enum):
     """Cookie parameter serialization styles."""
 
     FORM = "form"
 
 
 @unique
-class ContentType(Enum):
-    """Media content type variants."""
-
-    JSON = "application/json"
-    JSON_TEXT = "text/json"
-    JSON_ANY = "application/*+json"
-    JSON_PROBLEM = "application/problem+json"
-    XML = "application/xml"
-    FORM = "application/x-www-form-urlencoded"
-    MULTIPART_FORM = "multipart/form-data"
-    PLAIN_TEXT = "text/plain"
-    HTML = "text/html"
-    PDF = "application/pdf"
-    PNG = "image/png"
-    JPEG = "image/jpeg"
-    GIF = "image/gif"
-    SVG = "image/svg+xml"
-    AVIF = "image/avif"
-    BMP = "image/bmp"
-    WEBP = "image/webp"
-    Image = "image/*"
-    BINARY = "application/octet-stream"
-
-
-@unique
-class SecurityType(Enum):
+class SecurityType(str, Enum):
     """Security scheme types."""
 
     API_KEY = "apiKey"
@@ -156,23 +79,7 @@ class SecurityType(Enum):
 
 
 @unique
-class AuthenticationScheme(Enum):
-    """Authentication scheme variants."""
-
-    BASIC = "basic"
-    BEARER = "bearer"
-    DIGEST = "digest"
-    HOBA = "hoba"
-    MUTUAL = "mutual"
-    NEGOTIATE = "negotiate"
-    OAUTH = "oauth"
-    SCRAM_SHA1 = "scram-sha-1"
-    SCRAM_SHA256 = "scram-sha-256"
-    VAPID = "vapid"
-
-
-@unique
-class OAuthFlowType(Enum):
+class OAuthFlowType(str, Enum):
     """OAuth flow type variants."""
 
     IMPLICIT = "implicit"

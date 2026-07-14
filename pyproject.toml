@@ -22,8 +22,9 @@ classifiers = [
   "Topic :: Software Development :: Libraries",
 ]
 dependencies = [
-    "openapi-spec-validator>=0.8.5",
-    "prance>=25.4.8.0",
+    "pydantic>=2.0",
+    "referencing>=0.35",
+    "PyYAML>=6.0",
 ]
 
 [project.urls]
@@ -38,6 +39,7 @@ dev = [
     "python-semantic-release>=10.5.3",
     "ruff>=0.15.13",
     "ty>=0.0.37",
+    "types-pyyaml>=6.0.12.20260518",
 ]
 
 [build-system]
@@ -69,13 +71,7 @@ explicit = true
 python_version = "3.10"
 strict = true
 mypy_path = ["src"]
-
-[[tool.mypy.overrides]]
-module = "tests.*"
-
-[[tool.mypy.overrides]]
-module = "prance"
-ignore_missing_imports = true
+plugins = ["pydantic.mypy"]
 
 [tool.ruff.lint]
 extend-select = [
@@ -87,13 +83,35 @@ extend-select = [
   "ARG",    # unused arguments
   "RUF100", # unused noqa
   "TID252", # ban relative imports
+  "PLR0915", # too-many-statements
 ]
+
+[tool.ruff.lint.pylint]
+max-statements = 30
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"
 
 [tool.ruff.lint.per-file-ignores]
 "tests/**" = ["D", "ARG"]
+
+[tool.ty]
+# Tests use Pydantic aliases (e.g. location= instead of in=, not_schema=
+# instead of not=) which ty does not resolve through Field(alias=) +
+# populate_by_name=True correctly. These are false positives from the
+# Pydantic-to-ty impedance mismatch.
+[[tool.ty.overrides]]
+include = ["tests/test_parse/**"]
+[tool.ty.overrides.rules]
+"unknown-argument" = "ignore"
+"missing-argument" = "ignore"
+"invalid-argument-type" = "ignore"
+
+[tool.pytest.ini_options]
+filterwarnings = [
+    # Pydantic field name "schema" shadows parent attributes (cosmetic only)
+    "ignore:Field name \"schema\" in .* shadows an attribute in parent:UserWarning",
+]
 
 [tool.coverage.run]
 source = ["openapi_parser"]

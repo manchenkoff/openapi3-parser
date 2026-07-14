@@ -1,0 +1,407 @@
+openapi: 3.0.0
+
+security:
+  - Basic: []
+
+info:
+  title: 'User example service'
+  version: 1.0.0
+  description: 'Example service specification to work with user storage'
+  license:
+    name: 'MIT'
+  contact:
+    name: 'manchenkoff'
+    email: 'artyom@manchenkoff.me'
+
+externalDocs:
+  description: Find more info here
+  url: https://example.com/docs
+
+servers:
+  - url: 'https://users.app/api/v{version}'
+    description: 'production'
+    variables:
+      version:
+        default: '1'
+        description: 'API version'
+  - url: 'https://stage.users.app'
+    description: 'staging'
+  - url: 'https://users.local'
+    description: 'development'
+
+tags:
+  - name: Users
+    description: 'User operations'
+    externalDocs:
+      description: 'User API docs'
+      url: 'https://example.com/users/docs'
+
+paths:
+  /users:
+    get:
+      summary: 'Get user list'
+      description: 'Method to get user list'
+      operationId: GetUserList
+      tags:
+        - Users
+      parameters:
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Offset'
+        - $ref: '#/components/parameters/JsonParameter'
+      responses:
+        200:
+          $ref: '#/components/responses/GetUserListResponse'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+    post:
+      summary: 'Add new user'
+      description: 'Method to add new user'
+      operationId: AddUser
+      security:
+        - Basic: []
+      tags:
+        - Users
+      requestBody:
+        $ref: '#/components/requestBodies/AddUserRequest'
+      callbacks:
+        onAdd:
+          '{$request.body#/email}':
+            post:
+              summary: 'Callback after user creation'
+              responses:
+                '200':
+                  description: 'Callback processed successfully'
+      responses:
+        201:
+          $ref: '#/components/responses/AddUserResponse'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+
+  /users/{uuid}:
+    parameters:
+      - $ref: '#/components/parameters/UserUUID'
+    get:
+      summary: 'Get user model'
+      description: 'Method to get user details'
+      operationId: GetUser
+      tags:
+        - Users
+      responses:
+        200:
+          $ref: '#/components/responses/UserResponse'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+    put:
+      summary: 'Update existed user model'
+      operationId: UpdateUser
+      tags:
+        - Users
+      responses:
+        default:
+          $ref: '#/components/responses/Empty'
+        200:
+          $ref: '#/components/responses/Empty'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+    patch:
+      summary: 'Patch user model'
+      operationId: PatchUser
+      tags:
+        - Users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        200:
+          $ref: '#/components/responses/UserResponse'
+    delete:
+      summary: 'Delete user'
+      operationId: DeleteUser
+      tags:
+        - Users
+      responses:
+        204:
+          description: 'No content'
+
+  /non-strict:
+    get:
+      responses:
+        200:
+          description: 'OK'
+          content:
+            application/hal+json:
+              schema:
+                type: object
+                properties:
+                  expectedDeliveryDuration:
+                    type: string
+                    format: duration
+        400:
+          description: 'Bad Request'
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties: {}
+
+  /equipment:
+    get:
+      responses:
+        200:
+          description: 'OK'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Equipment'
+
+components:
+  securitySchemes:
+    Basic:
+      type: http
+      scheme: basic
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    ApiKey:
+      type: apiKey
+      in: header
+      name: X-API-Key
+
+  parameters:
+    Limit:
+      name: limit
+      in: query
+      description: 'Result items limit'
+      allowEmptyValue: false
+      example: 10
+      required: true
+      allowReserved: true
+      schema:
+        type: integer
+        not:
+          type: string
+
+    Offset:
+      name: offset
+      in: query
+      description: 'Result items start offset'
+      allowEmptyValue: false
+      example: 0
+      required: true
+      schema:
+        type: integer
+
+    UserUUID:
+      name: uuid
+      in: path
+      description: 'User unique id'
+      allowEmptyValue: false
+      example: '12345678-1234-5678-1234-567812345678'
+      required: true
+      schema:
+        type: string
+        format: uuid
+
+    JsonParameter:
+      name: json
+      in: query
+      description: 'Custom JSON parameter'
+      required: false
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              key:
+                type: string
+                example: 'test'
+                description: 'Test parameter'
+
+  requestBodies:
+    AddUserRequest:
+      description: 'New user model request'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/User'
+          encoding:
+            login:
+              contentType: text/plain
+              style: form
+            email:
+              contentType: text/plain
+
+  responses:
+    BadRequest:
+      description: 'Bad request or parameters'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/BadRequestError'
+
+    InternalServerError:
+      description: 'Internal error'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/InternalServerError'
+
+    Empty:
+      description: 'Empty successful response'
+
+    GetUserListResponse:
+      description: 'Successful user list response'
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - total_count
+              - users
+            properties:
+              total_count:
+                type: integer
+                description: 'Total count of users'
+              users:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+
+    AddUserResponse:
+      description: 'Successful addition user response'
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - user
+            properties:
+              user:
+                $ref: '#/components/schemas/User'
+
+    UserResponse:
+      description: 'Successful user response'
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - user
+            properties:
+              user:
+                $ref: '#/components/schemas/User'
+      links:
+        UpdateUser:
+          operationId: UpdateUser
+          parameters:
+            uuid: '$response.body#/user/uuid'
+          description: Updates the user
+
+  schemas:
+    BadRequestError:
+      type: object
+      required:
+        - code
+        - error
+      properties:
+        code:
+          type: integer
+          example: 1044
+          description: 'Internal error code'
+        error:
+          type: string
+          example: 'Invalid user id value'
+          description: 'Error details'
+
+    InternalServerError:
+      type: object
+      required:
+        - code
+        - error
+      properties:
+        code:
+          type: integer
+          example: 1
+          description: 'Internal error code'
+        error:
+          type: string
+          example: 'Unexpected server error'
+          description: 'Error details'
+
+    UUIDObject:
+      type: object
+      additionalProperties: false
+      required:
+        - uuid
+      properties:
+        uuid:
+          type: string
+          format: uuid
+          example: '12345678-1234-5678-1234-567812345678'
+          description: 'Unique object id'
+
+    User:
+      allOf:
+        - $ref: '#/components/schemas/UUIDObject'
+        - required:
+            - login
+            - email
+            - avatar
+        - properties:
+            login:
+              type: string
+              example: 'super-admin'
+              description: 'User login or nickname'
+            email:
+              type: string
+              format: email
+              example: 'user@mail.com'
+              description: 'User E-mail address'
+            avatar:
+              type: string
+              format: uri
+              example: 'https://github.com/manchenkoff/openapi3-parser'
+              description: 'User Avatar URL'
+
+    Payload:
+      oneOf:
+        - type: string
+        - type: integer
+      discriminator:
+        propertyName: payloadType
+        mapping:
+          str: 'SomeTarget'
+          int: 'OtherTarget'
+
+    Equipment:
+      type: object
+      properties:
+        Features:
+          type: array
+          items:
+            $ref: '#/components/schemas/Feature'
+        Id:
+          type: integer
+          format: int64
+
+    Feature:
+      type: object
+      properties:
+        Equipments:
+          type: array
+          items:
+            $ref: '#/components/schemas/Equipment'
+        Id:
+          type: integer
+          format: int64

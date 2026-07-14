@@ -1,206 +1,113 @@
-"""OpenAPI specification parser entry point."""
+"""Main entry point for the OpenAPI parser."""
 
-import logging
-from typing import Any
+import os
+import types
+from typing import Any, TypeAlias, cast
 
-from openapi_parser.builders.common import PropertyMeta, extract_typed_props
-from openapi_parser.builders.content import ContentBuilder
-from openapi_parser.builders.encoding import EncodingBuilder
-from openapi_parser.builders.external_doc import ExternalDocBuilder
-from openapi_parser.builders.header import HeaderBuilder
-from openapi_parser.builders.info import InfoBuilder
-from openapi_parser.builders.link import LinkBuilder
-from openapi_parser.builders.oauth_flow import OAuthFlowBuilder
-from openapi_parser.builders.operation import OperationBuilder
-from openapi_parser.builders.parameter import ParameterBuilder
-from openapi_parser.builders.path import PathBuilder
-from openapi_parser.builders.request import RequestBuilder
-from openapi_parser.builders.response import ResponseBuilder
-from openapi_parser.builders.schema import SchemaFactory
-from openapi_parser.builders.schemas import SchemasBuilder
-from openapi_parser.builders.security import SecurityBuilder
-from openapi_parser.builders.server import ServerBuilder
-from openapi_parser.builders.tag import TagBuilder
+from pydantic import ValidationError
+from yaml import YAMLError
+from yaml import safe_load as safe_load_yaml
+
+from openapi_parser import models
 from openapi_parser.errors import ParserError
-from openapi_parser.logging import log_ctx
-from openapi_parser.resolver import OpenAPIResolver
-from openapi_parser.specification import Specification
+from openapi_parser.models.mixins import RefCacheMixin
+from openapi_parser.models.v2_0 import normalize_swagger_v2
+from openapi_parser.models.v3_0 import Specification as SpecificationV3_0
+from openapi_parser.models.v3_1 import Specification as SpecificationV3_1
+from openapi_parser.resolver import _read_uri, resolve
 
-logger = logging.getLogger(__name__)
+Specification: TypeAlias = SpecificationV3_0 | SpecificationV3_1
 
-
-class Parser:
-    """Builds Specification objects from parsed OpenAPI data."""
-
-    info_builder: InfoBuilder
-    server_builder: ServerBuilder
-    tag_builder: TagBuilder
-    external_doc_builder: ExternalDocBuilder
-    path_builder: PathBuilder
-    security_builder: SecurityBuilder
-    schemas_builder: SchemasBuilder
-
-    def __init__(
-        self,
-        info_builder: InfoBuilder,
-        server_builder: ServerBuilder,
-        tag_builder: TagBuilder,
-        external_doc_builder: ExternalDocBuilder,
-        path_builder: PathBuilder,
-        security_builder: SecurityBuilder,
-        schemas_builder: SchemasBuilder,
-    ) -> None:
-        """Initialize parser with specialized builders.
-
-        Args:
-            info_builder: Builder for info metadata
-            server_builder: Builder for server definitions
-            tag_builder: Builder for tag definitions
-            external_doc_builder: Builder for external docs
-            path_builder: Builder for path definitions
-            security_builder: Builder for security schemes
-            schemas_builder: Builder for component schemas
-        """
-        self.info_builder = info_builder
-        self.server_builder = server_builder
-        self.tag_builder = tag_builder
-        self.external_doc_builder = external_doc_builder
-        self.path_builder = path_builder
-        self.security_builder = security_builder
-        self.schemas_builder = schemas_builder
-
-    def load_specification(self, data: dict[str, Any]) -> Specification:
-        """Load OpenAPI Specification object from a file or a remote URI.
-
-        Args:
-            data (dict): Parsed YAML/JSON dictionary of OpenAPI specification
-
-        Returns:
-            Specification: Specification object
-
-        Raises:
-            ParserError: If OpenAPI schema is invalid
-        """
-        with log_ctx("spec"):
-            logger.debug("Building Specification objects")
-
-            try:
-                version = data["openapi"]
-            except KeyError:
-                raise ParserError(
-                    "Invalid OpenAPI version, check 'openapi' property in the document",
-                ) from None
-
-            attrs_map = {
-                "servers": PropertyMeta(
-                    name="servers",
-                    cast=self.server_builder.build_list,
-                ),
-                "tags": PropertyMeta(
-                    name="tags",
-                    cast=self.tag_builder.build_list,
-                ),
-                "external_docs": PropertyMeta(
-                    name="externalDocs",
-                    cast=self.external_doc_builder.build,
-                ),
-                "paths": PropertyMeta(
-                    name="paths",
-                    cast=self.path_builder.build_list,
-                ),
-                "security": PropertyMeta(name="security", cast=None),
-            }
-
-            attrs = extract_typed_props(data, attrs_map)
-
-            attrs["version"] = version
-
-            info_data = data.get("info")
-
-            if info_data is None:
-                raise ParserError(
-                    "OpenAPI document is missing required 'info' property"
-                )
-
-            attrs["info"] = self.info_builder.build(info_data)
-
-            components = data.get("components") or {}
-
-            if "securitySchemes" in components:
-                attrs["security_schemas"] = self.security_builder.build_collection(
-                    components["securitySchemes"],
-                )
-
-            if "schemas" in components:
-                attrs["schemas"] = self.schemas_builder.build_collection(
-                    components["schemas"],
-                )
-
-            logger.debug("Specification parsed successfully")
-
-            return Specification(**attrs)
+_VERSION_SPEC_MAP = {
+    "2.0": models.v3_0,
+    "3.0": models.v3_0,
+    "3.1": models.v3_1,
+    "3.2": models.v3_1,
+}
 
 
-def _create_parser(strict_enum: bool = True) -> Parser:
-    logger.info("Initializing parser")
+def _detect_version(raw: dict[str, Any]) -> str:
+    """Determine the OpenAPI/Swagger version from the raw spec dict."""
+    if "swagger" in raw:
+        return "2.0"
 
-    info_builder = InfoBuilder()
-    server_builder = ServerBuilder()
-    external_doc_builder = ExternalDocBuilder()
-    tag_builder = TagBuilder(external_doc_builder)
-    schema_factory = SchemaFactory(strict_enum=strict_enum)
-    header_builder = HeaderBuilder(schema_factory)
-    encoding_builder = EncodingBuilder(header_builder)
-    content_builder = ContentBuilder(
-        schema_factory,
-        encoding_builder,
-        strict_enum=strict_enum,
-    )
-    parameter_builder = ParameterBuilder(schema_factory, content_builder)
-    schemas_builder = SchemasBuilder(schema_factory)
-    link_builder = LinkBuilder()
-    response_builder = ResponseBuilder(content_builder, header_builder, link_builder)
-    request_builder = RequestBuilder(content_builder)
-    operation_builder = OperationBuilder(
-        response_builder,
-        external_doc_builder,
-        request_builder,
-        parameter_builder,
-    )
-    path_builder = PathBuilder(operation_builder, parameter_builder)
-    oauth_flow_builder = OAuthFlowBuilder()
-    security_builder = SecurityBuilder(oauth_flow_builder)
+    # extract major.minor version from the string
+    version_parts = raw.get("openapi", "").split(".")[:2]
 
-    return Parser(
-        info_builder,
-        server_builder,
-        tag_builder,
-        external_doc_builder,
-        path_builder,
-        security_builder,
-        schemas_builder,
-    )
+    return ".".join(version_parts)
+
+
+def _load_raw(uri: str | None, spec_string: str | None) -> dict[str, Any]:
+    """Load and parse YAML/JSON from *uri* or *spec_string*."""
+    try:
+        if uri:
+            raw = safe_load_yaml(_read_uri(uri))
+        elif spec_string:
+            raw = safe_load_yaml(spec_string)
+        else:
+            raise ParserError("Either uri or spec_string must be provided")
+    except (OSError, YAMLError) as e:
+        raise ParserError(f"Failed to load spec: {e}") from e
+
+    if not isinstance(raw, dict):
+        raise ParserError("OpenAPI spec must be a dictionary")
+
+    return raw
+
+
+def _validate_model(
+    spec_module: types.ModuleType,
+    resolved: dict[str, Any],
+    version_key: str,
+) -> Specification:
+    """Validate the resolved spec against a version-specific module."""
+    try:
+        return cast(Specification, spec_module.Specification.model_validate(resolved))
+    except ValidationError as e:
+        raise ParserError(f"Validation failed for OpenAPI {version_key}: {e}") from e
 
 
 def parse(
-    uri: str | None = None,
+    uri: str | os.PathLike[str] | None = None,
     spec_string: str | None = None,
-    strict_enum: bool = True,
-    recursion_limit: int = 1,
 ) -> Specification:
-    """Parse specification document by URL/filepath or as a string.
+    """Parse an OpenAPI/Swagger spec into fully typed Pydantic models.
 
-    Args:
-        uri (str): Path or URL to OpenAPI file
-        spec_string (str): OpenAPI specification as a string to parse
-        strict_enum (bool): Validate content types and string formats against the
-          enums defined in openapi-parser. Note that the OpenAPI specification allows
-          for custom values in these properties.
-        recursion_limit (int): Maximum recursion depth for resolving references
+    Parameters
+    ----------
+    uri : str, optional
+        Location of the spec file. Accepts a local paths and URIs.
+    spec_string : str, optional
+        Raw spec YAML/JSON string (alternative to *uri*).
+
+    Returns:
+    -------
+    Specification
+        Version-specific typed specification model.
+
+    Raises:
+    ------
+    ParserError
+        On parse failures, wrapping the original exception.
     """
-    resolver = OpenAPIResolver(uri, spec_string, recursion_limit=recursion_limit)
-    specification = resolver.resolve()
+    RefCacheMixin.clear_ref_cache()
 
-    parser = _create_parser(strict_enum=strict_enum)
+    if uri is not None:
+        uri = os.fspath(uri)
 
-    return parser.load_specification(specification)
+    raw = _load_raw(uri, spec_string)
+
+    version = _detect_version(raw)
+    if version == "2.0":
+        raw = normalize_swagger_v2(raw)
+
+    spec_module = _VERSION_SPEC_MAP.get(version)
+    if spec_module is None:
+        raise ParserError(f"Unsupported OpenAPI version: {version}")
+
+    try:
+        resolved = resolve(raw, uri)
+    except Exception as e:
+        raise ParserError(f"Failed to resolve references: {e}") from e
+
+    return _validate_model(spec_module, resolved, version)
