@@ -8,7 +8,8 @@ from openapi_parser.parser import parse
 
 def test_parse_swagger_v2_petstore() -> None:
     """Test full parsing and normalization of Swagger 2.0 petstore."""
-    spec = parse("tests/data/swagger_v2.yaml")
+    fixture = os.path.join(os.path.dirname(__file__), "..", "data", "swagger_v2.yaml")
+    spec = parse(fixture)
     assert isinstance(spec, Specification)
     assert spec.openapi == "3.0.0"  # Normalized to 3.0
     assert spec.info.title == "Swagger Petstore"

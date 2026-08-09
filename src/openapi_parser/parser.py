@@ -70,6 +70,7 @@ def _validate_model(
 def parse(
     uri: str | os.PathLike[str] | None = None,
     spec_string: str | None = None,
+    base_uri: str | os.PathLike[str] | None = None,
 ) -> Specification:
     """Parse an OpenAPI/Swagger spec into fully typed Pydantic models.
 
@@ -79,6 +80,10 @@ def parse(
         Location of the spec file. Accepts a local paths and URIs.
     spec_string : str, optional
         Raw spec YAML/JSON string (alternative to *uri*).
+    base_uri : str, optional
+        Location used to resolve external ``$ref`` targets when parsing
+        a *spec_string* (e.g. ``"file:///path/to/specs/main.yaml"``).
+        Ignored when *uri* is provided.
 
     Returns:
     -------
@@ -95,6 +100,9 @@ def parse(
     if uri is not None:
         uri = os.fspath(uri)
 
+    if base_uri is not None:
+        base_uri = os.fspath(base_uri)
+
     raw = _load_raw(uri, spec_string)
 
     version = _detect_version(raw)
@@ -106,7 +114,7 @@ def parse(
         raise ParserError(f"Unsupported OpenAPI version: {version}")
 
     try:
-        resolved = resolve(raw, uri)
+        resolved = resolve(raw, base_uri if uri is None else uri, version)
     except Exception as e:
         raise ParserError(f"Failed to resolve references: {e}") from e
 

@@ -3,6 +3,8 @@
 Exercises 3.2-specific features: jsonSchemaDialect, webhooks, array type syntax.
 """
 
+import os
+
 from openapi_parser.enumeration import (
     ApiKeyLocation,
     DataType,
@@ -41,7 +43,7 @@ from openapi_parser.models.v3_1 import (
     Tag,
 )
 
-FIXTURE = "tests/data/openapi_3.2.yaml"
+FIXTURE = os.path.join(os.path.dirname(__file__), "..", "data", "openapi_3.2.yaml")
 
 
 _UUID_SCHEMA = Schema(

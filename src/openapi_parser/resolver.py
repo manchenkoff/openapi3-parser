@@ -6,11 +6,16 @@ from typing import Any, TypeVar, cast
 from urllib.parse import urljoin, urlparse
 from urllib.request import url2pathname, urlopen
 
-from referencing import Registry, Resource
-from referencing.jsonschema import DRAFT202012
+from referencing import Registry, Resource, Specification
+from referencing.jsonschema import DRAFT4, DRAFT202012
 from yaml import safe_load
 
-from openapi_parser.models.v3_0 import Components
+_DRAFT_BY_VERSION = {
+    "2.0": DRAFT4,
+    "3.0": DRAFT4,
+    "3.1": DRAFT202012,
+    "3.2": DRAFT202012,
+}
 
 
 def _read_uri(uri: str) -> str:
@@ -30,7 +35,9 @@ def _read_uri(uri: str) -> str:
         return f.read()
 
 
-def _make_retriever(base_uri: str) -> Callable[[str], Resource[Any]]:
+def _make_retriever(
+    base_uri: str, draft: Specification[Any]
+) -> Callable[[str], Resource[Any]]:
     """Build a retriever callable for the ``referencing`` library.
 
     Handles both local files and HTTP(S) external ``$ref`` targets
@@ -51,15 +58,24 @@ def _make_retriever(base_uri: str) -> Callable[[str], Resource[Any]]:
             path = join(base_dir, u) if not isabs(u) else u
             raw = safe_load(_read_uri(path))
 
-        return Resource.from_contents(raw, default_specification=DRAFT202012)
+        return Resource.from_contents(raw, default_specification=draft)
 
     return _retrieve
 
 
 _COMPONENT_SECTIONS = frozenset(
-    field.alias or name
-    for name, field in Components.model_fields.items()
-    if name != "extensions"
+    {
+        "schemas",
+        "responses",
+        "parameters",
+        "examples",
+        "requestBodies",
+        "headers",
+        "securitySchemes",
+        "links",
+        "callbacks",
+        "pathItems",
+    }
 )
 
 
@@ -197,10 +213,15 @@ def _walk(
     return cast(T, _traverse(node, _dict_fn, _tracking=_walking))
 
 
-def _build_registry(raw: dict[str, Any], uri: str | None = None) -> Registry[Any]:
+def _build_registry(
+    raw: dict[str, Any],
+    uri: str | None = None,
+    version: str | None = None,
+) -> Registry[Any]:
     """Build a ``referencing`` Registry with the root spec loaded."""
+    draft = _DRAFT_BY_VERSION.get(version or "", DRAFT202012)
     retrieval: Callable[[str], Resource[Any]] | None = (
-        _make_retriever(uri) if uri else None
+        _make_retriever(uri, draft) if uri else None
     )
     registry = (
         Registry(retrieve=retrieval) if retrieval else Registry()  # type: ignore[call-arg]  # referencing stubs missing ``retrieve``
@@ -210,20 +231,27 @@ def _build_registry(raw: dict[str, Any], uri: str | None = None) -> Registry[Any
         "Registry[Any]",
         registry.with_resource(
             "urn:root",
-            Resource.from_contents(raw, default_specification=DRAFT202012),
+            Resource.from_contents(raw, default_specification=draft),
         ),
     )
 
 
-def resolve(raw: dict[str, Any], uri: str | None = None) -> dict[str, Any]:
+def resolve(
+    raw: dict[str, Any],
+    uri: str | None = None,
+    version: str | None = None,
+) -> dict[str, Any]:
     """Resolve all ``$ref`` entries in *raw*, annotating each with *ref_name*.
 
     Every ``$ref`` is replaced with the resolved content plus a
     ``{"ref_name": "<ref path>"}`` marker. Python object cycles
     (self-referencing / bidirectional refs) are broken by replacing
     the nested occurrence with ``{"ref_name": "<path>"}``.
+
+    The JSON Schema *version* ("3.0" vs "3.1") selects the dialect used
+    for ``$ref`` resolution (Draft 4 vs Draft 2020-12).
     """
-    registry = _build_registry(raw, uri)
+    registry = _build_registry(raw, uri, version)
     resolver_obj = registry.resolver(base_uri="urn:root")
     result = _walk(raw, resolver_obj)
     _annotate_component_refs(result)

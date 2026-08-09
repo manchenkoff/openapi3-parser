@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from pydantic import Field, model_validator
+from pydantic import Field, model_serializer, model_validator
 
 from openapi_parser.enumeration import (
     ApiKeyLocation,
@@ -204,6 +204,15 @@ class Callback(ExtensionsMixin, _ModelBase):
 
         return data
 
+    @model_serializer(mode="wrap")
+    def _dump_callback(self, handler: Any) -> Any:
+        """Flatten back to the spec-compliant map of expression to PathItem."""
+        data = handler(self)
+        result: dict[str, Any] = dict(data.get("expressions") or {})
+        result.update(data.get("extensions") or {})
+
+        return result
+
 
 class Operation(ExtensionsMixin, _ModelBase):
     """Operation object definition."""
@@ -248,6 +257,7 @@ class PathItem(ExtensionsMixin, RefCacheMixin, _ModelBase):
     patch: Operation | None = None
     trace: Operation | None = None
     parameters: list[Parameter] | None = None
+    servers: list[Server] | None = None
 
 
 class SecurityScheme(ExtensionsMixin, RefCacheMixin, _ModelBase):

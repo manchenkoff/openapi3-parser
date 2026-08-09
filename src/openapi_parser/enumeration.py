@@ -76,6 +76,7 @@ class SecurityType(str, Enum):
     HTTP = "http"
     OAUTH2 = "oauth2"
     OPEN_ID_CONNECT = "openIdConnect"
+    MUTUAL_TLS = "mutualTLS"
 
 
 @unique

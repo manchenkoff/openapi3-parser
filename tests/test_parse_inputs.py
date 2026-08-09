@@ -6,6 +6,8 @@ and `http://`/`https://` URLs.
 
 import json
 import os
+import threading
+from concurrent.futures import ThreadPoolExecutor
 from typing import Any
 from unittest.mock import patch
 
@@ -458,3 +460,249 @@ paths:
     assert schema.model_extra is not None
     assert schema.model_extra.get("const") == "expected_value"
     assert schema.model_extra.get("prefixItems") == [{"type": "integer"}]
+
+
+# ---------------------------------------------------------------------------
+# Thread safety
+# ---------------------------------------------------------------------------
+
+
+def test_parse_isolated_across_threads() -> None:
+    """Concurrent parse() calls in different threads must not share ref caches."""
+    spec_a = """
+openapi: "3.0.0"
+info:
+  title: "A"
+  version: "1.0.0"
+paths:
+  /items:
+    get:
+      responses:
+        "200":
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Foo"
+components:
+  schemas:
+    Foo:
+      type: object
+"""
+
+    spec_b = """
+openapi: "3.0.0"
+info:
+  title: "B"
+  version: "1.0.0"
+paths:
+  /items:
+    get:
+      responses:
+        "200":
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Foo"
+components:
+  schemas:
+    Foo:
+      type: string
+"""
+
+    barrier = threading.Barrier(2)
+    results: dict[str, Specification] = {}
+
+    def run(key: str, text: str) -> None:
+        barrier.wait()
+        results[key] = parse(spec_string=text)
+
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        pool.submit(run, "a", spec_a)
+        pool.submit(run, "b", spec_b)
+
+    components_a = results["a"].components
+    components_b = results["b"].components
+    assert components_a is not None and components_a.schemas is not None
+    assert components_b is not None and components_b.schemas is not None
+    foo_a = components_a.schemas["Foo"]
+    foo_b = components_b.schemas["Foo"]
+
+    assert foo_a is not foo_b
+    assert foo_a.type is not None and foo_a.type.value == "object"
+    assert foo_b.type is not None and foo_b.type.value == "string"
+
+
+# ---------------------------------------------------------------------------
+# spec_string + base_uri (external refs)
+# ---------------------------------------------------------------------------
+
+
+def test_parse_spec_string_with_base_uri(tmp_path: object) -> None:
+    """External $refs resolve when parsing spec_string with a base_uri."""
+    refs_dir = os.path.join(str(tmp_path), "refs")
+    os.makedirs(refs_dir, exist_ok=True)
+
+    ref_path = os.path.join(refs_dir, "user.yaml")
+    with open(ref_path, "w") as f:
+        f.write("type: string\n")
+
+    spec_text = """
+openapi: "3.0.0"
+info:
+  title: "Base URI API"
+  version: "1.0.0"
+paths:
+  /users:
+    get:
+      responses:
+        "200":
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                $ref: "user.yaml"
+"""
+    base = os.path.join(refs_dir, "main.yaml")
+
+    spec = parse(spec_string=spec_text, base_uri=base)
+    get_op = spec.paths["/users"].get
+    assert get_op is not None
+    media_type = get_op.responses["200"].content
+    assert media_type is not None
+    schema = media_type["application/json"].schema
+    assert schema is not None
+    assert schema.type is not None and schema.type.value == "string"
+
+
+# ---------------------------------------------------------------------------
+# Callback serialization
+# ---------------------------------------------------------------------------
+
+
+def test_callback_roundtrip_dump() -> None:
+    """Callback.model_dump() must produce the spec-compliant flat map."""
+    spec_yaml = """
+openapi: "3.0.0"
+info:
+  title: "Callback Test"
+  version: "1.0.0"
+paths:
+  /test:
+    get:
+      responses:
+        "200":
+          description: "OK"
+      callbacks:
+        onData:
+          "{$request.body#/id}":
+            post:
+              responses:
+                "200":
+                  description: "Callback OK"
+          x-custom: "works"
+"""
+    spec = parse(spec_string=spec_yaml)
+    get_op = spec.paths["/test"].get
+    assert get_op is not None
+    callbacks = get_op.callbacks
+    assert callbacks is not None
+    callback = callbacks["onData"]
+
+    dumped = callback.model_dump()
+    assert "{$request.body#/id}" in dumped
+    assert (
+        dumped["{$request.body#/id}"]["post"]["responses"]["200"]["description"]
+        == "Callback OK"
+    )
+    assert dumped["x-custom"] == "works"
+    assert "expressions" not in dumped
+
+
+# ---------------------------------------------------------------------------
+# PathItem servers + mutualTLS security scheme
+# ---------------------------------------------------------------------------
+
+
+def test_path_item_servers() -> None:
+    """PathItem must support the spec-compliant servers field."""
+    spec_yaml = """
+openapi: "3.0.0"
+info:
+  title: "Servers on Path"
+  version: "1.0.0"
+paths:
+  /test:
+    servers:
+      - url: "https://staging.example.com"
+    get:
+      responses:
+        "200":
+          description: "OK"
+"""
+    spec = parse(spec_string=spec_yaml)
+    path_item = spec.paths["/test"]
+    assert path_item.servers is not None
+    assert path_item.servers[0].url == "https://staging.example.com"
+
+
+def test_mutual_tls_security_scheme() -> None:
+    """OpenAPI 3.1 mutualTLS security scheme type must parse."""
+    from openapi_parser.enumeration import SecurityType
+
+    spec_yaml = """
+openapi: "3.1.0"
+info:
+  title: "mutualTLS Test"
+  version: "1.0.0"
+paths: {}
+components:
+  securitySchemes:
+    mTLS:
+      type: mutualTLS
+"""
+    spec = parse(spec_string=spec_yaml)
+    assert spec.components is not None
+    assert spec.components.security_schemes is not None
+    assert spec.components.security_schemes["mTLS"].type == SecurityType.MUTUAL_TLS
+
+
+# ---------------------------------------------------------------------------
+# Enumeration export & Component sections resolution
+# ---------------------------------------------------------------------------
+
+
+def test_enumeration_export() -> None:
+    """Ensure that the enumeration module is exported at the top-level package."""
+    import openapi_parser
+
+    assert hasattr(openapi_parser, "enumeration")
+    from openapi_parser.enumeration import DataType
+
+    assert openapi_parser.enumeration.DataType is DataType
+
+
+def test_path_items_resolver_annotation() -> None:
+    """Ensure pathItems components are correctly resolved and annotated with ref_name in v3.1."""
+    spec_yaml = """
+openapi: "3.1.0"
+info:
+  title: "pathItems component test"
+  version: "1.0.0"
+paths:
+  /users:
+    $ref: "#/components/pathItems/UserPath"
+components:
+  pathItems:
+    UserPath:
+      get:
+        responses:
+          "200":
+            description: "OK"
+"""
+    spec = parse(spec_string=spec_yaml)
+    assert "/users" in spec.paths
+    path_item = spec.paths["/users"]
+    assert path_item.ref_name == "#/components/pathItems/UserPath"
+    assert path_item.get is not None
