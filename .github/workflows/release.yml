@@ -2,9 +2,14 @@
 name: Release
 on:
   workflow_dispatch:
+permissions:
+  contents: read
 jobs:
   release:
     runs-on: ubuntu-latest
+    concurrency:
+      group: ${{ github.workflow }}-release-${{ github.ref_name }}
+      cancel-in-progress: false
     permissions:
       contents: write
       id-token: write
@@ -12,15 +17,24 @@ jobs:
       - name: checkout
         uses: actions/checkout@v6
         with:
+          ref: ${{ github.ref_name }}
           fetch-depth: 0
+      - name: force release branch to workflow sha
+        run: git reset --hard ${{ github.sha }}
       - name: install uv
         uses: astral-sh/setup-uv@v6
         with:
+          version: "0.12.3"
           python-version: "3.10"
           enable-cache: true
       - name: dependencies
         run: uv sync --locked --dev
-      - name: release
-        run: uv run semantic-release publish
+      - name: semantic release
+        id: release
+        run: uv run semantic-release -v version
         env:
-          GH_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GIT_COMMIT_AUTHOR: "manchenkoff <artem@manchenkoff.me>"
+      - name: publish to pypi
+        if: steps.release.outputs.released == 'true'
+        run: uv publish
