@@ -14,11 +14,18 @@ jobs:
       contents: write
       id-token: write
     steps:
+      - name: generate release token
+        id: token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.RELEASE_APP_ID }}
+          private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
       - name: checkout
         uses: actions/checkout@v6
         with:
           ref: ${{ github.ref_name }}
           fetch-depth: 0
+          token: ${{ steps.token.outputs.token }}
       - name: force release branch to workflow sha
         run: git reset --hard ${{ github.sha }}
       - name: install uv
@@ -33,7 +40,7 @@ jobs:
         id: release
         run: uv run semantic-release -v version
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ steps.token.outputs.token }}
           GIT_COMMIT_AUTHOR: "manchenkoff <artem@manchenkoff.me>"
       - name: publish to pypi
         if: steps.release.outputs.released == 'true'
