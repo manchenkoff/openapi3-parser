@@ -5,15 +5,18 @@
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/openapi3-parser)](https://pypi.org/project/openapi3-parser/)
 [![PyPI - Format](https://img.shields.io/pypi/format/openapi3-parser)](https://pypi.org/project/openapi3-parser/)
 
-Parse OpenAPI 3 documents into fully typed Python dataclass objects.
+Parse OpenAPI and Swagger documents into fully typed Pydantic models.
 Navigate your API specification programmatically — servers, paths,
 operations, parameters, schemas, security schemes, and more.
 
 | Version | Status         |
 | ------- | -------------- |
-| 2.0     | Deprecated     |
-| 3.0     | **Supported**  |
-| 3.1     | In development |
+| 2.0     | Supported*     |
+| 3.0     | Supported      |
+| 3.1     | Supported      |
+| 3.2     | Supported      |
+
+\* Swagger 2.0 documents are normalized to OpenAPI 3.0.
 
 ## Installation
 
@@ -49,6 +52,12 @@ info:
   version: "1.0.0"
 paths: {}
 """)
+
+# From raw string with external $refs (resolved relative to base_uri)
+spec = parse(
+    spec_string=open("specs/openapi.yml").read(),
+    base_uri="file:///abs/path/specs/openapi.yml",
+)
 ```
 
 ### Navigate servers, paths, and operations
@@ -60,34 +69,35 @@ specification = parse("swagger.yml")
 for server in specification.servers:
     print(f"{server.description} - {server.url}")
 
-# List all paths and their HTTP methods
-for path in specification.paths:
-    methods = ", ".join(op.method.value for op in path.operations)
-    print(f"{path.url}: [{methods}]")
+# Iterate paths and their HTTP methods
+for path, path_item in specification.paths.items():
+    methods = ", ".join(
+        method for method in ("get", "put", "post", "delete", "patch")
+        if getattr(path_item, method) is not None
+    )
+    print(f"{path}: [{methods}]")
 
 # Inspect operation details
-for path in specification.paths:
-    for op in path.operations:
-        print(f"[{op.method.value}] {path.url}: {op.summary}")
-        if op.deprecated:
-            print("  (deprecated)")
-        if op.operation_id:
-            print(f"  operationId: {op.operation_id}")
+for path_item in specification.paths.values():
+    get_op = path_item.get
+    if get_op is None:
+        continue
+    print(f"[GET] {path}: {get_op.summary}")
+    if get_op.deprecated:
+        print("  (deprecated)")
+    if get_op.operation_id:
+        print(f"  operationId: {get_op.operation_id}")
 ```
 
-### Enum strictness
+### Follow `$ref` references
 
-By default, content types, string formats, and other enum fields are validated
-against predefined enums. For specs that use custom values, pass
-`strict_enum=False`:
+`$ref` entries are resolved in place and annotated with a `ref_name`
+pointing back to their canonical location:
 
 ```python
-# Accepts non-standard content types like "application/vnd.api+json"
-spec = parse("swagger.yml", strict_enum=False)
+schema = specification.components.schemas["Pet"]
+print(schema.ref_name)  # "#/components/schemas/Pet"
 ```
-
-When strict mode is off, unrecognized values are wrapped in a `LooseEnum`
-object instead of raising an error.
 
 ### Error Handling
 
@@ -98,36 +108,39 @@ try:
     spec = parse("invalid.yml")
 except ParserError as e:
     print(f"Parsing failed: {e}")
+    for detail in e.errors():
+        print(detail["loc"], detail["msg"])
 ```
 
 ## Data Model
 
 Parsed documents return a `Specification` object composed of fully typed
-dataclasses:
+Pydantic models:
 
-| Model           | Description |
-| --------------- | ----------- |
-| `Specification` | Root document — version, info, servers, paths, schemas, security |
-| `Info`          | API metadata — title, version, description, contact, license |
-| `Server`        | Server definition — url, description, variables |
-| `Path`          | URL path — operations, parameters |
-| `Operation`     | HTTP method — responses, parameters, request body, security |
-| `Parameter`     | Path/query/header/cookie param — schema, style, required |
-| `Response`      | Status code, description, content, headers |
-| `RequestBody`   | Content, description, required |
-| `Content`       | Media type, schema, example |
-| `Schema`        | Base type — Integer, Number, String, Boolean, Array, Object, Null |
-| `Property`      | Object property — name, schema |
-| `OneOf`/`AnyOf` | Composition schemas with discriminator support |
-| `Security`      | Security scheme — apiKey, http, oauth2, openIdConnect |
-| `OAuthFlow`     | OAuth flow — authorization, token, scopes |
-| `Header`        | Response header — name, schema, description |
-| `Tag`           | Tag with optional external docs |
-| `ExternalDoc`   | External documentation reference |
-| `Discriminator` | Polymorphism discriminator — property name, mapping |
+| Model            | Description |
+| ---------------- | ----------- |
+| `Specification`  | Root document — openapi, info, servers, paths, components, security |
+| `Info`           | API metadata — title, version, description, contact, license |
+| `Server`         | Server definition — url, description, variables |
+| `PathItem`       | URL path — get/post/put/delete/patch, parameters, servers |
+| `Operation`      | HTTP method — responses, parameters, request body, security |
+| `Parameter`      | Path/query/header/cookie param — schema, style, required |
+| `Response`       | Status code, description, content, headers |
+| `RequestBody`    | Content, description, required |
+| `MediaType`      | Media type — schema, example, encoding |
+| `Schema`         | Data definition — type, properties, items, composition |
+| `Components`     | Reusable schemas, responses, parameters, examples, headers, ... |
+| `SecurityScheme` | Security scheme — apiKey, http, oauth2, openIdConnect, mutualTLS |
+| `OAuthFlow`      | OAuth flow — authorization, token, scopes |
+| `Header`         | Response header — name, schema, description |
+| `Link`           | Link definition — operation, parameters, request body |
+| `Example`        | Example — value, summary, externalValue |
+| `Tag`            | Tag with optional external docs |
+| `ExternalDoc`    | External documentation reference |
+| `Discriminator`  | Polymorphism discriminator — property name, mapping |
 
-See the [specification module](src/openapi_parser/specification.py) for
-all available fields and types.
+See the [models](src/openapi_parser/models/) package for all available
+fields and types.
 
 ## Development
 
@@ -136,13 +149,13 @@ all available fields and types.
 uv sync --dev
 
 # Lint
-uv run ruff check .
-uv run mypy .
-uv run ty check .
+uv run ruff check src/ tests/
+uv run mypy src/ tests/
+uv run ty check
 
 # Test
 uv run pytest
 
 # Format
-uv run ruff format .
+uv run ruff format src/ tests/
 ```

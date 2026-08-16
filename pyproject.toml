@@ -22,8 +22,9 @@ classifiers = [
   "Topic :: Software Development :: Libraries",
 ]
 dependencies = [
-    "openapi-spec-validator>=0.8.5",
-    "prance>=25.4.8.0",
+    "pydantic>=2.0",
+    "referencing>=0.35",
+    "PyYAML>=6.0",
 ]
 
 [project.urls]
@@ -35,9 +36,10 @@ dev = [
     "mypy>=2.1.0",
     "pytest>=9.0.3",
     "pytest-cov>=6.1.0",
-    "python-semantic-release>=10.5.3",
+    "python-semantic-release>=10.6.1,<11",
     "ruff>=0.15.13",
     "ty>=0.0.37",
+    "types-pyyaml>=6.0.12.20260518",
 ]
 
 [build-system]
@@ -49,33 +51,17 @@ module-name = "openapi_parser"
 
 [tool.semantic_release]
 version_toml = ["pyproject.toml:project.version"]
-branch = "main"
 build_command = """
     uv lock --upgrade-package "$PACKAGE_NAME"
     git add uv.lock
     uv build
 """
-upload_to_pypi = true
-upload_to_release = true
-remove_dist = true
-
-[[tool.uv.index]]
-name = "testpypi"
-url = "https://test.pypi.org/simple/"
-publish-url = "https://test.pypi.org/legacy/"
-explicit = true
 
 [tool.mypy]
 python_version = "3.10"
 strict = true
 mypy_path = ["src"]
-
-[[tool.mypy.overrides]]
-module = "tests.*"
-
-[[tool.mypy.overrides]]
-module = "prance"
-ignore_missing_imports = true
+plugins = ["pydantic.mypy"]
 
 [tool.ruff.lint]
 extend-select = [
@@ -87,13 +73,33 @@ extend-select = [
   "ARG",    # unused arguments
   "RUF100", # unused noqa
   "TID252", # ban relative imports
+  "PLR0915", # too-many-statements
 ]
+
+[tool.ruff.lint.pylint]
+max-statements = 30
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"
 
 [tool.ruff.lint.per-file-ignores]
 "tests/**" = ["D", "ARG"]
+
+[tool.ty]
+# Tests use Pydantic aliases (e.g. location= instead of in=, not_schema=
+# instead of not=) which ty does not resolve through Field(alias=) +
+# populate_by_name=True correctly. These are false positives from the
+# Pydantic-to-ty impedance mismatch.
+[[tool.ty.overrides]]
+include = ["tests/test_parse/**"]
+[tool.ty.overrides.rules]
+"unknown-argument" = "ignore"
+"missing-argument" = "ignore"
+"invalid-argument-type" = "ignore"
+
+[tool.pytest.ini_options]
+log_cli = true
+log_cli_level = "WARNING"
 
 [tool.coverage.run]
 source = ["openapi_parser"]
