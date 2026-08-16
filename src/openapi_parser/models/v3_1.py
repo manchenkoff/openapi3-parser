@@ -29,7 +29,7 @@ class Schema(v3_0.Schema):
 class Header(v3_0.Header):
     """Header object definition in OpenAPI 3.1+."""
 
-    schema: Schema | None = Field(default=None)
+    schema_object: Schema | None = Field(default=None, alias="schema")
 
 
 class Encoding(v3_0.Encoding):
@@ -41,14 +41,14 @@ class Encoding(v3_0.Encoding):
 class MediaType(v3_0.MediaType):
     """Media Type object definition in OpenAPI 3.1+."""
 
-    schema: Schema | None = Field(default=None)
+    schema_object: Schema | None = Field(default=None, alias="schema")
     encoding: dict[str, Encoding] | None = None  # type: ignore[assignment]  # narrowed to v3_1.Encoding
 
 
 class Parameter(v3_0.Parameter):
     """Parameter object definition in OpenAPI 3.1+."""
 
-    schema: Schema | None = Field(default=None)
+    schema_object: Schema | None = Field(default=None, alias="schema")
     content: dict[str, MediaType] | None = None  # type: ignore[assignment]  # narrowed to v3_1.MediaType
 
 

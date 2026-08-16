@@ -98,7 +98,7 @@ class Schema(ExtensionsMixin, RefCacheMixin, _MutableModelBase):
 class Header(ExtensionsMixin, RefCacheMixin, _ModelBase):
     """Header object definition."""
 
-    schema: Schema | None = Field(default=None)  # type: ignore[assignment]  # shadows BaseModel.schema()
+    schema_object: Schema | None = Field(default=None, alias="schema")
     description: str | None = None
     required: bool | None = None
     deprecated: bool = False
@@ -132,7 +132,7 @@ class Example(ExtensionsMixin, RefCacheMixin, _ModelBase):
 class MediaType(ExtensionsMixin, _ModelBase):
     """Media Type object definition."""
 
-    schema: Schema | None = Field(default=None)  # type: ignore[assignment]  # shadows BaseModel.schema()
+    schema_object: Schema | None = Field(default=None, alias="schema")
     example: Any | None = None
     examples: dict[str, Example] | None = None
     encoding: dict[str, Encoding] | None = None
@@ -156,7 +156,7 @@ class Parameter(ExtensionsMixin, RefCacheMixin, _ModelBase):
     ) = None
     explode: bool | None = None
     allow_reserved: bool | None = Field(default=None, alias="allowReserved")
-    schema: Schema | None = Field(default=None)  # type: ignore[assignment]  # shadows BaseModel.schema()
+    schema_object: Schema | None = Field(default=None, alias="schema")
     example: Any | None = None
     examples: dict[str, Example] | None = None
     content: dict[str, MediaType] | None = None

@@ -108,10 +108,8 @@ include = ["tests/test_parse/**"]
 "invalid-argument-type" = "ignore"
 
 [tool.pytest.ini_options]
-filterwarnings = [
-    # Pydantic field name "schema" shadows parent attributes (cosmetic only)
-    "ignore:Field name \"schema\" in .* shadows an attribute in parent:UserWarning",
-]
+log_cli = true
+log_cli_level = "WARNING"
 
 [tool.coverage.run]
 source = ["openapi_parser"]

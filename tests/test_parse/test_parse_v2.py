@@ -30,7 +30,7 @@ def test_parse_swagger_v2_petstore() -> None:
     assert post_pets is not None
     assert post_pets.request_body is not None
     assert "application/json" in post_pets.request_body.content
-    body_schema = post_pets.request_body.content["application/json"].schema
+    body_schema = post_pets.request_body.content["application/json"].schema_object
     assert body_schema is not None
     assert body_schema.ref_name == "#/components/schemas/NewPet"
 
@@ -64,7 +64,7 @@ paths:
     assert post_op is not None
     assert post_op.request_body is not None
     content = post_op.request_body.content["application/x-www-form-urlencoded"]
-    schema = content.schema
+    schema = content.schema_object
     assert schema is not None
     assert schema.type == "object"
     assert schema.properties is not None
@@ -116,7 +116,7 @@ definitions:
     assert get_op is not None
     media_type = get_op.responses["200"].content
     assert media_type is not None
-    schema = media_type["application/json"].schema
+    schema = media_type["application/json"].schema_object
     assert schema is not None
     assert schema.properties is not None
     assert schema.properties["name"].type == "string"

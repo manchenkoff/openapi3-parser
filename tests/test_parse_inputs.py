@@ -351,7 +351,7 @@ type: string
     get_op = spec.paths["/users"].get
     assert get_op is not None
     assert get_op.responses["200"].content is not None
-    schema = get_op.responses["200"].content["application/json"].schema
+    schema = get_op.responses["200"].content["application/json"].schema_object
     assert schema is not None
     assert schema.properties is not None
     second_prop = schema.properties["value"]
@@ -413,7 +413,7 @@ type: string
     assert get_op is not None
     media_type = get_op.responses["200"].content
     assert media_type is not None
-    schema = media_type["application/json"].schema
+    schema = media_type["application/json"].schema_object
     assert schema is not None
     assert schema.type == DataType.STRING
 
@@ -454,7 +454,7 @@ paths:
     get_op = spec.paths["/test"].get
     assert get_op is not None
     assert get_op.responses["200"].content is not None
-    schema = get_op.responses["200"].content["application/json"].schema
+    schema = get_op.responses["200"].content["application/json"].schema_object
     assert schema is not None
     # Verify extra fields are preserved in model_extra
     assert schema.model_extra is not None
@@ -571,7 +571,7 @@ paths:
     assert get_op is not None
     media_type = get_op.responses["200"].content
     assert media_type is not None
-    schema = media_type["application/json"].schema
+    schema = media_type["application/json"].schema_object
     assert schema is not None
     assert schema.type is not None and schema.type.value == "string"
 
